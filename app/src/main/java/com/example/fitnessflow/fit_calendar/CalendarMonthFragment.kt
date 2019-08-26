@@ -6,9 +6,7 @@ import android.util.Xml
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.RelativeLayout
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.example.fitnessflow.R
 import kotlin.collections.ArrayList
@@ -64,6 +62,7 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
         if (itemClickListener!=null){
             monthView!!.setItemClickListener(itemClickListener!!)
         }
+        //monthView!!.setExpansionAndContractionLimitedChangedListener(this)
         monthViewGroup!!.addView(monthView)
     }
 
@@ -71,7 +70,7 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
         monthViewGroup!!.removeAllViews()
         monthView = CalendarMonthView(view!!.context, attributes!!,year!!,month!!,selectMode,defaultSelectedStateList!!,
             columnInit!!,daysCount!!)
-        //monthView!!.setExpansionAndContractionLimitedChangedListener(this)
+        monthView!!.setExpansionAndContractionLimitedChangedListener(this)
         monthViewGroup!!.addView(monthView)
     }
 

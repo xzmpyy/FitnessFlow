@@ -12,10 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
-import com.example.fitnessflow.fit_calendar.CalendarMonthView
 import com.example.fitnessflow.fit_calendar.FitCalendarView
 
-class PlanFragment : Fragment(){
+class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener{
 
     //测试数据
     private val testDataList = arrayListOf<String>()
@@ -27,6 +26,8 @@ class PlanFragment : Fragment(){
     private var fitCalendar:FitCalendarView? = null
     private var initRecyclerViewPosition = 0f
     private var recyclerViewMovedDistance = 0f
+    private var yearAndMonthChangedListener:YearAndMonthChangedListener? = null
+    private var setYearAndMonthChangedListenerFlag = false
 
     //视图加载
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
@@ -38,10 +39,12 @@ class PlanFragment : Fragment(){
     override fun onViewCreated(view:View, savedInstanceState:Bundle?){
         super.onViewCreated(view, savedInstanceState)
         fitCalendar = view.findViewById(R.id.calendar_view_in_plan)
+        println("111")
         view.findViewById<ImageButton>(R.id.expand_contract_button).setOnClickListener {
             val intent = Intent(view.context, PlanDetailActivity::class.java)
             startActivity(intent)
         }
+        fitCalendar!!.setParentFragment(this)
         for (i in 1..30){
             testDataList.add(i.toString())
         }
@@ -75,5 +78,27 @@ class PlanFragment : Fragment(){
         fitCalendar!!.jumpToToday()
     }
 
+
+    fun resetRecyclerView(){
+        planRecyclerView!!.scrollToPosition(0)
+    }
+
+    interface YearAndMonthChangedListener{
+        fun onYearAndMonthChangedListener(year: Int,month: Int)
+    }
+
+    fun setYearAndMonthChangedListener(yearAndMonthChangedListener:YearAndMonthChangedListener){
+        this.yearAndMonthChangedListener = yearAndMonthChangedListener
+        println("222")
+        fitCalendar!!.setYearAndMonthChangedListener(this)
+    }
+
+
+
+    override fun onYearAndMonthChangedListener(year: Int, month: Int) {
+        if (this.yearAndMonthChangedListener!=null){
+            this.yearAndMonthChangedListener!!.onYearAndMonthChangedListener(year,month)
+        }
+    }
 
 }

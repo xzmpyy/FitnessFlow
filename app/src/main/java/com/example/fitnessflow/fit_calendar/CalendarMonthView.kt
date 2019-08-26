@@ -121,11 +121,7 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
                 //单选模式且无选中项时，默认选中今日
                 if (SelectedItemClass.getListCount() == 0 && selectMode==0){
                     SelectedItemClass.addItem(dateString)
-//                    paint.color = selectedTextColor
-//                    bitmapCanvas.drawRect(position[0]-textSize!!,position[1]-textSize!!,position[0]+textSize!!,position[1]+textSize!!,paint)
-//                    paint.color = Color.GRAY
-//                    bitmapCanvas.drawRect(position[0]-textSize!!+strokeWidth,position[1]-textSize!!+strokeWidth,position[0]+textSize!!+strokeWidth,position[1]+textSize!!+strokeWidth,paint)
-               }
+                 }
             }else{
                 bitmapCanvas.drawText(dayText.toString(),position[0],position[1]+textSize!!/2,paint)
             }

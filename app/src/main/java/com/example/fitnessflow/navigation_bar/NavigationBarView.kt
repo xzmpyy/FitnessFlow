@@ -23,15 +23,17 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     private var mineButton:TextView? = null
     private var operationButton:ImageButton? = null
     private var selectedPosition = 1
-    private val operationDrawableListId = listOf(R.drawable.play_icon,R.drawable.edit_icon,R.drawable.add_icon,R.drawable.chart_icon,R.drawable.pause_icon)
+    private val operationDrawableListId = listOf(R.drawable.play_icon,R.drawable.edit_icon,R.drawable.add_icon,R.drawable.chart_icon,R.drawable.pause_icon,R.drawable.position)
     private var refreshTextFlag = 0
     private val anim:OverturnAnimation=OverturnAnimation(800)
     private val operationButtonCenterX = (ScreenInfoClass.getScreenWidthDP(context)/10).toFloat()
     private val operationButtonCenterY = (ScreenInfoClass.sp2px(20,context)+ ScreenInfoClass.dp2px(20,context)).toFloat()/2f
     private var navigatorClickListener:NavigatorClickListener? = null
-    //默认状态为0，点击后为4
-    private var operationButtonClickFlag = 0
+    //今日页默认状态为0，点击后为4
+    private var operationButtonInTodayPageClickFlag = 0
     private var operationButtonClickListener:OperationButtonClickListener? = null
+    //计划页默认状态为1，点击后为5
+    private var operationButtonInPlanPageClickFlag = 1
 
     init {
         navigationView = LayoutInflater.from(context).inflate(R.layout.navigation_button_view, this, true)
@@ -56,23 +58,40 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
         }
         operationButton!!.setOnClickListener {
             if (selectedPosition == 0){
-                when(operationButtonClickFlag){
+                when(operationButtonInTodayPageClickFlag){
                     0->{
-                        operationButtonClickFlag = 4
-                        operationButton!!.startAnimation(anim)
                         if (operationButtonClickListener != null){
-                            operationButtonClickListener!!.onOperationButtonClick(operationButtonClickFlag)
+                            operationButtonClickListener!!.onOperationButtonClick(operationButtonInTodayPageClickFlag)
                         }
+                        operationButtonInTodayPageClickFlag = 4
+                        operationButton!!.startAnimation(anim)
                     }
                     4->{
-                        operationButtonClickFlag = 0
-                        operationButton!!.startAnimation(anim)
                         if (operationButtonClickListener != null){
-                            operationButtonClickListener!!.onOperationButtonClick(operationButtonClickFlag)
+                            operationButtonClickListener!!.onOperationButtonClick(operationButtonInTodayPageClickFlag)
                         }
+                        operationButtonInTodayPageClickFlag = 0
+                        operationButton!!.startAnimation(anim)
                     }
                 }
-            }else{
+            }
+            else if (selectedPosition == 1){
+                when(operationButtonInPlanPageClickFlag){
+                    1->{
+                        if (operationButtonClickListener != null){
+                            operationButtonClickListener!!.onOperationButtonClick(operationButtonInPlanPageClickFlag)
+                        }
+                    }
+                    5->{
+                        if (operationButtonClickListener != null){
+                            operationButtonClickListener!!.onOperationButtonClick(operationButtonInPlanPageClickFlag)
+                        }
+                        operationButtonInPlanPageClickFlag = 1
+                        operationButton!!.startAnimation(anim)
+                    }
+                }
+            }
+            else{
                 if (operationButtonClickListener != null){
                     operationButtonClickListener!!.onOperationButtonClick(selectedPosition)
                 }
@@ -84,7 +103,7 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
 
     private fun setOperationButtonBackground(){
         if (selectedPosition == 0){
-            when (operationButtonClickFlag){
+            when (operationButtonInTodayPageClickFlag){
                 0 ->{
                     operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[selectedPosition]))
                 }
@@ -92,7 +111,18 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
                     operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[4]))
                 }
             }
-        }else{
+        }
+        else if (selectedPosition == 1){
+            when(operationButtonInPlanPageClickFlag){
+                1 ->{
+                    operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[selectedPosition]))
+                }
+                5->{
+                    operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[5]))
+                }
+            }
+        }
+        else{
             operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[selectedPosition]))
         }
     }
@@ -125,11 +155,25 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
 
     interface OperationButtonClickListener{
         //type值从0到3位4个页面，为4时代表点击的是pause
-        fun onOperationButtonClick(type:Int)
+        fun onOperationButtonClick(position:Int)
     }
 
     fun setOperationButtonClickListener(operationButtonClickListener:OperationButtonClickListener){
         this.operationButtonClickListener = operationButtonClickListener
+    }
+
+    //0为切换成正常按钮，1位切换成跳转今日
+    fun changeOperatorButtonToJumpTodayOrReset(type:Int){
+        when (type){
+            0->{
+                operationButtonInPlanPageClickFlag = 1
+                operationButton!!.startAnimation(anim)
+            }
+            1->{
+                operationButtonInPlanPageClickFlag = 5
+                operationButton!!.startAnimation(anim)
+            }
+        }
     }
 
 }

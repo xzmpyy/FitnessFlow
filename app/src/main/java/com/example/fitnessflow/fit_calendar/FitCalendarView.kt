@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.fitnessflow.R
+import com.example.fitnessflow.plan.PlanFragment
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -69,6 +70,8 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     private var currentItemChanged = false
     //0高度变化阶段,1margin变化阶段
     private var expansionAndContractionState = 0
+    private var parentFragment:PlanFragment? = null
+    private var yearAndMonthChangedListener:YearAndMonthChangedListener? = null
 
     init {
         //获取attrs中的值，如果不为空，则进行组件的修改
@@ -174,21 +177,33 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
                         dateInfoView!!.setMothText(leftMonth!!)
                         dateInfoView!!.setYearText(leftYear!!)
                         dateInfoView!!.invalidate()
+                        if (yearAndMonthChangedListener != null){
+                            yearAndMonthChangedListener!!.onYearAndMonthChangedListener(leftYear!!,leftMonth!!)
+                        }
                     }
                     1->{
                         dateInfoView!!.setMothText(middleLeftMonth!!)
                         dateInfoView!!.setYearText(middleLeftYear!!)
                         dateInfoView!!.invalidate()
+                        if (yearAndMonthChangedListener != null){
+                            yearAndMonthChangedListener!!.onYearAndMonthChangedListener(middleLeftYear!!,middleLeftMonth!!)
+                        }
                     }
                     2->{
                         dateInfoView!!.setMothText(middleRightMonth!!)
                         dateInfoView!!.setYearText(middleRightYear!!)
                         dateInfoView!!.invalidate()
+                        if (yearAndMonthChangedListener != null){
+                            yearAndMonthChangedListener!!.onYearAndMonthChangedListener(middleRightYear!!,middleRightMonth!!)
+                        }
                     }
                     3->{
                         dateInfoView!!.setMothText(rightMonth!!)
                         dateInfoView!!.setYearText(rightYear!!)
                         dateInfoView!!.invalidate()
+                        if (yearAndMonthChangedListener != null){
+                            yearAndMonthChangedListener!!.onYearAndMonthChangedListener(rightYear!!,rightMonth!!)
+                        }
                     }
                 }
             }
@@ -743,22 +758,24 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             when(viewPager!!.currentItem){
                 1->{
                     myHandler.sendEmptyMessage(3)
+                    currentItemChanged = false
                 }
                 2->{
                     myHandler.sendEmptyMessage(0)
+                    currentItemChanged =false
                 }
             }
         }
     }
 
     fun startResetAnimation(){
+        //自动展开
         if (this.height >= this.width/7*5 && this.height<=fitCalendarInitHeight!!.toInt()){
             val animationHeight = ValueAnimator.ofInt(this.height,fitCalendarInitHeight!!.toInt())
             animationHeight.addUpdateListener {
                 val height = it.animatedValue
                 viewLayoutParams!!.height = height as Int
                 this.layoutParams = viewLayoutParams
-                viewPager!!.refreshDrawableState()
             }
             animationHeight.duration = 300
             animationHeight.start()
@@ -773,13 +790,17 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             animationHeight.start()
             animationMargin.start()
             viewPager!!.setCanScrollHorizontally(true)
-        }else if (this.height < this.width/7*5 && this.height >= maxMarginChange!!){
+            if (parentFragment!=null){
+                parentFragment!!.resetRecyclerView()
+            }
+        }
+        //自动收缩
+        else if (this.height < this.width/7*5 && this.height >= maxMarginChange!!){
             val animationHeight = ValueAnimator.ofInt(this.height,maxMarginChange!!.toInt())
             animationHeight.addUpdateListener {
                 val height = it.animatedValue
                 viewLayoutParams!!.height = height as Int
                 this.layoutParams = viewLayoutParams
-                viewPager!!.refreshDrawableState()
             }
             animationHeight.duration = 300
             animationHeight.start()
@@ -794,7 +815,27 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             animationHeight.start()
             animationMargin.start()
             viewPager!!.setCanScrollHorizontally(false)
+            if (parentFragment!=null){
+                parentFragment!!.resetRecyclerView()
+            }
         }
     }
+
+
+    fun setParentFragment(parentFragment: PlanFragment){
+        this.parentFragment = parentFragment
+    }
+
+    //监听年月变化
+    interface YearAndMonthChangedListener{
+
+        fun onYearAndMonthChangedListener(year: Int,month: Int)
+
+    }
+
+    fun setYearAndMonthChangedListener(yearAndMonthChangedListener:YearAndMonthChangedListener){
+        this.yearAndMonthChangedListener = yearAndMonthChangedListener
+    }
+
 
 }
