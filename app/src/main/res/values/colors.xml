@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <color name="colorPrimary">#28323D</color>-->
+    <color name="colorPrimary">#13121B</color>
+    <color name="primaryRed">#D24D57</color>
+    <color name="primaryGreen">#0FC3B3</color>
+    <color name="primaryGray">#4F5359</color>
+    <color name="primaryWhite">#F4F4F4</color>
+    <color name="primaryPurple">#7631E3</color>
+    <color name="iconColor">#F4F4F4</color>
+    <color name="transparentPurPle">#057631E3</color>
+    <color name="transparentGray">#054F5359</color>
+</resources>

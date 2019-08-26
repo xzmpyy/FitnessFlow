@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="biggestTextSize">36sp</dimen>
+    <dimen name="navigatorTextSize">20sp</dimen>
+    <dimen name="viewPaddingHorizontal">5dp</dimen>
+    <dimen name="viewPaddingVertical">10dp</dimen>
+    <dimen name="viewMargin">10dp</dimen>
+    <dimen name="viewEvaluation">10dp</dimen>
+    <dimen name="iconSize">24dp</dimen>
+</resources>

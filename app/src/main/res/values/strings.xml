@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">FitnessFlow</string>
+    <string name="today">今日</string>
+    <string name="plan">计划</string>
+    <string name="library">收藏</string>
+    <string name="mine">我的</string>
+    <string name="Sunday">日</string>
+    <string name="Monday">一</string>
+    <string name="Tuesday">二</string>
+    <string name="Wednesday">三</string>
+    <string name="Thursday">四</string>
+    <string name="Friday">五</string>
+    <string name="Saturday">六</string>
+    <string name="Jan">一月</string>
+    <string name="Feb">二月</string>
+    <string name="March">三月</string>
+    <string name="Apr">四月</string>
+    <string name="May">五月</string>
+    <string name="Jun">六月</string>
+    <string name="Jul">七月</string>
+    <string name="Aug">八月</string>
+    <string name="Sept">九月</string>
+    <string name="Oct">十月</string>
+    <string name="Nov">十一月</string>
+    <string name="Dec">十二月</string>
+</resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.example.fitnessflow.fit_calendar.FitCalendarView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/calendar_view_in_plan"
+        android:background="@drawable/shadow_underline"
+        />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/arrow_icon"
+        android:background="@color/colorPrimary"
+        android:rotation="180"
+        tools:ignore="ContentDescription"
+        android:id="@+id/expand_contract_button"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rv_in_plan"
+        android:paddingStart="@dimen/viewPaddingHorizontal"
+        android:paddingEnd="@dimen/viewPaddingHorizontal"
+        />
+</LinearLayout>
