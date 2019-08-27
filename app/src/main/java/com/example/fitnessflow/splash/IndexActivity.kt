@@ -9,15 +9,13 @@ import com.example.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.fitnessflow.navigation_bar.NavigationBarView
 import com.example.fitnessflow.plan.PlanFragment
 
-class IndexActivity : AppCompatActivity(),PlanFragment.YearAndMonthChangedListener,NavigationBarView.OperationButtonClickListener{
+class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClickListener{
 
     private var indexViewPager: ViewPager? = null
     private var indexFragmentInViewPagerList:List<Fragment>? = null
     private var planFragment:PlanFragment? = null
     private var indexViewPagerAdapter:IndexViewPagerAdapter? = null
     private var navigatorBar:NavigationBarView? = null
-    private val dateNow = GetMonthInfo.getTodayString()
-    private var isDateNowOrNot = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,30 +32,16 @@ class IndexActivity : AppCompatActivity(),PlanFragment.YearAndMonthChangedListen
 
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        planFragment!!.setYearAndMonthChangedListener(this)
-        super.onWindowFocusChanged(hasFocus)
-    }
-
-    //监听PlanFragment中日历的变化
-    override fun onYearAndMonthChangedListener(year: Int, month: Int) {
-        val dateCurrent = GetMonthInfo.getYearAndMonthString(year,month)
-        if (dateNow == dateCurrent && !isDateNowOrNot){
-            navigatorBar!!.changeOperatorButtonToJumpTodayOrReset(0)
-            isDateNowOrNot = true
-        }else if (dateNow != dateCurrent && isDateNowOrNot){
-            navigatorBar!!.changeOperatorButtonToJumpTodayOrReset(1)
-            isDateNowOrNot = false
-        }
-    }
-
+    //OperatorButton点击事件
     override fun onOperationButtonClick(position: Int) {
-        when(position){
-            5->{
-                planFragment!!.calendarJumpToday()
-                isDateNowOrNot = true
-            }
-        }
+
     }
+
+    //息屏后点亮状态恢复
+    override fun onRestart() {
+        planFragment!!.fitCalendarReStart()
+        super.onRestart()
+    }
+
 
 }

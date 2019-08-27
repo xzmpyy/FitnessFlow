@@ -43,6 +43,8 @@
             tools:ignore="ContentDescription"
             android:background="@drawable/round_rect_background"
             android:id="@+id/operation"
+            android:outlineProvider="bounds"
+            android:elevation="@dimen/viewElevation"
             />
     </LinearLayout>
     <LinearLayout

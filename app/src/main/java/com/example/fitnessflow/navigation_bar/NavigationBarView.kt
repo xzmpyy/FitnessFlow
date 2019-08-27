@@ -23,7 +23,7 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     private var mineButton:TextView? = null
     private var operationButton:ImageButton? = null
     private var selectedPosition = 1
-    private val operationDrawableListId = listOf(R.drawable.play_icon,R.drawable.edit_icon,R.drawable.add_icon,R.drawable.chart_icon,R.drawable.pause_icon,R.drawable.position)
+    private val operationDrawableListId = listOf(R.drawable.play_icon,R.drawable.edit_icon,R.drawable.add_icon,R.drawable.chart_icon,R.drawable.pause_icon)
     private var refreshTextFlag = 0
     private val anim:OverturnAnimation=OverturnAnimation(800)
     private val operationButtonCenterX = (ScreenInfoClass.getScreenWidthDP(context)/10).toFloat()
@@ -32,8 +32,6 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     //今日页默认状态为0，点击后为4
     private var operationButtonInTodayPageClickFlag = 0
     private var operationButtonClickListener:OperationButtonClickListener? = null
-    //计划页默认状态为1，点击后为5
-    private var operationButtonInPlanPageClickFlag = 1
 
     init {
         navigationView = LayoutInflater.from(context).inflate(R.layout.navigation_button_view, this, true)
@@ -75,22 +73,6 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
                     }
                 }
             }
-            else if (selectedPosition == 1){
-                when(operationButtonInPlanPageClickFlag){
-                    1->{
-                        if (operationButtonClickListener != null){
-                            operationButtonClickListener!!.onOperationButtonClick(operationButtonInPlanPageClickFlag)
-                        }
-                    }
-                    5->{
-                        if (operationButtonClickListener != null){
-                            operationButtonClickListener!!.onOperationButtonClick(operationButtonInPlanPageClickFlag)
-                        }
-                        operationButtonInPlanPageClickFlag = 1
-                        operationButton!!.startAnimation(anim)
-                    }
-                }
-            }
             else{
                 if (operationButtonClickListener != null){
                     operationButtonClickListener!!.onOperationButtonClick(selectedPosition)
@@ -109,16 +91,6 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
                 }
                 4->{
                     operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[4]))
-                }
-            }
-        }
-        else if (selectedPosition == 1){
-            when(operationButtonInPlanPageClickFlag){
-                1 ->{
-                    operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[selectedPosition]))
-                }
-                5->{
-                    operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[5]))
                 }
             }
         }
@@ -160,20 +132,6 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
 
     fun setOperationButtonClickListener(operationButtonClickListener:OperationButtonClickListener){
         this.operationButtonClickListener = operationButtonClickListener
-    }
-
-    //0为切换成正常按钮，1位切换成跳转今日
-    fun changeOperatorButtonToJumpTodayOrReset(type:Int){
-        when (type){
-            0->{
-                operationButtonInPlanPageClickFlag = 1
-                operationButton!!.startAnimation(anim)
-            }
-            1->{
-                operationButtonInPlanPageClickFlag = 5
-                operationButton!!.startAnimation(anim)
-            }
-        }
     }
 
 }

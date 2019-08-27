@@ -5,6 +5,6 @@
     <dimen name="viewPaddingHorizontal">5dp</dimen>
     <dimen name="viewPaddingVertical">10dp</dimen>
     <dimen name="viewMargin">10dp</dimen>
-    <dimen name="viewEvaluation">10dp</dimen>
+    <dimen name="viewElevation">10dp</dimen>
     <dimen name="iconSize">24dp</dimen>
 </resources>

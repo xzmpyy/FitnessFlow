@@ -1,7 +1,6 @@
 package com.example.fitnessflow.plan
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
 import com.example.fitnessflow.fit_calendar.FitCalendarView
+import java.lang.Exception
 
 class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener{
 
@@ -26,8 +26,7 @@ class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener{
     private var fitCalendar:FitCalendarView? = null
     private var initRecyclerViewPosition = 0f
     private var recyclerViewMovedDistance = 0f
-    private var yearAndMonthChangedListener:YearAndMonthChangedListener? = null
-    private var setYearAndMonthChangedListenerFlag = false
+    private var scaleAnimationButton:ImageButton? = null
 
     //视图加载
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
@@ -39,12 +38,10 @@ class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener{
     override fun onViewCreated(view:View, savedInstanceState:Bundle?){
         super.onViewCreated(view, savedInstanceState)
         fitCalendar = view.findViewById(R.id.calendar_view_in_plan)
-        println("111")
-        view.findViewById<ImageButton>(R.id.expand_contract_button).setOnClickListener {
-            val intent = Intent(view.context, PlanDetailActivity::class.java)
-            startActivity(intent)
+        scaleAnimationButton = view.findViewById(R.id.expand_contract_button)
+        scaleAnimationButton!!.setOnClickListener {
+
         }
-        fitCalendar!!.setParentFragment(this)
         for (i in 1..30){
             testDataList.add(i.toString())
         }
@@ -59,15 +56,20 @@ class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener{
                     initRecyclerViewPosition = event.rawY
                 }
                 MotionEvent.ACTION_MOVE->{
-                    recyclerViewMovedDistance = event.rawY - initRecyclerViewPosition
-                    initRecyclerViewPosition = event.rawY
-                    if (recyclerViewMovedDistance <=0 || (recyclerViewMovedDistance>0 && layoutManager.findFirstVisibleItemPosition() == 0)){
-                        fitCalendar!!.scrollerListener(recyclerViewMovedDistance)
+                    try {
+                        recyclerViewMovedDistance = event.rawY - initRecyclerViewPosition
+                        initRecyclerViewPosition = event.rawY
+                        if (recyclerViewMovedDistance <=0 || (recyclerViewMovedDistance>0 && layoutManager.findFirstVisibleItemPosition() == 0)){
+                            fitCalendar!!.scrollerListener(recyclerViewMovedDistance)
+                        }
+                    }catch (exception:Exception){
+                        println(exception)
+                        initRecyclerViewPosition = 0f
                     }
-
                 }
                 MotionEvent.ACTION_UP->{
                     fitCalendar!!.startResetAnimation()
+                    initRecyclerViewPosition = 0f
                 }
             }
             false
@@ -83,22 +85,13 @@ class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener{
         planRecyclerView!!.scrollToPosition(0)
     }
 
-    interface YearAndMonthChangedListener{
-        fun onYearAndMonthChangedListener(year: Int,month: Int)
-    }
-
-    fun setYearAndMonthChangedListener(yearAndMonthChangedListener:YearAndMonthChangedListener){
-        this.yearAndMonthChangedListener = yearAndMonthChangedListener
-        println("222")
-        fitCalendar!!.setYearAndMonthChangedListener(this)
-    }
-
-
 
     override fun onYearAndMonthChangedListener(year: Int, month: Int) {
-        if (this.yearAndMonthChangedListener!=null){
-            this.yearAndMonthChangedListener!!.onYearAndMonthChangedListener(year,month)
-        }
+
+    }
+
+    fun fitCalendarReStart(){
+        fitCalendar!!.reStart()
     }
 
 }

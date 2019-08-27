@@ -8,18 +8,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/calendar_view_in_plan"
-        android:background="@drawable/shadow_underline"
+        android:outlineProvider="bounds"
+        android:elevation="@dimen/viewElevation"
         />
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/arrow_icon"
-        android:background="@color/colorPrimary"
-        android:rotation="180"
-        tools:ignore="ContentDescription"
-        android:id="@+id/expand_contract_button"
-        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/position"
+            android:background="@color/colorPrimary"
+            android:rotation="180"
+            tools:ignore="ContentDescription"
+            android:id="@+id/jump_today_button"
+            android:clickable="false"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow_icon"
+            android:background="@color/colorPrimary"
+            android:rotation="180"
+            tools:ignore="ContentDescription"
+            android:id="@+id/expand_contract_button"
+            />
+    </FrameLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

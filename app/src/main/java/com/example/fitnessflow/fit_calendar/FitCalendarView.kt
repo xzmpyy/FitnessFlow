@@ -70,7 +70,6 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     private var currentItemChanged = false
     //0高度变化阶段,1margin变化阶段
     private var expansionAndContractionState = 0
-    private var parentFragment:PlanFragment? = null
     private var yearAndMonthChangedListener:YearAndMonthChangedListener? = null
 
     init {
@@ -698,6 +697,7 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             currentItemChanged = false
         }
         //页面变化时
+
         if (currentItemChanged) {
             when (viewPager!!.currentItem) {
                 1 -> {
@@ -717,7 +717,6 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         }
         //根据滑动距离改变height和margin
         viewLayoutParams!!.height = this.height + distance.toInt()
-
         if (expansionAndContractionState == 0) {
             if (viewLayoutParams!!.height.toFloat() <= fitCalendarInitHeight!! && viewLayoutParams!!.height.toFloat() >maxHeightChange!!) {
                 this.layoutParams = viewLayoutParams
@@ -790,9 +789,6 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             animationHeight.start()
             animationMargin.start()
             viewPager!!.setCanScrollHorizontally(true)
-            if (parentFragment!=null){
-                parentFragment!!.resetRecyclerView()
-            }
         }
         //自动收缩
         else if (this.height < this.width/7*5 && this.height >= maxMarginChange!!){
@@ -815,15 +811,7 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             animationHeight.start()
             animationMargin.start()
             viewPager!!.setCanScrollHorizontally(false)
-            if (parentFragment!=null){
-                parentFragment!!.resetRecyclerView()
-            }
         }
-    }
-
-
-    fun setParentFragment(parentFragment: PlanFragment){
-        this.parentFragment = parentFragment
     }
 
     //监听年月变化
@@ -837,5 +825,16 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         this.yearAndMonthChangedListener = yearAndMonthChangedListener
     }
 
+    fun reStart(){
+        when(viewPager!!.currentItem){
+            1->{
+                myHandler.sendEmptyMessage(3)
+            }
+            2->{
+                myHandler.sendEmptyMessage(0)
+            }
+        }
+        currentItemChanged = true
+    }
 
 }

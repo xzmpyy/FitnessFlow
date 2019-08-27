@@ -60,7 +60,6 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
     private var yearAndMonthString:String? = null
     private var itemClickListener:ItemClickListener? = null
     private var expansionAndContractionLimitedChangedListener:ExpansionAndContractionLimitedChangedListener? = null
-    private var isInitDraw = true
 
     init {
         //去锯齿
@@ -83,13 +82,6 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
         }
         canvas!!.drawColor(backGroundColor)
         drawDayText(canvas)
-        if (isInitDraw){
-            isInitDraw = false
-        }else{
-            if (expansionAndContractionLimitedChangedListener!=null){
-                expansionAndContractionLimitedChangedListener!!.onExpansionAndContractionLimitedChanged(this)
-            }
-        }
     }
 
 
@@ -127,6 +119,9 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
             }
             //选中
             if (SelectedItemClass.checkItem(dateString)){
+                if (expansionAndContractionLimitedChangedListener!=null){
+                    expansionAndContractionLimitedChangedListener!!.onExpansionAndContractionLimitedChanged(this)
+                }
                 paint.color = selectedTextColor
                 bitmapCanvas.drawRect(position[0]-textSize!!,position[1]-textSize!!,position[0]+textSize!!,position[1]+textSize!!,paint)
                 paint.color = Color.GRAY
@@ -183,32 +178,34 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
                 }else{
                     month.toString()
                 }
-                dateClick += if(clickWhich<10){
-                    "-0$clickWhich"
-                }else{
-                    "-$clickWhich"
-                }
-                if (selectMode == 0){
-                    if (!SelectedItemClass.checkItem(dateClick)){
-                        SelectedItemClass.clear()
-                        SelectedItemClass.addItem(dateClick)
+                if (clickWhich in 1..daysCount){
+                    dateClick += if(clickWhich<10){
+                        "-0$clickWhich"
+                    }else{
+                        "-$clickWhich"
                     }
-                    this.invalidate()
-                }else{
-                    if (SelectedItemClass.checkItem(dateClick)){
-                        SelectedItemClass.removeItem(dateClick)
+                    if (selectMode == 0){
+                        if (!SelectedItemClass.checkItem(dateClick)){
+                            SelectedItemClass.clear()
+                            SelectedItemClass.addItem(dateClick)
+                            this.invalidate()
+                        }
+                    }else{
+                        if (SelectedItemClass.checkItem(dateClick)){
+                            SelectedItemClass.removeItem(dateClick)
+                        }
+                        else{
+                            SelectedItemClass.addItem(dateClick)
+                        }
+                        this.invalidate()
                     }
-                    else{
-                        SelectedItemClass.addItem(dateClick)
+                    if (itemClickListener!=null){
+                        itemClickListener!!.onItemClickListener(dateClick)
                     }
-                    this.invalidate()
+                    moveStartX = null
+                    moveStartY = null
+                    return false
                 }
-                if (itemClickListener!=null){
-                    itemClickListener!!.onItemClickListener(dateClick)
-                }
-                moveStartX = null
-                moveStartY = null
-                return false
             }
         }
         return true

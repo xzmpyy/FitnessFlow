@@ -31,6 +31,6 @@
         android:textColor="@color/primaryWhite"
         android:textSize="@dimen/biggestTextSize"
         android:textStyle="bold"
-        android:elevation="@dimen/viewEvaluation"
+        android:elevation="@dimen/viewElevation"
         />
 </LinearLayout>
