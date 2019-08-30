@@ -34,11 +34,12 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
     private var viewPadding: Float? = null
     private var halfWidth: Float? = null
     //不同画笔的颜色
-    private var naturalTextColor = ContextCompat.getColor(context, R.color.primaryWhite)
-    private var selectedTextColor  = ContextCompat.getColor(context, R.color.primaryPurple)
-    private var defaultSelectedColor = ContextCompat.getColor(context, R.color.primaryGreen)
+    private var naturalTextColor = ContextCompat.getColor(context, R.color.primaryTextColor)
+    private var selectedTextColor  = ContextCompat.getColor(context, R.color.primaryButtonBackground)
+    private var defaultSelectedColor = ContextCompat.getColor(context, R.color.primaryButtonBackground)
     private var todayTextColor = ContextCompat.getColor(context, R.color.primaryRed)
     private var backGroundColor  = ContextCompat.getColor(context, R.color.colorPrimary)
+    private var shadowColor = ContextCompat.getColor(context, R.color.primaryShadowColor)
     //双缓冲
     private var textBitmap: Bitmap? = null
     private val bitmapCanvas = Canvas()
@@ -82,6 +83,9 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
         }
         canvas!!.drawColor(backGroundColor)
         drawDayText(canvas)
+        if (!textBitmap!!.isRecycled){
+            textBitmap!!.recycle()
+        }
     }
 
 
@@ -123,16 +127,16 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
                     expansionAndContractionLimitedChangedListener!!.onExpansionAndContractionLimitedChanged(this)
                 }
                 paint.color = selectedTextColor
-                bitmapCanvas.drawRect(position[0]-textSize!!,position[1]-textSize!!,position[0]+textSize!!,position[1]+textSize!!,paint)
-                paint.color = Color.GRAY
-                bitmapCanvas.drawRect(position[0]-textSize!!+strokeWidth,position[1]-textSize!!+strokeWidth,position[0]+textSize!!+strokeWidth,position[1]+textSize!!+strokeWidth,paint)
+                bitmapCanvas.drawRoundRect(position[0]-textSize!!,position[1]+textSize!!-strokeWidth*3,position[0]+textSize!!,position[1]+textSize!!+strokeWidth*5,10f,10f,paint)
+                paint.color = shadowColor
+                bitmapCanvas.drawRoundRect(position[0]-textSize!!+strokeWidth*3,position[1]+textSize!!,position[0]+textSize!!+strokeWidth*3,position[1]+textSize!!+strokeWidth*8,10f,10f,paint)
             }
             //默认选中
             if (defaultSelectedStateList!!.contains(dateString)){
                 paint.color = defaultSelectedColor
-                paint.alpha = 60
-                bitmapCanvas.drawRect(position[0]-halfWidth!!,position[1]-halfWidth!!,position[0]+halfWidth!!-strokeWidth,position[1]+halfWidth!!-strokeWidth,paint)
-                paint.alpha = 255
+                bitmapCanvas.drawCircle(position[0],position[1]+textSize!!,strokeWidth*3,paint)
+                paint.color = shadowColor
+                bitmapCanvas.drawCircle(position[0],position[1]+textSize!! + strokeWidth*3,strokeWidth*3,paint)
             }
             paint.color = naturalTextColor
             paint.xfermode = null

@@ -1,8 +1,6 @@
 package com.example.fitnessflow.fit_calendar
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -21,7 +19,7 @@ class CalendarDateInfoView (context: Context, set:AttributeSet):View(context,set
 
     private val paint= Paint()
     //不同画笔的颜色
-    private var naturalTextColor = ContextCompat.getColor(context, R.color.primaryWhite)
+    private var naturalTextColor = ContextCompat.getColor(context, R.color.primaryTextColor)
     private var backGroundColor = ContextCompat.getColor(context, R.color.colorPrimary)
     private var year:Int?=null
     private var month:Int?=null

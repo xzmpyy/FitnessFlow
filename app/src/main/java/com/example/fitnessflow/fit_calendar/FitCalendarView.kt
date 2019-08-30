@@ -16,12 +16,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.fitnessflow.R
-import com.example.fitnessflow.plan.PlanFragment
 import java.util.*
 import kotlin.collections.ArrayList
 
 class FitCalendarView (context: Context?, attrs: AttributeSet?):
-    LinearLayout(context,attrs),CalendarMonthFragment.ExpansionAndContractionLimitedChangedListener{
+    LinearLayout(context,attrs),CalendarMonthFragment.ExpansionAndContractionLimitedChangedListener,CalendarMonthFragment.ItemClickListener{
 
     private var selectMode:Int? = null
 
@@ -54,7 +53,7 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     private var monthFragmentList:List<Fragment>? = null
     //生成默认选中列表项的接口实例
     private var defaultSelectedListGenerator:DefaultSelectedListGenerator? = null
-    private var itemClickListener: CalendarMonthView.ItemClickListener? = null
+    private var itemClickListener:ItemClickListener? = null
     //Handler实例
     private val myHandler= MyHandler(this)
     //初始化月视图的Margin标识
@@ -71,6 +70,8 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     //0高度变化阶段,1margin变化阶段
     private var expansionAndContractionState = 0
     private var yearAndMonthChangedListener:YearAndMonthChangedListener? = null
+    //监听伸缩动画的接口
+    private var scaleAnimationListener:ScaleAnimationListener? = null
 
     init {
         //获取attrs中的值，如果不为空，则进行组件的修改
@@ -258,13 +259,13 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     //获取默认标记列表
     private fun getDefaultSelectedList(year:Int,month:Int):ArrayList<String>{
         if (defaultSelectedListGenerator!=null){
-            return defaultSelectedListGenerator!!.setDeDefaultSelectedList(year,month)
+            return defaultSelectedListGenerator!!.setDefaultSelectedList(year,month)
         }
         return arrayListOf()
     }
     //自定义默认选中项的接口
     interface DefaultSelectedListGenerator{
-        fun setDeDefaultSelectedList(year:Int,month:Int):ArrayList<String>
+        fun setDefaultSelectedList(year:Int,month:Int):ArrayList<String>
     }
     fun setDefaultSelectedListGenerator(defaultSelectedListGenerator:DefaultSelectedListGenerator){
         this.defaultSelectedListGenerator = defaultSelectedListGenerator
@@ -278,10 +279,17 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         fragmentRight!!.updateData(rightYear!!,rightMonth!!,rightDefaultSelectedList!!)
     }
 
+    interface ItemClickListener{
+        fun onItemClickListener(date:String)
+    }
 
-    fun setItemClickListener(itemClickListener:CalendarMonthView.ItemClickListener){
-        for (fragment in monthFragmentList!!){
-            (fragment as CalendarMonthFragment).setItemClickListener(itemClickListener)
+    fun setItemClickListener(itemClickListener:ItemClickListener){
+        this.itemClickListener = itemClickListener
+    }
+
+    override fun onItemClickListener(date: String) {
+        if (this.itemClickListener != null){
+            this.itemClickListener!!.onItemClickListener(date)
         }
     }
 
@@ -668,12 +676,152 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             isMonthViewInit = false
             fragmentMiddleLeft!!.setExpansionAndContractionLimitedChangedListener(this)
             fragmentMiddleRight!!.setExpansionAndContractionLimitedChangedListener(this)
+            fragmentMiddleLeft!!.setItemClickListener(this)
+            fragmentMiddleRight!!.setItemClickListener(this)
         }
         super.onWindowFocusChanged(hasWindowFocus)
     }
 
     fun scrollerListener(distance:Float) {
         //伸缩限制设置
+        getScrollerLimited()
+        //根据滑动距离改变height和margin
+        viewLayoutParams!!.height = this.height + distance.toInt()
+        if (expansionAndContractionState == 0) {
+            if (viewLayoutParams!!.height.toFloat() < fitCalendarInitHeight!! && viewLayoutParams!!.height.toFloat() >maxHeightChange!!) {
+                this.layoutParams = viewLayoutParams
+            } else if (viewLayoutParams!!.height.toFloat() <= maxHeightChange!!) {
+                viewLayoutParams!!.height = maxHeightChange!!.toInt()
+                this.layoutParams = viewLayoutParams
+                expansionAndContractionState = 1
+            } else if (viewLayoutParams!!.height.toFloat() >= fitCalendarInitHeight!! && this.measuredHeight != fitCalendarInitHeight!!.toInt()) {
+                viewLayoutParams!!.height = fitCalendarInitHeight!!.toInt()
+                this.layoutParams = viewLayoutParams
+                viewPager!!.setCanScrollHorizontally(true)
+                if (scaleAnimationListener!=null){
+                    scaleAnimationListener!!.duringScaleAnimation(1)
+                }
+            }
+        } else if (expansionAndContractionState == 1) {
+            val targetMargin = viewPagerLayoutParams!!.topMargin + distance.toInt()
+            if (targetMargin< monthViewInitMargin!! && targetMargin>minMargin!!){
+                this.layoutParams = viewLayoutParams
+                viewPagerLayoutParams!!.topMargin = targetMargin
+                viewPager!!.layoutParams = viewPagerLayoutParams
+            }else if (targetMargin<=minMargin!! && viewPagerLayoutParams!!.topMargin != minMargin!!){
+                viewLayoutParams!!.height = maxMarginChange!!.toInt()
+                this.layoutParams = viewLayoutParams
+                viewPagerLayoutParams!!.topMargin = minMargin!!
+                viewPager!!.layoutParams = viewPagerLayoutParams
+                viewPager!!.setCanScrollHorizontally(false)
+                if (scaleAnimationListener!=null){
+                    scaleAnimationListener!!.duringScaleAnimation(0)
+                }
+            }else if (viewLayoutParams!!.height.toFloat() >= maxHeightChange!! && viewPagerLayoutParams!!.topMargin != monthViewInitMargin!!){
+                viewLayoutParams!!.height = maxHeightChange!!.toInt()
+                this.layoutParams = viewLayoutParams
+                viewPagerLayoutParams!!.topMargin = monthViewInitMargin!!
+                viewPager!!.layoutParams = viewPagerLayoutParams
+                expansionAndContractionState = 0
+            }
+        }
+    }
+
+    override fun onExpansionAndContractionLimitedChanged(monthView: CalendarMonthView) {
+        val changeLimited = monthView.getTheExpansionAndContractionLimited()
+        maxHeightChange = fitCalendarInitHeight!! - changeLimited[0]
+        maxMarginChange = fitCalendarInitHeight!! - changeLimited[0] - changeLimited[1]
+        minMargin = (monthViewInitMargin!! - changeLimited[1]).toInt()
+        if (currentItemChanged){
+            when(viewPager!!.currentItem){
+                1->{
+                    Thread{myHandler.sendEmptyMessage(3)}.start()
+                    currentItemChanged = false
+                }
+                2->{
+                    Thread{myHandler.sendEmptyMessage(0)}.start()
+                    currentItemChanged =false
+                }
+            }
+        }
+    }
+
+    fun startResetAnimation(){
+        //自动展开
+        if (this.height >= this.width/7*5 && this.height<fitCalendarInitHeight!!.toInt()){
+            if (scaleAnimationListener!=null){
+                scaleAnimationListener!!.duringScaleAnimation(1)
+            }
+            val animationHeight = ValueAnimator.ofInt(this.height,fitCalendarInitHeight!!.toInt())
+            animationHeight.addUpdateListener {
+                val height = it.animatedValue
+                viewLayoutParams!!.height = height as Int
+                this.layoutParams = viewLayoutParams
+            }
+            animationHeight.duration = 300
+            animationHeight.start()
+            val animationMargin = ValueAnimator.ofInt(viewPagerLayoutParams!!.topMargin,monthViewInitMargin!!.toInt())
+            animationMargin.addUpdateListener {
+                val margin = it.animatedValue
+                viewPagerLayoutParams!!.topMargin = margin as Int
+                viewPager!!.layoutParams = viewPagerLayoutParams!!
+            }
+            animationMargin.duration = 300
+            animationMargin.start()
+            viewPager!!.setCanScrollHorizontally(true)
+            expansionAndContractionState = 0
+        }
+        //自动收缩
+        else if (this.height < this.width/7*5 && this.height > maxMarginChange!!){
+            if (scaleAnimationListener!=null){
+                scaleAnimationListener!!.duringScaleAnimation(0)
+            }
+            val animationHeight = ValueAnimator.ofInt(this.height,maxMarginChange!!.toInt())
+            animationHeight.addUpdateListener {
+                val height = it.animatedValue
+                viewLayoutParams!!.height = height as Int
+                this.layoutParams = viewLayoutParams
+            }
+            val animationMargin = ValueAnimator.ofInt(viewPagerLayoutParams!!.topMargin,minMargin!!)
+            animationMargin.addUpdateListener {
+                val margin = it.animatedValue
+                viewPagerLayoutParams!!.topMargin = margin as Int
+                viewPager!!.layoutParams = viewPagerLayoutParams!!
+            }
+            animationHeight.duration = 300
+            animationMargin.duration = 300
+            animationMargin.start()
+            animationHeight.start()
+            viewPager!!.setCanScrollHorizontally(false)
+            expansionAndContractionState = 1
+        }
+    }
+
+    //监听年月变化
+    interface YearAndMonthChangedListener{
+
+        fun onYearAndMonthChangedListener(year: Int,month: Int)
+
+    }
+
+    fun setYearAndMonthChangedListener(yearAndMonthChangedListener:YearAndMonthChangedListener){
+        this.yearAndMonthChangedListener = yearAndMonthChangedListener
+    }
+
+    fun reStart(){
+        when(viewPager!!.currentItem){
+            1->{
+                Thread{myHandler.sendEmptyMessage(3)}.start()
+            }
+            2->{
+                Thread{myHandler.sendEmptyMessage(0)}.start()
+            }
+        }
+        currentItemChanged = true
+    }
+
+    //设置height和margin变化限制
+    private fun getScrollerLimited(){
         //第一次初始化
         if (viewLayoutParams == null) {
             viewLayoutParams = this.layoutParams as LayoutParams
@@ -697,7 +845,6 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             currentItemChanged = false
         }
         //页面变化时
-
         if (currentItemChanged) {
             when (viewPager!!.currentItem) {
                 1 -> {
@@ -715,126 +862,70 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             }
             currentItemChanged = false
         }
-        //根据滑动距离改变height和margin
-        viewLayoutParams!!.height = this.height + distance.toInt()
-        if (expansionAndContractionState == 0) {
-            if (viewLayoutParams!!.height.toFloat() <= fitCalendarInitHeight!! && viewLayoutParams!!.height.toFloat() >maxHeightChange!!) {
-                this.layoutParams = viewLayoutParams
-            } else if (viewLayoutParams!!.height.toFloat() <= maxHeightChange!!) {
-                viewLayoutParams!!.height = maxHeightChange!!.toInt()
-                this.layoutParams = viewLayoutParams
-                expansionAndContractionState = 1
-            } else if (viewLayoutParams!!.height.toFloat() > fitCalendarInitHeight!! && this.measuredHeight != fitCalendarInitHeight!!.toInt()) {
-                viewLayoutParams!!.height = fitCalendarInitHeight!!.toInt()
-                this.layoutParams = viewLayoutParams
-            }
-        } else if (expansionAndContractionState == 1) {
-            if (viewLayoutParams!!.height.toFloat() < maxHeightChange!! && viewLayoutParams!!.height.toFloat() > maxMarginChange!!) {
-                this.layoutParams = viewLayoutParams
-                viewPagerLayoutParams!!.topMargin = viewPagerLayoutParams!!.topMargin + distance.toInt()
-                viewPager!!.layoutParams = viewPagerLayoutParams
-            }else if (viewLayoutParams!!.height.toFloat() > maxHeightChange!!){
-                this.layoutParams = viewLayoutParams
-                viewPagerLayoutParams!!.topMargin = monthViewInitMargin!!
-                viewPager!!.layoutParams = viewPagerLayoutParams
-                expansionAndContractionState = 0
-            }else if (viewLayoutParams!!.height.toFloat() <= maxMarginChange!! && viewLayoutParams!!.height.toFloat() != maxMarginChange!!){
-                viewLayoutParams!!.height = maxMarginChange!!.toInt()
-                this.layoutParams = viewLayoutParams
-                viewPagerLayoutParams!!.topMargin = minMargin!!
-                viewPager!!.layoutParams = viewPagerLayoutParams
-            }
-
-        }
     }
 
-    override fun onExpansionAndContractionLimitedChanged(monthView: CalendarMonthView) {
-        val changeLimited = monthView.getTheExpansionAndContractionLimited()
-        maxHeightChange = fitCalendarInitHeight!! - changeLimited[0]
-        maxMarginChange = fitCalendarInitHeight!! - changeLimited[0] - changeLimited[1]
-        minMargin = (monthViewInitMargin!! - changeLimited[1]).toInt()
-        if (currentItemChanged){
-            when(viewPager!!.currentItem){
+    fun scaleAnimation(){
+        if (this.height == fitCalendarInitHeight!!.toInt() || this.height == maxMarginChange!!.toInt()){
+            getScrollerLimited()
+            when(expansionAndContractionState){
+                //展开状态下
+                0->{
+                    if (scaleAnimationListener!=null){
+                        scaleAnimationListener!!.duringScaleAnimation(expansionAndContractionState)
+                    }
+                    val animationHeight = ValueAnimator.ofInt(fitCalendarInitHeight!!.toInt(),maxMarginChange!!.toInt())
+                    animationHeight.addUpdateListener {
+                        val height = it.animatedValue
+                        viewLayoutParams!!.height = height as Int
+                        this.layoutParams = viewLayoutParams
+                    }
+                    animationHeight.duration = 300
+                    animationHeight.start()
+                    val animationMargin = ValueAnimator.ofInt(monthViewInitMargin!!.toInt(),minMargin!!)
+                    animationMargin.addUpdateListener {
+                        val margin = it.animatedValue
+                        viewPagerLayoutParams!!.topMargin = margin as Int
+                        viewPager!!.layoutParams = viewPagerLayoutParams!!
+                    }
+                    animationMargin.duration = 300
+                    animationMargin.start()
+                    viewPager!!.setCanScrollHorizontally(false)
+                    expansionAndContractionState = 1
+                }
+                //收起状态下
                 1->{
-                    myHandler.sendEmptyMessage(3)
-                    currentItemChanged = false
+                    if (scaleAnimationListener!=null){
+                        scaleAnimationListener!!.duringScaleAnimation(expansionAndContractionState)
+                    }
+                    val animationHeight = ValueAnimator.ofInt(this.height,fitCalendarInitHeight!!.toInt())
+                    animationHeight.addUpdateListener {
+                        val height = it.animatedValue
+                        viewLayoutParams!!.height = height as Int
+                        this.layoutParams = viewLayoutParams
+                    }
+                    val animationMargin = ValueAnimator.ofInt(viewPagerLayoutParams!!.topMargin,monthViewInitMargin!!)
+                    animationMargin.addUpdateListener {
+                        val margin = it.animatedValue
+                        viewPagerLayoutParams!!.topMargin = margin as Int
+                        viewPager!!.layoutParams = viewPagerLayoutParams!!
+                    }
+                    animationHeight.duration = 300
+                    animationMargin.duration = 300
+                    animationMargin.start()
+                    animationHeight.start()
+                    viewPager!!.setCanScrollHorizontally(true)
+                    expansionAndContractionState = 0
                 }
-                2->{
-                    myHandler.sendEmptyMessage(0)
-                    currentItemChanged =false
-                }
             }
         }
     }
 
-    fun startResetAnimation(){
-        //自动展开
-        if (this.height >= this.width/7*5 && this.height<=fitCalendarInitHeight!!.toInt()){
-            val animationHeight = ValueAnimator.ofInt(this.height,fitCalendarInitHeight!!.toInt())
-            animationHeight.addUpdateListener {
-                val height = it.animatedValue
-                viewLayoutParams!!.height = height as Int
-                this.layoutParams = viewLayoutParams
-            }
-            animationHeight.duration = 300
-            animationHeight.start()
-            val animationMargin = ValueAnimator.ofInt(viewPagerLayoutParams!!.topMargin,monthViewInitMargin!!.toInt())
-            animationMargin.addUpdateListener {
-                val margin = it.animatedValue
-                viewPagerLayoutParams!!.topMargin = margin as Int
-                viewPager!!.layoutParams = viewPagerLayoutParams!!
-            }
-            animationHeight.duration = 300
-            animationMargin.duration = 300
-            animationHeight.start()
-            animationMargin.start()
-            viewPager!!.setCanScrollHorizontally(true)
-        }
-        //自动收缩
-        else if (this.height < this.width/7*5 && this.height >= maxMarginChange!!){
-            val animationHeight = ValueAnimator.ofInt(this.height,maxMarginChange!!.toInt())
-            animationHeight.addUpdateListener {
-                val height = it.animatedValue
-                viewLayoutParams!!.height = height as Int
-                this.layoutParams = viewLayoutParams
-            }
-            animationHeight.duration = 300
-            animationHeight.start()
-            val animationMargin = ValueAnimator.ofInt(viewPagerLayoutParams!!.topMargin,(monthViewInitMargin!!.toFloat() -maxHeightChange!! + maxMarginChange!!).toInt())
-            animationMargin.addUpdateListener {
-                val margin = it.animatedValue
-                viewPagerLayoutParams!!.topMargin = margin as Int
-                viewPager!!.layoutParams = viewPagerLayoutParams!!
-            }
-            animationHeight.duration = 300
-            animationMargin.duration = 300
-            animationHeight.start()
-            animationMargin.start()
-            viewPager!!.setCanScrollHorizontally(false)
-        }
+    interface ScaleAnimationListener{
+        fun duringScaleAnimation(expansionAndContractionState:Int)
     }
 
-    //监听年月变化
-    interface YearAndMonthChangedListener{
-
-        fun onYearAndMonthChangedListener(year: Int,month: Int)
-
-    }
-
-    fun setYearAndMonthChangedListener(yearAndMonthChangedListener:YearAndMonthChangedListener){
-        this.yearAndMonthChangedListener = yearAndMonthChangedListener
-    }
-
-    fun reStart(){
-        when(viewPager!!.currentItem){
-            1->{
-                myHandler.sendEmptyMessage(3)
-            }
-            2->{
-                myHandler.sendEmptyMessage(0)
-            }
-        }
-        currentItemChanged = true
+    fun setScaleAnimationListener(scaleAnimationListener:ScaleAnimationListener){
+        this.scaleAnimationListener = scaleAnimationListener
     }
 
 }

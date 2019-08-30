@@ -15,7 +15,7 @@ class TransitionBackgroundView (context: Context, set:AttributeSet): View(contex
     private val paint = Paint()
     private val myPaintMode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
     private val colorRed = ContextCompat.getColor(context, R.color.primaryRed)
-    private val shadowColor = ContextCompat.getColor(context, R.color.primaryGray)
+    private val shadowColor = ContextCompat.getColor(context, R.color.primaryShadowColor)
     private val processBarHeight = ScreenInfoClass.sp2dp(resources.getDimension(R.dimen.biggestTextSize).toInt(),context).toFloat()
     private var upperRectWidth:Float? = null
     private var lowerRectWidth:Float? = null

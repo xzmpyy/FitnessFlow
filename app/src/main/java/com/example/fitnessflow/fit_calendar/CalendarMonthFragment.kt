@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.fitnessflow.R
 import kotlin.collections.ArrayList
 
-class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractionLimitedChangedListener{
+class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractionLimitedChangedListener,CalendarMonthView.ItemClickListener{
 
     private var monthViewGroup:RelativeLayout? = null
     private var monthView:CalendarMonthView? = null
@@ -22,7 +22,7 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
     private var defaultSelectedStateList: ArrayList<String>? = null
     private var daysCount:Int? = null
     private var attributes:AttributeSet? = null
-    private var itemClickListener: CalendarMonthView.ItemClickListener? = null
+    private var itemClickListener:ItemClickListener? = null
     private var expansionAndContractionLimitedChangedListener:ExpansionAndContractionLimitedChangedListener? = null
 
     fun getLuLuMonthFragment(year:Int,month:Int
@@ -59,9 +59,6 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
         monthViewGroup = view.findViewById(R.id.month_view_group)
         monthView = CalendarMonthView(view.context, attributes!!,year!!,month!!,selectMode,defaultSelectedStateList!!,
             columnInit!!,daysCount!!)
-        if (itemClickListener!=null){
-            monthView!!.setItemClickListener(itemClickListener!!)
-        }
         //monthView!!.setExpansionAndContractionLimitedChangedListener(this)
         monthViewGroup!!.addView(monthView)
     }
@@ -71,12 +68,18 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
         monthView = CalendarMonthView(view!!.context, attributes!!,year!!,month!!,selectMode,defaultSelectedStateList!!,
             columnInit!!,daysCount!!)
         monthView!!.setExpansionAndContractionLimitedChangedListener(this)
+        monthView!!.setItemClickListener(this)
         monthViewGroup!!.addView(monthView)
     }
 
 
-    fun setItemClickListener(itemClickListener: CalendarMonthView.ItemClickListener){
+    interface ItemClickListener{
+        fun onItemClickListener(date:String)
+    }
+
+    fun setItemClickListener(itemClickListener:ItemClickListener){
         this.itemClickListener = itemClickListener
+        monthView!!.setItemClickListener(this)
     }
 
     fun getScrollerLimited():FloatArray{
@@ -98,5 +101,10 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
         }
     }
 
+    override fun onItemClickListener(date: String) {
+        if (this.itemClickListener !=null){
+            this.itemClickListener!!.onItemClickListener(date)
+        }
+    }
 
 }

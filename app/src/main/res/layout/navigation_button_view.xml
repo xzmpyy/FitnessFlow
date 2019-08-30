@@ -25,7 +25,7 @@
         <TextView
             style="@style/navigationTextStyle"
             android:text="@string/plan"
-            android:textColor="@color/primaryWhite"
+            android:textColor="@color/primaryTextColor"
             android:id="@+id/plan"
             />
     </LinearLayout>
@@ -43,8 +43,6 @@
             tools:ignore="ContentDescription"
             android:background="@drawable/round_rect_background"
             android:id="@+id/operation"
-            android:outlineProvider="bounds"
-            android:elevation="@dimen/viewElevation"
             />
     </LinearLayout>
     <LinearLayout

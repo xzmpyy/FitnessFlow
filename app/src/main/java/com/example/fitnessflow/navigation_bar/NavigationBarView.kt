@@ -44,8 +44,8 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
         for (navigator in navigatorList!!){
             navigator.setOnClickListener {
                 if (selectedPosition != navigatorList!!.indexOf(navigator)){
-                    navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.primaryGray))
-                    navigatorList!![navigatorList!!.indexOf(navigator)].setTextColor(ContextCompat.getColor(context, R.color.primaryWhite))
+                    navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.unSelectedTextColor))
+                    navigatorList!![navigatorList!!.indexOf(navigator)].setTextColor(ContextCompat.getColor(context, R.color.primaryTextColor))
                     selectedPosition = navigatorList!!.indexOf(navigator)
                     operationButton!!.startAnimation(anim)
                     if (navigatorClickListener != null){
@@ -119,8 +119,8 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
 
 
     fun setCurrentSelected(position:Int){
-        navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.primaryGray))
-        navigatorList!![position].setTextColor(ContextCompat.getColor(context, R.color.primaryWhite))
+        navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.unSelectedTextColor))
+        navigatorList!![position].setTextColor(ContextCompat.getColor(context, R.color.primaryTextColor))
         selectedPosition = position
         operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[position]))
     }

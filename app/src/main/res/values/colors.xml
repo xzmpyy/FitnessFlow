@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <color name="colorPrimary">#28323D</color>-->
-    <color name="colorPrimary">#13121B</color>
+<!--深色系-->
+    <color name="colorPrimary">#1E2026</color>
     <color name="primaryRed">#D24D57</color>
     <color name="primaryGreen">#0FC3B3</color>
-    <color name="primaryGray">#4F5359</color>
-    <color name="primaryWhite">#F4F4F4</color>
-    <color name="primaryPurple">#7631E3</color>
+    <color name="primaryShadowColor">#5F13121B</color>
+    <color name="unSelectedTextColor">#4F5359</color>
+    <color name="primaryTextColor">#F4F4F4</color>
+    <color name="primaryButtonBackground">#7631E3</color>
     <color name="iconColor">#F4F4F4</color>
-    <color name="transparentPurPle">#057631E3</color>
-    <color name="transparentGray">#054F5359</color>
+    <color name="itemInRecyclerViewBackground">#057631E3</color>
+<!--浅色系-->
+<!--    <color name="colorPrimary">#F4F4F4</color>-->
+<!--    <color name="primaryRed">#D24D57</color>-->
+<!--    <color name="primaryGreen">#0FC3B3</color>-->
+<!--    <color name="primaryGray">#EAEAEA</color>-->
+<!--    <color name="primaryWhite">#13121B</color>-->
+<!--    <color name="primaryPurple">#B2DFEE</color>-->
+<!--    <color name="iconColor">#EAEAEA</color>-->
+<!--    <color name="transparentPurPle">#057631E3</color>-->
 </resources>

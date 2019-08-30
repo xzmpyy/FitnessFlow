@@ -19,7 +19,7 @@ class CalendarWeekTitleView(context: Context, set:AttributeSet):View(context, se
     private var viewPadding:Float? = null
     private var halfWidth:Float? = null
     //不同画笔的颜色
-    private var naturalTextColor = ContextCompat.getColor(context, R.color.primaryWhite)
+    private var naturalTextColor = ContextCompat.getColor(context, R.color.primaryTextColor)
     private var weekendTextColor= ContextCompat.getColor(context, R.color.primaryGreen)
     private var backGroundColor= ContextCompat.getColor(context, R.color.colorPrimary)
     //双缓冲
