@@ -6,7 +6,7 @@
     android:gravity="center"
     android:background="@drawable/transparent_round_rect_background"
     android:layout_marginBottom="@dimen/viewMargin"
-    android:elevation="@dimen/viewElevation"
+    android:id="@+id/item_parent_layout"
     >
     <TextView
         android:layout_height="80dp"

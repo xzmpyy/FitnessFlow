@@ -41,6 +41,7 @@ class SplashActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: Void?): Boolean {
             //预加载任务
+            FragmentInit.init()
             return true
         }
 

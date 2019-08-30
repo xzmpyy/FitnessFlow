@@ -24,7 +24,7 @@ FitCalendarView.ScaleAnimationListener{
     private val testDataList = arrayListOf<String>()
     //RecyclerView相关
     private var planRecyclerView:RecyclerView? = null
-    private var layoutManager = LinearLayoutManager(this.activity)
+    private val layoutManager = LinearLayoutManager(this.activity)
     private var adapter:AdapterInPlanFragment? = null
     //日历相关
     private var fitCalendar:FitCalendarView? = null

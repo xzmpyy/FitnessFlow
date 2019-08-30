@@ -29,4 +29,15 @@
         <item>@string/Nov</item>
         <item>@string/Dec</item>
     </array>
+    <array name="muscle_group">
+        <item>@string/Template</item>
+        <item>@string/Chest</item>
+        <item>@string/Shoulder</item>
+        <item>@string/BackGroup</item>
+        <item>@string/Arms</item>
+        <item>@string/Legs</item>
+        <item>@string/Belly</item>
+        <item>@string/Aerobics</item>
+        <item>@string/Others</item>
+    </array>
 </resources>

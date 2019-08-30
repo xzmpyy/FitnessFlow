@@ -1,31 +1,32 @@
-package com.example.fitnessflow.plan
+package com.example.fitnessflow.library.library_child_fragments
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
 
-class AdapterInPlanFragment(private val list:ArrayList<String>, private val context: Context):
-    RecyclerView.Adapter<AdapterInPlanFragment.RvHolder>(){
+class TemplateFragmentAdapter (private val list:ArrayList<String>, private val context: Context):
+    RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(){
 
+    private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
 
     //控件类，代表了每一个Item的布局
-    class RvHolder(view: View):RecyclerView.ViewHolder(view){
+    class RvHolder(view: View): RecyclerView.ViewHolder(view){
         //找到加载的布局文件中需要进行设置的各项控件
         val itemText=view.findViewById<TextView>(R.id.text)!!
-        val parentLayout = view.findViewById<LinearLayout>(R.id.item_parent_layout)!!
+        val parentLayout = view.findViewById<FrameLayout>(R.id.item_parent_layout)!!
     }
 
     //复写控件类的生成方法
     override fun onCreateViewHolder(p0: ViewGroup, p1:Int):RvHolder{
         //创建一个ViewHolder，获得ViewHolder关联的layout文件,返回一个加载了layout的控件类
         //inflate三个参数为需要填充的View的资源id、附加到resource中的根控件、是否将root附加到布局文件的根视图上
-        return RvHolder(LayoutInflater.from(context).inflate(R.layout.every_day_plan_item,p0,false))
+        return RvHolder(LayoutInflater.from(context).inflate(R.layout.template_item_in_library,p0,false))
     }
 
     //获取Item个数的方法
@@ -35,8 +36,14 @@ class AdapterInPlanFragment(private val list:ArrayList<String>, private val cont
     }
 
     override fun onBindViewHolder(p0:RvHolder,p1:Int){
+        //第一个和最后一个加top、bottom的margin
+        if (p1 == 0){
+            val layoutParams = FrameLayout.LayoutParams(p0.parentLayout.layoutParams)
+            layoutParams.topMargin = firstItemTopMargin
+            p0.parentLayout.layoutParams = layoutParams
+        }
         if (p1 == list.size - 1){
-            val layoutParams = LinearLayout.LayoutParams(p0.parentLayout.layoutParams)
+            val layoutParams = FrameLayout.LayoutParams(p0.parentLayout.layoutParams)
             layoutParams.bottomMargin = lastItemBottomMargin
             p0.parentLayout.layoutParams = layoutParams
         }

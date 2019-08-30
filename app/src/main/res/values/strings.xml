@@ -23,4 +23,13 @@
     <string name="Oct">十月</string>
     <string name="Nov">十一月</string>
     <string name="Dec">十二月</string>
+    <string name="Template">模板</string>
+    <string name="Chest">胸部</string>
+    <string name="Shoulder">肩部</string>
+    <string name="BackGroup">背部</string>
+    <string name="Arms">臂部</string>
+    <string name="Legs">腿部</string>
+    <string name="Belly">腹部</string>
+    <string name="Aerobics">有氧</string>
+    <string name="Others">其他</string>
 </resources>

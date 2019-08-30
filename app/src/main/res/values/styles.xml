@@ -25,4 +25,13 @@
         <!--选择方式，0为单选模式，1位多选模式-->
         <attr name="selectMode" format="integer"/>
     </declare-styleable>
+    <style name="muscleGroupNavigator">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">@dimen/navigatorTextSize</item>
+        <item name="android:textColor">@color/unSelectedTextColor</item>
+        <item name="android:background">@null</item>
+    </style>
 </resources>

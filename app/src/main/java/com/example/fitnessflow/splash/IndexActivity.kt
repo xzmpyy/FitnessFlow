@@ -2,18 +2,14 @@ package com.example.fitnessflow.splash
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
 import com.example.fitnessflow.R
-import com.example.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.fitnessflow.navigation_bar.NavigationBarView
 import com.example.fitnessflow.plan.PlanFragment
 
-class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClickListener{
+class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClickListener,NavigationBarView.NavigatorClickListener{
 
-    private var indexViewPager: ViewPager? = null
-    private var indexFragmentInViewPagerList:List<Fragment>? = null
-    private var planFragment:PlanFragment? = null
+    private var indexViewPager: ViewPagerScrollerFalse? = null
+    private var indexFragmentInViewPagerList = FragmentInit.getIndexFragmentInViewPagerList()
     private var indexViewPagerAdapter:IndexViewPagerAdapter? = null
     private var navigatorBar:NavigationBarView? = null
 
@@ -23,13 +19,11 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
         indexViewPager = findViewById(R.id.index_view_pager)
         navigatorBar = findViewById(R.id.navigator)
         indexViewPager!!.offscreenPageLimit =3
-        planFragment = PlanFragment()
         navigatorBar!!.setOperationButtonClickListener(this)
-        indexFragmentInViewPagerList = listOf(planFragment!! as Fragment)
-        indexViewPagerAdapter = IndexViewPagerAdapter(supportFragmentManager, indexFragmentInViewPagerList!!)
+        navigatorBar!!.setNavigatorClickListener(this)
+        indexViewPagerAdapter = IndexViewPagerAdapter(supportFragmentManager, indexFragmentInViewPagerList)
         indexViewPager!!.adapter = indexViewPagerAdapter
-        indexViewPager!!.currentItem = 0
-
+        indexViewPager!!.currentItem = 1
     }
 
     //OperatorButton点击事件
@@ -37,9 +31,13 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
 
     }
 
+    override fun onNavigatorClick(position: Int) {
+        indexViewPager!!.setCurrentItem(position,false)
+    }
+
     //息屏后点亮状态恢复
     override fun onRestart() {
-        planFragment!!.fitCalendarReStart()
+        (indexFragmentInViewPagerList[1] as PlanFragment).fitCalendarReStart()
         super.onRestart()
     }
 
