@@ -723,6 +723,11 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
                 viewPagerLayoutParams!!.topMargin = monthViewInitMargin!!
                 viewPager!!.layoutParams = viewPagerLayoutParams
                 expansionAndContractionState = 0
+            }else if (monthViewInitMargin!! == minMargin!!){
+                expansionAndContractionState = 0
+                if (scaleAnimationListener!=null){
+                    scaleAnimationListener!!.duringScaleAnimation(0)
+                }
             }
         }
     }

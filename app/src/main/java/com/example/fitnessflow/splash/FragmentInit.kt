@@ -16,7 +16,6 @@ object FragmentInit {
         muscleGroupFragmentsList = listOf(TemplateFragment() as Fragment)
         indexFragmentInViewPagerList = listOf(TodayFragment() as Fragment,
             PlanFragment() as Fragment,LibraryFragment() as Fragment,MineFragment() as Fragment)
-        println("111")
     }
 
     fun getIndexFragmentInViewPagerList():List<Fragment>{

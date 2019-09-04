@@ -25,7 +25,7 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     private var selectedPosition = 1
     private val operationDrawableListId = listOf(R.drawable.play_icon,R.drawable.edit_icon,R.drawable.add_icon,R.drawable.chart_icon,R.drawable.pause_icon)
     private var refreshTextFlag = 0
-    private val anim:OverturnAnimation=OverturnAnimation(800)
+    private val anim:OverturnAnimation=OverturnAnimation(400)
     private val operationButtonCenterX = (ScreenInfoClass.getScreenWidthDP(context)/10).toFloat()
     private val operationButtonCenterY = (ScreenInfoClass.sp2px(20,context)+ ScreenInfoClass.dp2px(20,context)).toFloat()/2f
     private var navigatorClickListener:NavigatorClickListener? = null
@@ -118,12 +118,12 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     }
 
 
-    fun setCurrentSelected(position:Int){
-        navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.unSelectedTextColor))
-        navigatorList!![position].setTextColor(ContextCompat.getColor(context, R.color.primaryTextColor))
-        selectedPosition = position
-        operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[position]))
-    }
+//    fun setCurrentSelected(position:Int){
+//        navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.unSelectedTextColor))
+//        navigatorList!![position].setTextColor(ContextCompat.getColor(context, R.color.primaryTextColor))
+//        selectedPosition = position
+//        operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[position]))
+//    }
 
     interface OperationButtonClickListener{
         //type值从0到3位4个页面，为4时代表点击的是pause

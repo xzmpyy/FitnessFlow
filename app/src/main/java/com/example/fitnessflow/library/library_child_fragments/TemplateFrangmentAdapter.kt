@@ -1,10 +1,13 @@
 package com.example.fitnessflow.library.library_child_fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
@@ -20,6 +23,7 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
         //找到加载的布局文件中需要进行设置的各项控件
         val itemText=view.findViewById<TextView>(R.id.text)!!
         val parentLayout = view.findViewById<FrameLayout>(R.id.item_parent_layout)!!
+        val upperLayout = view.findViewById<LinearLayout>(R.id.upper_layout)!!
     }
 
     //复写控件类的生成方法
@@ -35,11 +39,13 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
         return list.size
     }
 
-    override fun onBindViewHolder(p0:RvHolder,p1:Int){
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onBindViewHolder(p0:RvHolder, p1:Int){
         //第一个和最后一个加top、bottom的margin
         if (p1 == 0){
             val layoutParams = FrameLayout.LayoutParams(p0.parentLayout.layoutParams)
             layoutParams.topMargin = firstItemTopMargin
+            layoutParams.bottomMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
             p0.parentLayout.layoutParams = layoutParams
         }
         if (p1 == list.size - 1){
@@ -49,12 +55,14 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
         }
         //向viewHolder中的View控件赋值需显示的内容
         p0.itemText.text=list[p1]
+        p0.upperLayout.setOnTouchListener { _, event ->
+            true
+        }
     }
 
     //onBindViewHolder只有在getItemViewType返回值不同时才调用，当有多种布局的Item时不重写会导致复用先前的条目，数据容易错乱
     override fun getItemViewType(position:Int):Int{
         return position
     }
-
 
 }
