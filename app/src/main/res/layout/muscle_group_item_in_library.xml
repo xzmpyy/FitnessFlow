@@ -14,21 +14,9 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/send_button"
-            android:id="@+id/date_button"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/viewMargin"
-            android:layout_marginStart="@dimen/viewMargin"
-            android:background="@null"
-            tools:ignore="ContentDescription"
-            android:clickable="false"
-            />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:src="@drawable/edit_button_green"
             android:id="@+id/edit_button"
-            android:layout_toStartOf="@+id/date_button"
+            android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/viewMargin"
             android:layout_marginStart="@dimen/viewMargin"
             android:background="@null"

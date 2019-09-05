@@ -43,6 +43,7 @@ class LibraryFragment : Fragment(){
                     muscleGroup.setTextColor(selectedColor!!)
                     muscleGroupButtonList!![currentPageNo].setTextColor(unselectedColor!!)
                     currentPageNo = muscleGroupButtonList!!.indexOf(muscleGroup)
+                    muscleViewPager!!.setCurrentItem(currentPageNo,false)
                 }
             }
         }

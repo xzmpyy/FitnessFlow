@@ -19,12 +19,12 @@ object ScreenInfoClass {
         //sWidth=sWidthDp*density/DisplayMetrics.DENSITY_DEFAULT
     }
 
-    fun getScreenWidthPx(context: Context):Int{
-        val wm: WindowManager =context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val dm = DisplayMetrics()
-        wm.defaultDisplay.getMetrics(dm)
-        return dm.widthPixels
-    }
+//    fun getScreenWidthPx(context: Context):Int{
+//        val wm: WindowManager =context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//        val dm = DisplayMetrics()
+//        wm.defaultDisplay.getMetrics(dm)
+//        return dm.widthPixels
+//    }
 
     fun dp2px(dp:Int, context: Context):Int{
         return  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,dp.toFloat(),context.resources.displayMetrics).toInt()

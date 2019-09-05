@@ -14,12 +14,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
 
-class TemplateFragmentAdapter (private val list:ArrayList<String>, private val context: Context):
-    RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(){
+class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private val context: Context):
+    RecyclerView.Adapter<MuscleGroupFragmentAdapter.RvHolder>(){
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
-    private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*3 + context.resources.getDimension(R.dimen.viewMargin)*7)
+    private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*2 + context.resources.getDimension(
+        R.dimen.viewMargin)*5)
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
@@ -27,7 +28,6 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
         val itemText=view.findViewById<TextView>(R.id.text)!!
         val parentLayout = view.findViewById<FrameLayout>(R.id.item_parent_layout)!!
         val upperLayout = view.findViewById<LinearLayout>(R.id.upper_layout)!!
-        val sendTemplateButton = view.findViewById<ImageButton>(R.id.date_button)!!
         val editTemplateButton = view.findViewById<ImageButton>(R.id.edit_button)!!
         val deleteTemplateButton = view.findViewById<ImageButton>(R.id.delete_button)!!
     }
@@ -36,7 +36,7 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
     override fun onCreateViewHolder(p0: ViewGroup, p1:Int):RvHolder{
         //创建一个ViewHolder，获得ViewHolder关联的layout文件,返回一个加载了layout的控件类
         //inflate三个参数为需要填充的View的资源id、附加到resource中的根控件、是否将root附加到布局文件的根视图上
-        return RvHolder(LayoutInflater.from(context).inflate(R.layout.template_item_in_library,p0,false))
+        return RvHolder(LayoutInflater.from(context).inflate(R.layout.muscle_group_item_in_library,p0,false))
     }
 
     //获取Item个数的方法
@@ -59,7 +59,7 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
             p0.parentLayout.layoutParams = layoutParams
         }
         //向viewHolder中的View控件赋值需显示的内容
-        p0.itemText.text="T" + list[p1]
+        p0.itemText.text="M" + list[p1]
         var positionX = 0f
         //item侧滑显示按钮
         p0.upperLayout.setOnTouchListener { _, event ->
@@ -73,12 +73,10 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
                         p0.upperLayout.translationX = targetTranslationX
                     }else if (targetTranslationX<=maxSwipeDistance && p0.upperLayout.translationX != maxSwipeDistance){
                         p0.upperLayout.translationX = maxSwipeDistance
-                        p0.sendTemplateButton.isClickable = true
                         p0.editTemplateButton.isClickable = true
                         p0.deleteTemplateButton.isClickable = true
                     }else if (targetTranslationX >=0 && p0.upperLayout.translationX != 0f){
                         p0.upperLayout.translationX = 0f
-                        p0.sendTemplateButton.isClickable = false
                         p0.editTemplateButton.isClickable = false
                         p0.deleteTemplateButton.isClickable = false
                     }
@@ -107,7 +105,7 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
         return position
     }
 
-    private fun itemSwipeAnimation(upperView:View,p0:RvHolder){
+    private fun itemSwipeAnimation(upperView: View, p0:RvHolder){
         if (upperView.translationX <= maxSwipeDistance/2 && upperView.translationX!=maxSwipeDistance){
             val swipeAnimation = ValueAnimator.ofFloat(upperView.translationX,maxSwipeDistance)
             swipeAnimation.addUpdateListener {
@@ -116,7 +114,6 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
             }
             swipeAnimation.duration = 300
             swipeAnimation.start()
-            p0.sendTemplateButton.isClickable = true
             p0.editTemplateButton.isClickable = true
             p0.deleteTemplateButton.isClickable = true
         }else if (upperView.translationX > maxSwipeDistance/2 && upperView.translationX!=0f){
@@ -128,7 +125,6 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val c
             swipeAnimation.duration = 300
             swipeAnimation.start()
             p0.upperLayout.translationX = 0f
-            p0.sendTemplateButton.isClickable = false
             p0.editTemplateButton.isClickable = false
             p0.deleteTemplateButton.isClickable = false
         }
