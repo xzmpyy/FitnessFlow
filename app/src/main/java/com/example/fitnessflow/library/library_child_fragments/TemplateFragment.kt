@@ -5,14 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
 
 class TemplateFragment : Fragment(){
 
     private var templateRv:RecyclerView? = null
-    private val layoutManager = LinearLayoutManager(this.activity)
+    private var layoutManager:LinearLayoutManagerForItemSwipe? = null
     private var adapter:TemplateFragmentAdapter? = null
     //测试数据
     private val testDataList = arrayListOf<String>()
@@ -29,8 +28,9 @@ class TemplateFragment : Fragment(){
         for (i in 1..30){
             testDataList.add(i.toString())
         }
+        layoutManager = LinearLayoutManagerForItemSwipe((view.context))
         templateRv!!.layoutManager = layoutManager
-        adapter = TemplateFragmentAdapter(testDataList, view.context)
+        adapter = TemplateFragmentAdapter(testDataList, layoutManager!!,view.context)
         templateRv!!.adapter = adapter
     }
 

@@ -30,6 +30,7 @@ class SplashActivity : AppCompatActivity() {
             if (startActivityFlag){
                 val intent = Intent(this@SplashActivity, IndexActivity::class.java)
                 startActivity(intent)
+                finish()
             }else{
                 startActivityFlag = true
             }
@@ -49,6 +50,7 @@ class SplashActivity : AppCompatActivity() {
             if (startActivityFlag){
                 val intent = Intent(this@SplashActivity, IndexActivity::class.java)
                 startActivity(intent)
+                finish()
             }else{
                 startActivityFlag = true
             }

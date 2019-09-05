@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
 
@@ -20,7 +19,7 @@ class MuscleGroupFragment : Fragment(){
     }
 
     private var muscleGroupRv: RecyclerView? = null
-    private val layoutManager = LinearLayoutManager(this.activity)
+    private var layoutManager:LinearLayoutManagerForItemSwipe? = null
     private var adapter:MuscleGroupFragmentAdapter? = null
     private var muscleGroupType = 0
     //测试数据
@@ -38,8 +37,9 @@ class MuscleGroupFragment : Fragment(){
         for (i in 1..30){
             testDataList.add(i.toString())
         }
+        layoutManager = LinearLayoutManagerForItemSwipe((view.context))
         muscleGroupRv!!.layoutManager = layoutManager
-        adapter = MuscleGroupFragmentAdapter(testDataList, view.context)
+        adapter = MuscleGroupFragmentAdapter(testDataList, layoutManager!!,view.context)
         muscleGroupRv!!.adapter = adapter
     }
 

@@ -14,13 +14,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessflow.R
 
-class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private val context: Context):
+class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private val layoutManager:LinearLayoutManagerForItemSwipe,
+                                  private val context: Context):
     RecyclerView.Adapter<MuscleGroupFragmentAdapter.RvHolder>(){
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
     private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*2 + context.resources.getDimension(
         R.dimen.viewMargin)*5)
+    private var canScrollVerticallyFlag = true
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
@@ -70,12 +72,24 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
                 MotionEvent.ACTION_MOVE->{
                     val targetTranslationX = p0.upperLayout.translationX + event.rawX - positionX
                     if (targetTranslationX < 0 && targetTranslationX>maxSwipeDistance){
+                        if (canScrollVerticallyFlag){
+                            canScrollVerticallyFlag = false
+                            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+                        }
                         p0.upperLayout.translationX = targetTranslationX
                     }else if (targetTranslationX<=maxSwipeDistance && p0.upperLayout.translationX != maxSwipeDistance){
+                        if (!canScrollVerticallyFlag){
+                            canScrollVerticallyFlag = true
+                            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+                        }
                         p0.upperLayout.translationX = maxSwipeDistance
                         p0.editTemplateButton.isClickable = true
                         p0.deleteTemplateButton.isClickable = true
                     }else if (targetTranslationX >=0 && p0.upperLayout.translationX != 0f){
+                        if (!canScrollVerticallyFlag){
+                            canScrollVerticallyFlag = true
+                            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+                        }
                         p0.upperLayout.translationX = 0f
                         p0.editTemplateButton.isClickable = false
                         p0.deleteTemplateButton.isClickable = false
@@ -83,11 +97,6 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
                     positionX = event.rawX
                 }
                 MotionEvent.ACTION_UP->{
-                    itemSwipeAnimation(p0.upperLayout,p0)
-                    positionX = 0f
-                }
-                //不加这个 则在滑动item的同时如果滚动了RecyclerView，则ACTION_UP不会触发
-                MotionEvent.ACTION_CANCEL->{
                     itemSwipeAnimation(p0.upperLayout,p0)
                     positionX = 0f
                 }
@@ -116,6 +125,10 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
             swipeAnimation.start()
             p0.editTemplateButton.isClickable = true
             p0.deleteTemplateButton.isClickable = true
+            if (!canScrollVerticallyFlag){
+                canScrollVerticallyFlag = true
+                layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+            }
         }else if (upperView.translationX > maxSwipeDistance/2 && upperView.translationX!=0f){
             val swipeAnimation = ValueAnimator.ofFloat(upperView.translationX,0f)
             swipeAnimation.addUpdateListener {
@@ -127,6 +140,10 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
             p0.upperLayout.translationX = 0f
             p0.editTemplateButton.isClickable = false
             p0.deleteTemplateButton.isClickable = false
+            if (!canScrollVerticallyFlag){
+                canScrollVerticallyFlag = true
+                layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+            }
         }
     }
 
