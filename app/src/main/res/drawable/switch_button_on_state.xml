@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!--高度40-->
+    <size android:height="@dimen/iconSize" android:width="@dimen/iconSize"/>
+    <!--变化率-->
+    <gradient
+        android:endColor="@color/primaryGreen"
+        android:startColor="@color/primaryGreen"/>
+    <stroke android:width="0.5dp"
+        android:color="@color/primaryTextColor"/>
+</shape>

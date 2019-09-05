@@ -34,4 +34,9 @@
         <item name="android:textColor">@color/unSelectedTextColor</item>
         <item name="android:background">@null</item>
     </style>
+    <!--  自定义弹窗的弹入弹出动画  -->
+    <style name="dialog_pop" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_out</item>
+    </style>
 </resources>

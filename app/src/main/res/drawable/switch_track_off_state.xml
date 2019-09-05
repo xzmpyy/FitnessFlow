@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--圆角弧度25-->
+    <corners android:radius="25dp"/>
+    <!--变化率定义从左到右的颜色不变-->
+    <gradient
+        android:endColor="@color/primaryRed"
+        android:startColor="@color/primaryRed"/>
+</shape>
