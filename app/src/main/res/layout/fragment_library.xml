@@ -61,7 +61,7 @@
                 android:text="@string/Others"/>
         </LinearLayout>
     </LinearLayout>
-    <com.example.fitnessflow.splash.ViewPagerScrollerFalse
+    <com.example.zhangjie.fitnessflow.splash.ViewPagerScrollerFalse
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/muscle_vp"

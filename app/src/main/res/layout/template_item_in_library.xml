@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/item_parent_layout"
-    android:paddingBottom="@dimen/viewPaddingVertical"
+    android:background="@drawable/underline_background"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:background="@drawable/underline_background"
+        android:background="@color/colorPrimary"
         android:id="@+id/upper_layout"
         android:elevation="@dimen/viewElevation"
         >

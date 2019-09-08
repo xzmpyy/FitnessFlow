@@ -1,4 +1,4 @@
-package com.example.fitnessflow
+package com.example.zhangjie.fitnessflow
 
 import org.junit.Test
 

@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.example.fitnessflow.fit_calendar.FitCalendarView
+    <com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/calendar_view_in_plan"

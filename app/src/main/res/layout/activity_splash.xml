@@ -13,11 +13,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.example.fitnessflow.splash.TransitionBackgroundView
+        <com.example.zhangjie.fitnessflow.splash.TransitionBackgroundView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
-        <com.example.fitnessflow.splash.TransitionView
+        <com.example.zhangjie.fitnessflow.splash.TransitionView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/process"

@@ -2,6 +2,6 @@
 <!--设置按钮在不同状态下的时候，按钮不同的颜色-->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_checked="true"
-        android:drawable="@drawable/switch_button_on_state"/>
-    <item android:drawable="@drawable/switch_button_off_state"/>
+        android:drawable="@drawable/switch_button_state"/>
+    <item android:drawable="@drawable/switch_button_state"/>
 </selector>

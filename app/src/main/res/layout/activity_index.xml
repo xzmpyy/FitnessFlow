@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <com.example.fitnessflow.splash.ViewPagerScrollerFalse
+    <com.example.zhangjie.fitnessflow.splash.ViewPagerScrollerFalse
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/index_view_pager"
         />
-    <com.example.fitnessflow.navigation_bar.NavigationBarView
+    <com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

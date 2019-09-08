@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               android:id="@+id/parent"
 >
-    <com.example.fitnessflow.fit_calendar.CalendarViewPager
+    <com.example.zhangjie.fitnessflow.fit_calendar.CalendarViewPager
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/month_view_pager"

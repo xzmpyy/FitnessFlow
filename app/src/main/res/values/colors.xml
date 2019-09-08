@@ -10,7 +10,8 @@
     <color name="primaryButtonBackground">#7631E3</color>
     <color name="iconColor">#F4F4F4</color>
     <color name="itemInRecyclerViewBackground">#057631E3</color>
-    <color name="underlineColor">#17181F</color>
+    <color name="underlineColor">#1F4F5359</color>
+    <color name="editTextColor">#DBDBDB</color>
 <!--浅色系-->
 <!--    17181F<color name="colorPrimary">#F4F4F4</color>-->
 <!--    <color name="primaryRed">#D24D57</color>-->

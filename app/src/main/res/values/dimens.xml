@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="biggestTextSize">36sp</dimen>
+    <dimen name="bigTextSize">30sp</dimen>
     <dimen name="navigatorTextSize">20sp</dimen>
     <dimen name="viewPaddingHorizontal">5dp</dimen>
     <dimen name="viewPaddingVertical">10dp</dimen>
@@ -8,4 +9,5 @@
     <dimen name="viewElevation">10dp</dimen>
     <dimen name="iconSize">24dp</dimen>
     <dimen name="LastBottomInRvBottom">60dp</dimen>
+    <dimen name="editTextHeight">35dp</dimen>
 </resources>

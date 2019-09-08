@@ -5,7 +5,7 @@
         android:left="@dimen/viewPaddingHorizontal"
         android:right="@dimen/viewPaddingHorizontal">
         <shape>
-            <solid android:color="@color/underlineColor" />
+            <solid android:color="@color/primaryShadowColor" />
             <padding android:bottom="1dp"
                 />
         </shape>

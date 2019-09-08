@@ -5,8 +5,6 @@
     <size android:height="@dimen/iconSize" android:width="@dimen/iconSize"/>
     <!--变化率-->
     <gradient
-        android:endColor="@color/primaryGreen"
-        android:startColor="@color/primaryGreen"/>
-    <stroke android:width="0.5dp"
-        android:color="@color/primaryTextColor"/>
+        android:endColor="@color/primaryTextColor"
+        android:startColor="@color/primaryTextColor"/>
 </shape>
