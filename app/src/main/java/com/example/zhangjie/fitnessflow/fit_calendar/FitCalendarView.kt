@@ -98,7 +98,7 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         weekTitle = CalendarWeekTitleView(context,attributesForWeekTitle)
         group.addView(weekTitle)
         //月视图栏
-        viewPager = fitCalendarView!!.findViewById<CalendarViewPager>(R.id.month_view_pager)
+        viewPager = fitCalendarView!!.findViewById(R.id.month_view_pager)
         viewPager!!.offscreenPageLimit = 3
         fragmentLeft = CalendarMonthFragment().getLuLuMonthFragment(leftYear!!,leftMonth!!,selectMode!!,leftDefaultSelectedList!!)
         fragmentMiddleLeft = CalendarMonthFragment().getLuLuMonthFragment(middleLeftYear!!,middleLeftMonth!!,selectMode!!,middleLeftDefaultSelectedList!!)
@@ -584,11 +584,11 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         }
     }
 
-    //从0跳2时
+    //从3跳1时
     private fun getNextMonth(fragmentPosition: Int){
         when (fragmentPosition){
             0 ->{
-                if (leftMonth!=10 && leftMonth!=11){
+                if (leftMonth!=12 && leftMonth!=11){
                     leftMonth = leftMonth!! +2
                 }else if (leftMonth == 11){
                     leftMonth = 1
