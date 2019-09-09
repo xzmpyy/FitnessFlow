@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <TextView
+        style="@style/universalTextStyle"
+        android:text="@string/OtherUnit"/>
+    <EditText
+        style="@style/editTextStyle"
+        android:inputType="text"
+        android:hint="@string/other_unit_example"
+        android:id="@+id/other_unit"
+        android:importantForAutofill="no"
+        tools:ignore="LabelFor,TextFields"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:baselineAligned="false">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                style="@style/universalTextStyle"
+                android:text="@string/InitNum"/>
+            <EditText
+                style="@style/editTextStyle"
+                android:inputType="number"
+                android:hint="@string/fill_in"
+                android:id="@+id/init_unm_without_weight"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                style="@style/universalTextStyle"
+                android:text="@string/NumOfIncreaseProgressively"/>
+            <EditText
+                style="@style/editTextStyle"
+                android:inputType="number"
+                android:hint="@string/fill_in"
+                android:id="@+id/num_increase_without_weight"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

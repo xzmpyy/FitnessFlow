@@ -19,5 +19,5 @@
         </activity>
         <activity android:name="com.example.zhangjie.fitnessflow.splash.IndexActivity"/>
     </application>
-
+    <uses-permission android:name="android.permission.VIBRATE"/>
 </manifest>

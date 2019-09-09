@@ -35,4 +35,16 @@
     <string name="action_name">动作名称</string>
     <string name="is_had_weight_units">有无重量单位</string>
     <string name="fill_in">请输入</string>
+    <string name="WeightUnit">重量单位</string>
+    <string name="weight_unit_example">例如KG、LBS等</string>
+    <string name="InitWeight">起始重量</string>
+    <string name="WeightOfIncreaseProgressively">递增重量</string>
+    <string name="InitNum">起始数量</string>
+    <string name="NumOfIncreaseProgressively">递增数量</string>
+    <string name="OtherUnit">每组单位</string>
+    <string name="other_unit_example">例如个、次、米、分钟等</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="form_incomplete">请填写必要信息</string>
+    <string name="add_successful">添加成功</string>
 </resources>

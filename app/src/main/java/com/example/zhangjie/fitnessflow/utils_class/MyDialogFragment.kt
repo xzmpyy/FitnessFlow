@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import com.example.zhangjie.fitnessflow.R
@@ -13,6 +14,7 @@ import com.example.zhangjie.fitnessflow.R
 class MyDialogFragment (private val gravity: Int,private val widthType:Int,private val childView:View):DialogFragment(){
 
     private var parentLayout:LinearLayout? = null
+    private var confirmButtonClickListener:ConfirmButtonClickListener?=null
 
     //设置Fragment宽高
     override fun onStart(){
@@ -47,6 +49,24 @@ class MyDialogFragment (private val gravity: Int,private val widthType:Int,priva
     override fun onViewCreated(view:View,savedInstanceState:Bundle?){
         parentLayout = view.findViewById(R.id.parent_layout)
         parentLayout!!.addView(childView)
+        //取消按钮
+        view.findViewById<Button>(R.id.cancel_button).setOnClickListener {
+            this.dismiss()
+        }
+        //去人按钮
+        view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
+            if (confirmButtonClickListener!=null){
+                confirmButtonClickListener!!.onConfirmButtonClick()
+            }
+        }
+    }
+
+    interface ConfirmButtonClickListener{
+        fun onConfirmButtonClick()
+    }
+
+    fun setConfirmButtonClickListener(confirmButtonClickListener:ConfirmButtonClickListener){
+        this.confirmButtonClickListener =confirmButtonClickListener
     }
 
 }

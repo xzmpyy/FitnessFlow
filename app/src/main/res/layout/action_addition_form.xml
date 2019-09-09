@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:minWidth="300dp"
+    android:minWidth="350dp"
     android:layout_height="wrap_content"
     android:padding="@dimen/viewPaddingVertical"
     >
@@ -17,21 +17,11 @@
         style="@style/universalTextStyle"
         android:text="@string/action_name"/>
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/editTextHeight"
-        android:background="@drawable/edit_text_background"
-        android:textSize="@dimen/navigatorTextSize"
-        android:textColorHint="@color/unSelectedTextColor"
-        android:textColor="@color/primaryButtonBackground"
+        style="@style/editTextStyle"
         android:inputType="text"
-        android:singleLine="true"
-        android:ellipsize="middle"
         android:hint="@string/fill_in"
         android:id="@+id/action_name"
-        android:labelFor="@+id/action_name"
-        android:paddingStart="@dimen/viewPaddingHorizontal"
-        android:paddingEnd="@dimen/viewPaddingHorizontal"
-        android:importantForAutofill="no" />
+        android:labelFor="@+id/action_name" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,10 +35,15 @@
             android:layout_height="wrap_content"
             android:thumb="@drawable/switch_button"
             android:track="@drawable/switch_track"
-            android:elevation="@dimen/viewElevation"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:checked="true"
+            android:id="@+id/form_type_switch"
             />
     </RelativeLayout>
+    <com.example.zhangjie.fitnessflow.library.library_child_fragments.ViewPagerForAdditionForm
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/form_type_page"
+        />
 </LinearLayout>

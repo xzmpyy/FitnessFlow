@@ -47,4 +47,17 @@
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:layout_marginBottom">@dimen/viewMargin</item>
     </style>
+    <style name="editTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/editTextHeight</item>
+        <item name="android:background">@drawable/edit_text_background</item>
+        <item name="android:textColorHint">@color/unSelectedTextColor</item>
+        <item name="android:textColor">@color/primaryButtonBackground</item>
+        <item name="android:textSize">@dimen/navigatorTextSize</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:paddingEnd">@dimen/viewPaddingHorizontal</item>
+        <item name="android:paddingStart">@dimen/viewPaddingHorizontal</item>
+        <item name="android:importantForAutofill">no</item>
+    </style>
 </resources>

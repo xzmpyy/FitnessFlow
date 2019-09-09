@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
+import java.lang.Exception
 
 class TemplateFragmentAdapter (private val list:ArrayList<String>, private val layoutManager:LinearLayoutManagerForItemSwipe,
                                private val context: Context):
@@ -67,43 +68,50 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val l
         var positionX = 0f
         //item侧滑显示按钮
         p0.upperLayout.setOnTouchListener { _, event ->
-            when (event!!.action){
-                MotionEvent.ACTION_DOWN->{
-                    positionX = event.rawX
-                }
-                MotionEvent.ACTION_MOVE->{
-                    val targetTranslationX = p0.upperLayout.translationX + event.rawX - positionX
-                    if (targetTranslationX < 0 && targetTranslationX>maxSwipeDistance){
-                        if (canScrollVerticallyFlag){
-                            canScrollVerticallyFlag = false
-                            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
-                        }
-                        p0.upperLayout.translationX = targetTranslationX
-                    }else if (targetTranslationX<=maxSwipeDistance && p0.upperLayout.translationX != maxSwipeDistance){
-                        if (!canScrollVerticallyFlag){
-                            canScrollVerticallyFlag = true
-                            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
-                        }
-                        p0.upperLayout.translationX = maxSwipeDistance
-                        p0.sendTemplateButton.isClickable = true
-                        p0.editTemplateButton.isClickable = true
-                        p0.deleteTemplateButton.isClickable = true
-                    }else if (targetTranslationX >=0 && p0.upperLayout.translationX != 0f){
-                        if (!canScrollVerticallyFlag){
-                            canScrollVerticallyFlag = true
-                            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
-                        }
-                        p0.upperLayout.translationX = 0f
-                        p0.sendTemplateButton.isClickable = false
-                        p0.editTemplateButton.isClickable = false
-                        p0.deleteTemplateButton.isClickable = false
+            try {
+                when (event!!.action){
+                    MotionEvent.ACTION_DOWN->{
+                        positionX = event.rawX
                     }
-                    positionX = event.rawX
+                    MotionEvent.ACTION_MOVE->{
+                        val targetTranslationX = p0.upperLayout.translationX + event.rawX - positionX
+                        if (targetTranslationX < 0 && targetTranslationX>maxSwipeDistance){
+                            if (canScrollVerticallyFlag){
+                                canScrollVerticallyFlag = false
+                                layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+                            }
+                            p0.upperLayout.translationX = targetTranslationX
+                        }else if (targetTranslationX<=maxSwipeDistance && p0.upperLayout.translationX != maxSwipeDistance){
+                            if (!canScrollVerticallyFlag){
+                                canScrollVerticallyFlag = true
+                                layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+                            }
+                            p0.upperLayout.translationX = maxSwipeDistance
+                            p0.sendTemplateButton.isClickable = true
+                            p0.editTemplateButton.isClickable = true
+                            p0.deleteTemplateButton.isClickable = true
+                        }else if (targetTranslationX >=0 && p0.upperLayout.translationX != 0f){
+                            if (!canScrollVerticallyFlag){
+                                canScrollVerticallyFlag = true
+                                layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+                            }
+                            p0.upperLayout.translationX = 0f
+                            p0.sendTemplateButton.isClickable = false
+                            p0.editTemplateButton.isClickable = false
+                            p0.deleteTemplateButton.isClickable = false
+                        }
+                        positionX = event.rawX
+                    }
+                    MotionEvent.ACTION_UP->{
+                        itemSwipeAnimation(p0.upperLayout,p0)
+                        positionX = 0f
+                    }
                 }
-                MotionEvent.ACTION_UP->{
-                    itemSwipeAnimation(p0.upperLayout,p0)
-                    positionX = 0f
-                }
+            }
+            catch (exception: Exception){
+                println(exception)
+                itemSwipeAnimation(p0.upperLayout,p0)
+                positionX = 0f
             }
             true
         }

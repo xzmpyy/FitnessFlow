@@ -2,6 +2,7 @@ package com.example.zhangjie.fitnessflow.plan
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -9,11 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
+import com.example.zhangjie.fitnessflow.library.library_child_fragments.LinearLayoutManagerForItemSwipe
 import java.lang.Exception
 
 class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener,
@@ -24,8 +25,9 @@ FitCalendarView.ScaleAnimationListener{
     private val testDataList = arrayListOf<String>()
     //RecyclerView相关
     private var planRecyclerView:RecyclerView? = null
-    private val layoutManager = LinearLayoutManager(this.activity)
+    private var layoutManager:LinearLayoutManagerForItemSwipe?=null
     private var adapter:AdapterInPlanFragment? = null
+    private var canRecyclerViewScroll = false
     //日历相关
     private var fitCalendar:FitCalendarView? = null
     private var initRecyclerViewPosition = 0f
@@ -74,6 +76,8 @@ FitCalendarView.ScaleAnimationListener{
             testDataList.add(i.toString())
         }
         planRecyclerView = view.findViewById(R.id.rv_in_plan)
+        layoutManager = LinearLayoutManagerForItemSwipe(view.context)
+        layoutManager!!.setCanScrollVerticallyFlag(canRecyclerViewScroll)
         planRecyclerView!!.layoutManager = layoutManager
         adapter = AdapterInPlanFragment(testDataList, view.context)
         planRecyclerView!!.adapter = adapter
@@ -87,7 +91,7 @@ FitCalendarView.ScaleAnimationListener{
                     MotionEvent.ACTION_MOVE->{
                         recyclerViewMovedDistance = event.rawY - initRecyclerViewPosition
                         initRecyclerViewPosition = event.rawY
-                        if (recyclerViewMovedDistance <-2 || (recyclerViewMovedDistance>2 && layoutManager.findFirstVisibleItemPosition() == 0)){
+                        if (recyclerViewMovedDistance <-2 || (recyclerViewMovedDistance>2 && layoutManager!!.findFirstCompletelyVisibleItemPosition() == 0)){
                             fitCalendar!!.scrollerListener(recyclerViewMovedDistance)
                         }
                     }
@@ -98,6 +102,7 @@ FitCalendarView.ScaleAnimationListener{
                 }
             }catch (exception:Exception){
                 println(exception)
+                fitCalendar!!.startResetAnimation()
                 initRecyclerViewPosition = 0f
             }
             false
@@ -176,6 +181,10 @@ FitCalendarView.ScaleAnimationListener{
                 }
                 animationRotation.duration = 300
                 animationRotation.start()
+                if (!canRecyclerViewScroll){
+                    canRecyclerViewScroll = true
+                    layoutManager!!.setCanScrollVerticallyFlag(canRecyclerViewScroll)
+                }
                 this.expansionAndContractionState = 1
             }
             1->{
@@ -186,6 +195,11 @@ FitCalendarView.ScaleAnimationListener{
                 }
                 animationRotation.duration = 300
                 animationRotation.start()
+                if (canRecyclerViewScroll){
+                    canRecyclerViewScroll = false
+                    layoutManager!!.setCanScrollVerticallyFlag(canRecyclerViewScroll)
+                }
+                planRecyclerView!!.scrollToPosition(0)
                 this.expansionAndContractionState = 0
             }
         }

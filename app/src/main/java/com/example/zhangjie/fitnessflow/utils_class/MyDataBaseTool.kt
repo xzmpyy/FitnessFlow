@@ -15,9 +15,11 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "  \"ActionName\" text,\n" +
                 "  \"IsHadWeightUnits\" integer,\n" +
                 "  \"AddTimes\" integer,\n" +
-                "  \"WeightUnit\" text,\n" +
+                "  \"Unit\" text,\n" +
                 "  \"InitWeight\" text,\n" +
+                "  \"InitNum\" text,\n" +
                 "  \"WeightOfIncreaseProgressively\" integer,\n" +
+                "  \"NumOfIncreaseProgressively\" integer,\n" +
                 "  CONSTRAINT \"ActionID\" UNIQUE (\"ActionID\" ASC)\n" +
                 ");"
         val actionTableSql2 = "CREATE UNIQUE INDEX \"ActionID\"\n" +

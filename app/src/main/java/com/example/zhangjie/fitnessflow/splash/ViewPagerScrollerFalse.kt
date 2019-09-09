@@ -1,5 +1,6 @@
 package com.example.zhangjie.fitnessflow.splash
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -11,6 +12,7 @@ class ViewPagerScrollerFalse (context: Context,set: AttributeSet):ViewPager(cont
         return false
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         return false
     }
