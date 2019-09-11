@@ -32,9 +32,8 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
     private var canScrollVerticallyFlag = true
     private val addTimesText = context.resources.getString(R.string.add_times_text)
     private var formView:View? = null
-    private var actionEditPosition = 0
-    private var actionDeletePosition = 0
-    private var editedViewHolder:RvHolder? = null
+    private var currentItemPosition = 0
+    private var currentViewHolder:RvHolder? = null
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
@@ -127,15 +126,16 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
         }
         //按钮点击事件
         p0.deleteActionButton.setOnClickListener {
-            actionDeletePosition = p1
+            currentItemPosition = p1
             val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
             alertView.findViewById<TextView>(R.id.alert_text).text = it.context.resources.getString(R.string.confirm_to_delete)
             val alertFragment = MyAlertFragment(alertView)
             alertFragment.setConfirmButtonClickListener(this)
             alertFragment.show(context.supportFragmentManager, null)
+            currentViewHolder = p0
         }
         p0.editActionButton.setOnClickListener {
-            actionEditPosition = p1
+            currentItemPosition = p1
             val parser = it.context.resources.getXml(R.xml.base_linear_layout)
             val attributes = Xml.asAttributeSet(parser)
             formView = MuscleGroupItemAddFormView(it.context,attributes,actionList[p1].actionType,actionInfo=actionList[p1])
@@ -143,7 +143,7 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
             val formDialog = MyDialogFragment(1, Gravity.CENTER,1,formView!!)
             formDialog.setConfirmButtonClickListener(this)
             formDialog.show(context.supportFragmentManager,null)
-            editedViewHolder = p0
+            currentViewHolder = p0
         }
     }
 
@@ -210,13 +210,12 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
         }else{
             notifyItemRangeChanged(position-1,actionList.size-position+1)
         }
-
     }
 
     private fun delAction(position:Int){
         actionList.removeAt(position)
         notifyItemRemoved(position)
-        if (position == 0){
+        if (position != actionList.size){
             notifyItemRangeChanged(position,actionList.size-position)
         }else{
             notifyItemRangeChanged(position-1,actionList.size-position+1)
@@ -228,10 +227,10 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
     }
 
     override fun onSubmit(actionType: Int, action: Action) {
-        actionList[actionEditPosition] = action
+        actionList[currentItemPosition] = action
         notifyDataSetChanged()
-        itemEditEndAnimation(editedViewHolder!!.upperLayout, editedViewHolder!!)
-        editedViewHolder = null
+        itemEditEndAnimation(currentViewHolder!!.upperLayout, currentViewHolder!!)
+        currentViewHolder = null
     }
 
     private fun actionDeleteInDataBase(){
@@ -239,13 +238,15 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
         val actionDeleteDataBaseTool=actionDeleteDatabase.writableDatabase
         actionDeleteDataBaseTool.beginTransaction()
         try{
-            val delSql: String = if (actionList[actionDeletePosition].addTimes == 0){
-                "DELETE FROM ActionTable WHERE ActionID=${actionList[actionDeletePosition].actionID}"
+            val delSql: String = if (actionList[currentItemPosition].addTimes == 0){
+                "DELETE FROM ActionTable WHERE ActionID=${actionList[currentItemPosition].actionID}"
             }else{
-                "UPDATE ActionTable SET IsShow=0 WHERE ActionID=${actionList[actionDeletePosition].actionID}"
+                "UPDATE ActionTable SET IsShow=0 WHERE ActionID=${actionList[currentItemPosition].actionID}"
             }
             actionDeleteDataBaseTool.execSQL(delSql)
-            delAction(actionDeletePosition)
+            itemEditEndAnimation(currentViewHolder!!.upperLayout, currentViewHolder!!)
+            currentViewHolder = null
+            delAction(currentItemPosition)
             actionDeleteDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Delete Failed(In MuscleGroupFragmentAdapter):$e")
