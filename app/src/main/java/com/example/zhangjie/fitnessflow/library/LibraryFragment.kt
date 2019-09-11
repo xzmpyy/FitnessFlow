@@ -8,6 +8,8 @@ import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupFragment
 import com.example.zhangjie.fitnessflow.splash.FragmentInit
 import com.example.zhangjie.fitnessflow.splash.IndexViewPagerAdapter
 import com.example.zhangjie.fitnessflow.splash.ViewPagerScrollerFalse
@@ -57,6 +59,10 @@ class LibraryFragment : Fragment(){
 
     fun getCurrentPageNo():Int{
         return currentPageNo
+    }
+
+    fun actionAdd(actionType:Int, action:Action){
+        (muscleGroupFragmentsList[actionType] as MuscleGroupFragment).actionAdd(action)
     }
 
 }

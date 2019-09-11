@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupItemAddFormView
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
@@ -13,7 +14,8 @@ import com.example.zhangjie.fitnessflow.plan.PlanFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 
 class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClickListener,
-    NavigationBarView.NavigatorClickListener,MyDialogFragment.ConfirmButtonClickListener{
+    NavigationBarView.NavigatorClickListener,MyDialogFragment.ConfirmButtonClickListener,
+    MuscleGroupItemAddFormView.SubmitListener{
 
     private var indexViewPager: ViewPagerScrollerFalse? = null
     private var indexFragmentInViewPagerList = FragmentInit.getIndexFragmentInViewPagerList()
@@ -47,8 +49,9 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                         formViewType = 1
                         val parser = resources.getXml(R.xml.base_linear_layout)
                         val attributes = Xml.asAttributeSet(parser)
-                        formView = MuscleGroupItemAddFormView(this,attributes,currentPageNo)
-                        val formDialog = MyDialogFragment(Gravity.CENTER,1,formView!!)
+                        formView = MuscleGroupItemAddFormView(this,attributes,currentPageNo,actionInfo = null)
+                        (formView!! as MuscleGroupItemAddFormView).setSubmitListener(this)
+                        val formDialog = MyDialogFragment(1,Gravity.CENTER,1,formView!!)
                         formDialog.setConfirmButtonClickListener(this)
                         formDialog.show(supportFragmentManager,null)
                     }
@@ -77,5 +80,9 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
         }
     }
 
+    //收藏添加动作
+    override fun onSubmit(actionType:Int,action: Action) {
+        (indexFragmentInViewPagerList[2] as LibraryFragment).actionAdd(actionType,action)
+    }
 
 }

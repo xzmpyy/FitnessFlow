@@ -2,38 +2,49 @@ package com.example.zhangjie.fitnessflow.library.library_child_fragments
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.Context
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.util.Xml
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
+import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.lang.Exception
 
-class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private val layoutManager:LinearLayoutManagerForItemSwipe,
-                                  private val context: Context):
-    RecyclerView.Adapter<MuscleGroupFragmentAdapter.RvHolder>(){
+class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, private val layoutManager:LinearLayoutManagerForItemSwipe,
+                                  private val context: AppCompatActivity
+): RecyclerView.Adapter<MuscleGroupFragmentAdapter.RvHolder>(),MyDialogFragment.ConfirmButtonClickListener,
+    MuscleGroupItemAddFormView.SubmitListener,MyAlertFragment.ConfirmButtonClickListener{
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
     private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*2 + context.resources.getDimension(
         R.dimen.viewMargin)*5)
     private var canScrollVerticallyFlag = true
+    private val addTimesText = context.resources.getString(R.string.add_times_text)
+    private var formView:View? = null
+    private var actionEditPosition = 0
+    private var actionDeletePosition = 0
+    private var editedViewHolder:RvHolder? = null
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
         //找到加载的布局文件中需要进行设置的各项控件
-        val itemText=view.findViewById<TextView>(R.id.text)!!
+        val actionName=view.findViewById<TextView>(R.id.action_name)!!
         val parentLayout = view.findViewById<FrameLayout>(R.id.item_parent_layout)!!
         val upperLayout = view.findViewById<LinearLayout>(R.id.upper_layout)!!
-        val editTemplateButton = view.findViewById<ImageButton>(R.id.edit_button)!!
-        val deleteTemplateButton = view.findViewById<ImageButton>(R.id.delete_button)!!
+        val editActionButton = view.findViewById<ImageButton>(R.id.edit_button)!!
+        val deleteActionButton = view.findViewById<ImageButton>(R.id.delete_button)!!
+        val addTimes = view.findViewById<TextView>(R.id.add_times)!!
     }
 
     //复写控件类的生成方法
@@ -46,10 +57,10 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
     //获取Item个数的方法
     override fun getItemCount():Int{
         //返回列表长度
-        return list.size
+        return actionList.size
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onBindViewHolder(p0:RvHolder, p1:Int){
         //第一个和最后一个加top、bottom的margin
         if (p1 == 0){
@@ -57,14 +68,15 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
             layoutParams.topMargin = firstItemTopMargin
             p0.parentLayout.layoutParams = layoutParams
         }
-        if (p1 == list.size - 1){
+        if (p1 == actionList.size - 1){
             val layoutParams = FrameLayout.LayoutParams(p0.parentLayout.layoutParams)
             layoutParams.bottomMargin = lastItemBottomMargin
             p0.parentLayout.layoutParams = layoutParams
             p0.parentLayout.background = ContextCompat.getDrawable(context,R.drawable.last_item_underline)
         }
         //向viewHolder中的View控件赋值需显示的内容
-        p0.itemText.text="M" + list[p1]
+        p0.actionName.text= actionList[p1].actionName
+        p0.addTimes.text = addTimesText + actionList[p1].addTimes.toString()
         var positionX = 0f
         //item侧滑显示按钮
         p0.upperLayout.setOnTouchListener { _, event ->
@@ -87,16 +99,16 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
                                 layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
                             }
                             p0.upperLayout.translationX = maxSwipeDistance
-                            p0.editTemplateButton.isClickable = true
-                            p0.deleteTemplateButton.isClickable = true
+                            p0.editActionButton.isClickable = true
+                            p0.deleteActionButton.isClickable = true
                         }else if (targetTranslationX >=0 && p0.upperLayout.translationX != 0f){
                             if (!canScrollVerticallyFlag){
                                 canScrollVerticallyFlag = true
                                 layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
                             }
                             p0.upperLayout.translationX = 0f
-                            p0.editTemplateButton.isClickable = false
-                            p0.deleteTemplateButton.isClickable = false
+                            p0.editActionButton.isClickable = false
+                            p0.deleteActionButton.isClickable = false
                         }
                         positionX = event.rawX
                     }
@@ -114,14 +126,47 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
             true
         }
         //按钮点击事件
-        p0.deleteTemplateButton.setOnClickListener {
-            println("Delete")
+        p0.deleteActionButton.setOnClickListener {
+            actionDeletePosition = p1
+            val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
+            alertView.findViewById<TextView>(R.id.alert_text).text = it.context.resources.getString(R.string.confirm_to_delete)
+            val alertFragment = MyAlertFragment(alertView)
+            alertFragment.setConfirmButtonClickListener(this)
+            alertFragment.show(context.supportFragmentManager, null)
+        }
+        p0.editActionButton.setOnClickListener {
+            actionEditPosition = p1
+            val parser = it.context.resources.getXml(R.xml.base_linear_layout)
+            val attributes = Xml.asAttributeSet(parser)
+            formView = MuscleGroupItemAddFormView(it.context,attributes,actionList[p1].actionType,actionInfo=actionList[p1])
+            (formView!! as MuscleGroupItemAddFormView).setSubmitListener(this)
+            val formDialog = MyDialogFragment(1, Gravity.CENTER,1,formView!!)
+            formDialog.setConfirmButtonClickListener(this)
+            formDialog.show(context.supportFragmentManager,null)
+            editedViewHolder = p0
         }
     }
 
     //onBindViewHolder只有在getItemViewType返回值不同时才调用，当有多种布局的Item时不重写会导致复用先前的条目，数据容易错乱
     override fun getItemViewType(position:Int):Int{
         return position
+    }
+
+    private fun itemEditEndAnimation(upperView: View, p0:RvHolder){
+        val swipeAnimation = ValueAnimator.ofFloat(upperView.translationX,0f)
+        swipeAnimation.addUpdateListener {
+            val translationDistance = it.animatedValue as Float
+            upperView.translationX = translationDistance
+        }
+        swipeAnimation.duration = 300
+        swipeAnimation.start()
+        p0.upperLayout.translationX = 0f
+        p0.editActionButton.isClickable = false
+        p0.deleteActionButton.isClickable = false
+        if (!canScrollVerticallyFlag){
+            canScrollVerticallyFlag = true
+            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+        }
     }
 
     private fun itemSwipeAnimation(upperView: View, p0:RvHolder){
@@ -133,8 +178,8 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
             }
             swipeAnimation.duration = 300
             swipeAnimation.start()
-            p0.editTemplateButton.isClickable = true
-            p0.deleteTemplateButton.isClickable = true
+            p0.editActionButton.isClickable = true
+            p0.deleteActionButton.isClickable = true
             if (!canScrollVerticallyFlag){
                 canScrollVerticallyFlag = true
                 layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
@@ -148,13 +193,72 @@ class MuscleGroupFragmentAdapter (private val list:ArrayList<String>, private va
             swipeAnimation.duration = 300
             swipeAnimation.start()
             p0.upperLayout.translationX = 0f
-            p0.editTemplateButton.isClickable = false
-            p0.deleteTemplateButton.isClickable = false
+            p0.editActionButton.isClickable = false
+            p0.deleteActionButton.isClickable = false
             if (!canScrollVerticallyFlag){
                 canScrollVerticallyFlag = true
                 layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
             }
         }
+    }
+
+    fun addAction(position:Int,action: Action){
+        actionList.add(position,action)
+        notifyItemInserted(position)
+        if (position == 0){
+            notifyItemRangeChanged(position,actionList.size-position)
+        }else{
+            notifyItemRangeChanged(position-1,actionList.size-position+1)
+        }
+
+    }
+
+    private fun delAction(position:Int){
+        actionList.removeAt(position)
+        notifyItemRemoved(position)
+        if (position == 0){
+            notifyItemRangeChanged(position,actionList.size-position)
+        }else{
+            notifyItemRangeChanged(position-1,actionList.size-position+1)
+        }
+    }
+
+    override fun onConfirmButtonClick() {
+        (formView!! as MuscleGroupItemAddFormView).onConfirmButtonClick()
+    }
+
+    override fun onSubmit(actionType: Int, action: Action) {
+        actionList[actionEditPosition] = action
+        notifyDataSetChanged()
+        itemEditEndAnimation(editedViewHolder!!.upperLayout, editedViewHolder!!)
+        editedViewHolder = null
+    }
+
+    private fun actionDeleteInDataBase(){
+        val actionDeleteDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val actionDeleteDataBaseTool=actionDeleteDatabase.writableDatabase
+        actionDeleteDataBaseTool.beginTransaction()
+        try{
+            val delSql: String = if (actionList[actionDeletePosition].addTimes == 0){
+                "DELETE FROM ActionTable WHERE ActionID=${actionList[actionDeletePosition].actionID}"
+            }else{
+                "UPDATE ActionTable SET IsShow=0 WHERE ActionID=${actionList[actionDeletePosition].actionID}"
+            }
+            actionDeleteDataBaseTool.execSQL(delSql)
+            delAction(actionDeletePosition)
+            actionDeleteDataBaseTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Action Delete Failed(In MuscleGroupFragmentAdapter):$e")
+            MyToast(context, context.resources.getString(R.string.del_failed)).showToast()
+        }finally{
+            actionDeleteDataBaseTool.endTransaction()
+            actionDeleteDataBaseTool.close()
+            actionDeleteDatabase.close()
+        }
+    }
+
+    override fun onAlertConfirmButtonClick() {
+        actionDeleteInDataBase()
     }
 
 }

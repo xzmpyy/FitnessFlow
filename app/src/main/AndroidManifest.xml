@@ -17,7 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.zhangjie.fitnessflow.splash.IndexActivity"/>
+        <activity android:name="com.example.zhangjie.fitnessflow.splash.IndexActivity"
+                  android:windowSoftInputMode="adjustPan"
+            />
     </application>
     <uses-permission android:name="android.permission.VIBRATE"/>
 </manifest>
