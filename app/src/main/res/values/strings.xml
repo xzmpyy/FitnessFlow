@@ -50,8 +50,10 @@
     <string name="add_failed">添加失败，请重试</string>
     <string name="del_failed">删除失败，请重试</string>
     <string name="add_times_text">添加次数：</string>
+    <string name="action_num">动作数量：</string>
     <string name="confirm_to_delete">是否确认删除？</string>
     <string name="alert">提示</string>
     <string name="modify_successful">修改成功</string>
     <string name="modify_failed">修改失败，请重试</string>
+    <string name="template_name">模板名称</string>
 </resources>

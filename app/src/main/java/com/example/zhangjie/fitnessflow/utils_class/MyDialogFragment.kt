@@ -53,6 +53,7 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
     override fun onViewCreated(view:View,savedInstanceState:Bundle?){
         parentLayout = view.findViewById(R.id.parent_layout)
         parentLayout!!.addView(childView)
+        //0只有确认按钮，1动作编辑，2名称编辑，3日历选择
         when(dialogType){
             0->{
                 view.findViewById<Button>(R.id.cancel_button).visibility = LinearLayout.GONE
@@ -86,6 +87,24 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
                     val imm: InputMethodManager = v!!.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(v.windowToken, 0)
                     false
+                }
+            }
+            2->{
+                //取消按钮
+                view.findViewById<Button>(R.id.cancel_button).setOnClickListener {
+                    this.dismiss()
+                }
+                //确认按钮
+                view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
+                    this.view!!.focusable = View.FOCUSABLE
+                    this.view!!.isFocusableInTouchMode = true
+                    this.view!!.requestFocus()
+                    //收起键盘
+                    val imm: InputMethodManager = this.context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(this.view!!.windowToken, 0)
+                    if (confirmButtonClickListener!=null){
+                        confirmButtonClickListener!!.onConfirmButtonClick()
+                    }
                 }
             }
         }

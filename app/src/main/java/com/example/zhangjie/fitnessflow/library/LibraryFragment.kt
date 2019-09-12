@@ -1,5 +1,6 @@
 package com.example.zhangjie.fitnessflow.library
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,15 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupFragment
+import com.example.zhangjie.fitnessflow.library.library_child_fragments.TemplateFragment
 import com.example.zhangjie.fitnessflow.splash.FragmentInit
 import com.example.zhangjie.fitnessflow.splash.IndexViewPagerAdapter
 import com.example.zhangjie.fitnessflow.splash.ViewPagerScrollerFalse
+import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
 class LibraryFragment : Fragment(){
 
@@ -63,6 +69,39 @@ class LibraryFragment : Fragment(){
 
     fun actionAdd(actionType:Int, action:Action){
         (muscleGroupFragmentsList[actionType] as MuscleGroupFragment).actionAdd(action)
+    }
+
+    fun templateAdd(templateName:String,dialog:MyDialogFragment){
+        val newTemplate = newTemplate(templateName)
+        if (newTemplate!=null){
+            (muscleGroupFragmentsList[0] as TemplateFragment).templateAdd(newTemplate)
+            dialog.dismiss()
+        }
+    }
+
+    private fun newTemplate(templateName: String):Template?{
+        var templateID:Int? = null
+        val templateCreateDatabase= MyDataBaseTool(this.activity as Context,"FitnessFlowDB",null,1)
+        val templateCreateTool=templateCreateDatabase.writableDatabase
+        templateCreateTool.beginTransaction()
+        try{
+            val insertSql = "INSERT INTO TemplateTable (TemplateName,ActionNum,MuscleGroupInclude) VALUES (" +
+                    "\"$templateName\",0,\"\")"
+            templateCreateTool.execSQL(insertSql)
+            val idCheckCursor = templateCreateTool.rawQuery("select last_insert_rowid() from TemplateTable",null)
+            idCheckCursor.moveToNext()
+            templateID = idCheckCursor.getString(0).toInt()
+            idCheckCursor.close()
+            templateCreateTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Template Create Failed(In LibraryFragment):$e")
+            MyToast(this.activity as Context,resources.getString(R.string.add_failed)).showToast()
+        }finally{
+            templateCreateTool.endTransaction()
+            templateCreateTool.close()
+            templateCreateDatabase.close()
+        }
+        return if (templateID == null){null}else{Template(templateName,0, arrayListOf(),templateID)}
     }
 
 }

@@ -1,10 +1,16 @@
 package com.example.zhangjie.fitnessflow.splash
 
+import android.app.Service
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.text.TextUtils
 import android.util.Xml
 import android.view.Gravity
 import android.view.View
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
@@ -12,6 +18,7 @@ import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGr
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
 import com.example.zhangjie.fitnessflow.plan.PlanFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
 class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClickListener,
     NavigationBarView.NavigatorClickListener,MyDialogFragment.ConfirmButtonClickListener,
@@ -23,6 +30,7 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
     private var navigatorBar:NavigationBarView? = null
     private var formView: View? = null
     private var formViewType = 0
+    private var formDialog:MyDialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +52,10 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                 when(val currentPageNo = (indexFragmentInViewPagerList[2] as LibraryFragment).getCurrentPageNo()){
                     0->{
                         formViewType = 0
+                        formView = View.inflate(this,R.layout.template_create_dialog,null)
+                        formDialog = MyDialogFragment(2,Gravity.CENTER,1,formView!!)
+                        formDialog!!.setConfirmButtonClickListener(this)
+                        formDialog!!.show(supportFragmentManager,null)
                     }
                     else->{
                         formViewType = 1
@@ -51,9 +63,9 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                         val attributes = Xml.asAttributeSet(parser)
                         formView = MuscleGroupItemAddFormView(this,attributes,currentPageNo,actionInfo = null)
                         (formView!! as MuscleGroupItemAddFormView).setSubmitListener(this)
-                        val formDialog = MyDialogFragment(1,Gravity.CENTER,1,formView!!)
-                        formDialog.setConfirmButtonClickListener(this)
-                        formDialog.show(supportFragmentManager,null)
+                        formDialog = MyDialogFragment(1,Gravity.CENTER,1,formView!!)
+                        formDialog!!.setConfirmButtonClickListener(this)
+                        formDialog!!.show(supportFragmentManager,null)
                     }
                 }
             }
@@ -72,6 +84,19 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
 
     override fun onConfirmButtonClick() {
         when(formViewType){
+            0->{
+                if (formView!=null){
+                    val templateName = formView!!.findViewById<EditText>(R.id.template_name)
+                    if (TextUtils.isEmpty(templateName!!.text)){
+                        templateName.background = ContextCompat.getDrawable(this,R.drawable.incomplete_edit_text_background)
+                        MyToast(this,resources.getString(R.string.form_incomplete)).showToast()
+                        (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
+                            VibrationEffect.createOneShot(400,4))
+                    }else{
+                        (indexFragmentInViewPagerList[2] as LibraryFragment).templateAdd(templateName.text.toString(),formDialog!!)
+                    }
+                }
+            }
             1->{
                 if (formView!=null){
                     (formView!! as MuscleGroupItemAddFormView).onConfirmButtonClick()

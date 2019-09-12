@@ -3,17 +3,18 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="@dimen/viewPaddingHorizontal"
+    android:paddingStart="@dimen/viewPaddingHorizontal"
+    android:paddingEnd="@dimen/viewPaddingHorizontal"
     android:background="@drawable/round_rect_background"
+    android:layout_marginBottom="@dimen/viewMargin"
+    android:layout_marginTop="@dimen/viewMargin"
     >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textColor="@color/primaryTextColor"
-        android:layout_marginStart="@dimen/viewMargin"
-        android:layout_marginEnd="@dimen/viewMargin"
         android:textSize="@dimen/smallTextSize"
         android:maxLines="1"
-        android:id="@+id/toast_text"/>
+        android:id="@+id/muscle_group_text"/>
 </LinearLayout>

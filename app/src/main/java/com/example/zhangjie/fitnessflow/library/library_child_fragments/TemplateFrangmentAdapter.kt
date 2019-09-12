@@ -12,11 +12,13 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.Template
 import java.lang.Exception
 
-class TemplateFragmentAdapter (private val list:ArrayList<String>, private val layoutManager:LinearLayoutManagerForItemSwipe,
+class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, private val layoutManager:LinearLayoutManagerForItemSwipe,
                                private val context: Context):
     RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(){
 
@@ -24,13 +26,16 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val l
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
     private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*3 + context.resources.getDimension(R.dimen.viewMargin)*7)
     private var canScrollVerticallyFlag = true
+    private val actionNum = context.resources.getString(R.string.action_num)
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
         //找到加载的布局文件中需要进行设置的各项控件
-        val itemText=view.findViewById<TextView>(R.id.text)!!
+        val templateName=view.findViewById<TextView>(R.id.template_name)!!
         val parentLayout = view.findViewById<FrameLayout>(R.id.item_parent_layout)!!
         val upperLayout = view.findViewById<LinearLayout>(R.id.upper_layout)!!
+        val includeNum = view.findViewById<TextView>(R.id.include_num)!!
+        val includeRv = view.findViewById<RecyclerViewCanNotTouch>(R.id.muscle_group_include_rv)!!
         val sendTemplateButton = view.findViewById<ImageButton>(R.id.date_button)!!
         val editTemplateButton = view.findViewById<ImageButton>(R.id.edit_button)!!
         val deleteTemplateButton = view.findViewById<ImageButton>(R.id.delete_button)!!
@@ -46,10 +51,10 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val l
     //获取Item个数的方法
     override fun getItemCount():Int{
         //返回列表长度
-        return list.size
+        return templateList.size
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onBindViewHolder(p0:RvHolder, p1:Int){
         //第一个和最后一个加top、bottom的margin
         if (p1 == 0){
@@ -57,14 +62,19 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val l
             layoutParams.topMargin = firstItemTopMargin
             p0.parentLayout.layoutParams = layoutParams
         }
-        if (p1 == list.size - 1){
+        if (p1 == templateList.size - 1){
             val layoutParams = FrameLayout.LayoutParams(p0.parentLayout.layoutParams)
             layoutParams.bottomMargin = lastItemBottomMargin
             p0.parentLayout.layoutParams = layoutParams
             p0.parentLayout.background = ContextCompat.getDrawable(context,R.drawable.last_item_underline)
         }
         //向viewHolder中的View控件赋值需显示的内容
-        p0.itemText.text="T" + list[p1]
+        p0.templateName.text = templateList[p1].templateName
+        p0.includeNum.text = actionNum + templateList[p1].actionNum.toString()
+        val muscleGroupAdapter = AdapterForShowIncludeMuscleGroup(templateList[p1].muscleGroupInclude,context)
+        val gridLayoutManager = GridLayoutManager(context,8)
+        p0.includeRv.layoutManager = gridLayoutManager
+        p0.includeRv.adapter = muscleGroupAdapter
         var positionX = 0f
         //item侧滑显示按钮
         p0.upperLayout.setOnTouchListener { _, event ->
@@ -158,6 +168,16 @@ class TemplateFragmentAdapter (private val list:ArrayList<String>, private val l
                 canScrollVerticallyFlag = true
                 layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
             }
+        }
+    }
+
+    fun addTemplate(position: Int, template:Template){
+        templateList.add(position,template)
+        notifyItemInserted(position)
+        if (position == 0){
+            notifyItemRangeChanged(position,templateList.size-position)
+        }else{
+            notifyItemRangeChanged(position-1,templateList.size-position+1)
         }
     }
 

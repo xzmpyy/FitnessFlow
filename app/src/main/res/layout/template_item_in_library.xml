@@ -50,17 +50,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:background="@color/colorPrimary"
         android:id="@+id/upper_layout"
+        android:padding="@dimen/viewPaddingHorizontal"
+        android:paddingStart="@dimen/paddingInRecyclerView"
+        android:paddingEnd="@dimen/paddingInRecyclerView"
         android:elevation="@dimen/viewElevation"
+        android:orientation="vertical"
         >
         <TextView
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             style="@style/navigationTextStyle"
-            android:gravity="center"
             android:text="@string/app_name"
-            android:id="@+id/text"
+            android:id="@+id/template_name"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:textColor="@color/primaryTextColor"
+            />
+        <com.example.zhangjie.fitnessflow.library.library_child_fragments.RecyclerViewCanNotTouch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/muscle_group_include_rv"
+            />
+        <TextView
+            android:layout_height="wrap_content"
+            style="@style/navigationTextStyle"
+            android:textSize="@dimen/smallTextSize"
+            android:text="@string/app_name"
+            android:id="@+id/include_num"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:textColor="@color/primaryGreen"
             />
     </LinearLayout>
 </FrameLayout>

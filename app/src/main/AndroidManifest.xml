@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.zhangjie.fitnessflow">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,17 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.zhangjie.fitnessflow.plan.PlanDetailActivity"></activity>
-        <activity android:name="com.example.zhangjie.fitnessflow.splash.SplashActivity">
+        <activity android:name=".library.TemplateDetailActivity"></activity>
+        <activity android:name=".plan.PlanDetailActivity" />
+        <activity android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.zhangjie.fitnessflow.splash.IndexActivity"
-                  android:windowSoftInputMode="adjustPan"
-            />
+        <activity
+            android:name=".splash.IndexActivity"
+            android:windowSoftInputMode="adjustPan" />
     </application>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+
 </manifest>
