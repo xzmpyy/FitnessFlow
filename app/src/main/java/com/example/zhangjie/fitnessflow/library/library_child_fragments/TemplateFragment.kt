@@ -16,7 +16,6 @@ class TemplateFragment : Fragment(){
     private var templateRv:RecyclerView? = null
     private var layoutManager:LinearLayoutManagerForItemSwipe? = null
     private var adapter:TemplateFragmentAdapter? = null
-    //测试数据
     private val templateList = arrayListOf<Template>()
 
     //视图加载
@@ -64,6 +63,14 @@ class TemplateFragment : Fragment(){
 
     fun templateAdd(template: Template){
         adapter!!.addTemplate(templateList.size,template)
+    }
+
+    override fun onResume() {
+        //模板编辑完毕后刷新相应项
+        if (TemplateModifyClass.getPosition() != null){
+            adapter!!.updateTemplate(TemplateModifyClass.getPosition()!!,TemplateModifyClass.getTemplate()!!)
+        }
+        super.onResume()
     }
 
 }

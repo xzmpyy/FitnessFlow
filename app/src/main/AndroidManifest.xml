@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".library.TemplateDetailActivity"></activity>
-        <activity android:name=".plan.PlanDetailActivity" />
+        <activity android:name=".library.TemplateDetailActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity android:name=".plan.PlanDetailActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

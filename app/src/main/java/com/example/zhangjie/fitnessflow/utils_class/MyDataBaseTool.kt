@@ -9,7 +9,7 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
 
     override fun onCreate(db:SQLiteDatabase?){
         //动作表
-        val actionTableSql1 = "CREATE TABLE \"ActionTable\" (\n" +
+        val actionTableString1 = "CREATE TABLE \"ActionTable\" (\n" +
                 "  \"ActionType\" integer,\n" +
                 "  \"ActionID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
                 "  \"ActionName\" text,\n" +
@@ -23,11 +23,11 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "  \"IsShow\" integer,\n" +
                 "  CONSTRAINT \"ActionID\" UNIQUE (\"ActionID\" ASC)\n" +
                 ");"
-        val actionTableSql2 = "CREATE UNIQUE INDEX \"ActionID\"\n" +
+        val actionTableString2 = "CREATE UNIQUE INDEX \"ActionID\"\n" +
                 "ON \"ActionTable\" (\n" +
                 "  \"ActionID\" ASC\n" +
                 ");"
-        val actionTableSql3 = "CREATE INDEX \"ActionType\"\n" +
+        val actionTableString3 = "CREATE INDEX \"ActionType\"\n" +
                 "ON \"ActionTable\" (\n" +
                 "  \"ActionType\" ASC\n" +
                 ");"
@@ -44,13 +44,46 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "ON \"TemplateTable\" (\n" +
                 "  \"TemplateID\" ASC\n" +
                 ");"
-        db!!.execSQL(actionTableSql1)
+        //模板详情表
+        val templateDetailString1 = "CREATE TABLE \"TemplateDetailTable\" (\n" +
+                "  \"ActionID\" integer,\n" +
+                "  \"ActionType\" integer,\n" +
+                "  \"ActionName\" text,\n" +
+                "  \"IsHadWeightUnits\" integer,\n" +
+                "  \"Unit\" text,\n" +
+                "  \"Weight\" integer,\n" +
+                "  \"Num\" integer,\n" +
+                "  \"TemplateID\" integer,\n" +
+                "  \"ActionOrder\" integer,\n" +
+                "  \"TemplateOrder\" integer,\n" +
+                "  \"Num\" integer,\n" +
+                "  \"ID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
+                "  CONSTRAINT \"TemplatesItemID\" UNIQUE (\"TemplatesItemID\")\n" +
+                ");"
+        //索引
+        val templateDetailString2 = "CREATE INDEX \"TemplateID\"\n" +
+                "ON \"TemplateDetailTable\" (\n" +
+                "  \"TemplateID\" ASC\n" +
+                ");"
+        val templateDetailString3="CREATE UNIQUE INDEX \"ID\"\n" +
+                "ON \"TemplateDetailTable\" (\n" +
+                "  \"ID\" ASC\n" +
+                ");"
+        val templateDetailString4 = "CREATE INDEX \"ActionID\"\n" +
+                "ON \"TemplateDetailTable\" (\n" +
+                "  \"ActionID\" ASC\n" +
+                ");"
+        db!!.execSQL(actionTableString1)
         //执行语句
         db.run{
-            execSQL(actionTableSql2)
-            execSQL(actionTableSql3)
+            execSQL(actionTableString2)
+            execSQL(actionTableString3)
             execSQL(templateString1)
             execSQL(templateString2)
+            execSQL(templateDetailString1)
+            execSQL(templateDetailString2)
+            execSQL(templateDetailString3)
+            execSQL(templateDetailString4)
         }
     }
 

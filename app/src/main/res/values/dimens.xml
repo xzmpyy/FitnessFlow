@@ -9,6 +9,7 @@
     <dimen name="viewMargin">10dp</dimen>
     <dimen name="viewElevation">10dp</dimen>
     <dimen name="iconSize">24dp</dimen>
+    <dimen name="minButtonWidth">60dp</dimen>
     <dimen name="LastBottomInRvBottom">60dp</dimen>
     <dimen name="editTextHeight">35dp</dimen>
     <dimen name="paddingInRecyclerView">20dp</dimen>

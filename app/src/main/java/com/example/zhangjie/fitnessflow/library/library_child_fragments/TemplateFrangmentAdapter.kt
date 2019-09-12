@@ -181,4 +181,14 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         }
     }
 
+    fun updateTemplate(position: Int,template:Template){
+        if (position == -1){
+            templateList[templateList.size - 1] = template
+        }else{
+            templateList[position] = template
+        }
+        notifyDataSetChanged()
+        TemplateModifyClass.clear()
+    }
+
 }

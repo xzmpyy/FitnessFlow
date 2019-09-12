@@ -1,6 +1,7 @@
 package com.example.zhangjie.fitnessflow.library
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupFragment
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.TemplateFragment
+import com.example.zhangjie.fitnessflow.library.library_child_fragments.TemplateModifyClass
 import com.example.zhangjie.fitnessflow.splash.FragmentInit
 import com.example.zhangjie.fitnessflow.splash.IndexViewPagerAdapter
 import com.example.zhangjie.fitnessflow.splash.ViewPagerScrollerFalse
@@ -76,6 +78,10 @@ class LibraryFragment : Fragment(){
         if (newTemplate!=null){
             (muscleGroupFragmentsList[0] as TemplateFragment).templateAdd(newTemplate)
             dialog.dismiss()
+            TemplateModifyClass.setPosition(-1)
+            TemplateModifyClass.setTemplate(newTemplate)
+            val intent = Intent(this.activity, TemplateDetailActivity::class.java)
+            startActivity(intent)
         }
     }
 
