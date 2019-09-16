@@ -13,6 +13,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.TemplateModifyClass
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
@@ -37,17 +39,18 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
     private var saveFlag = true
     private var muscleGroupInclude = StringBuilder()
     private var addButton:ImageButton? = null
-
+    private val templateDetailMap = mutableMapOf<Action,ArrayList<ActionDetailInTemplate>>()
+    private val actionIDListInTemplateDetail = arrayListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_template_detail)
         template = TemplateModifyClass.getTemplate()!!
         //相关视图
-        backButton = findViewById(R.id.back)
-        saveButton = findViewById(R.id.save)
-        templateName = findViewById(R.id.template_name)
-        templateNameEditButton = findViewById(R.id.template_name_edit)
+        backButton = this.findViewById(R.id.back)
+        saveButton = this.findViewById(R.id.save)
+        templateName = this.findViewById(R.id.template_name)
+        templateNameEditButton = this.findViewById(R.id.template_name_edit)
         processDialogFragment = ProcessDialogFragment(this.resources.getString(R.string.save_process))
         backButton!!.setOnClickListener {
             TemplateModifyClass.clear()
@@ -65,8 +68,9 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         templateName!!.text = template!!.templateName
         addButton = findViewById(R.id.add_button)
         addButton!!.setOnClickListener {
-            ActionPickDialog(arrayListOf(),this).show(supportFragmentManager,null)
+            ActionPickDialog(actionIDListInTemplateDetail,this).show(supportFragmentManager,null)
         }
+        recyclerViewDataInit()
     }
 
     //0是模板名称编辑，1是有重量编辑，2是无重量编辑
@@ -175,5 +179,58 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         }
 
     }
+
+    //初始化RecyclerView的数据
+    private fun recyclerViewDataInit(){
+        val recyclerViewDataInitDatabase=MyDataBaseTool(this,"FitnessFlowDB",null,1)
+        val recyclerViewDataInitTool=recyclerViewDataInitDatabase.writableDatabase
+        recyclerViewDataInitTool.beginTransaction()
+        try{
+            val templateDetailCursor=recyclerViewDataInitTool.rawQuery("Select * From TemplateDetailTable where TemplateID=? Order By TemplateOrder,ActionOrder",arrayOf(template!!.templateID.toString()))
+            while(templateDetailCursor.moveToNext()){
+                val actionDetailInTemplate = ActionDetailInTemplate(templateDetailCursor.getString(0).toInt(),
+                    templateDetailCursor.getString(1).toInt(),templateDetailCursor.getString(2),
+                    templateDetailCursor.getString(3).toInt(),templateDetailCursor.getString(4),
+                    templateDetailCursor.getString(5).toFloat(),templateDetailCursor.getString(6).toInt(),
+                    templateDetailCursor.getString(8).toInt(),templateDetailCursor.getString(9).toInt())
+                if (actionIDListInTemplateDetail.contains(templateDetailCursor.getString(0).toInt())){
+                    templateDetailMap[getKeyInTemplateDetailMap(actionDetailInTemplate.actionID)]!!.add(actionDetailInTemplate)
+                }else{
+                    actionIDListInTemplateDetail.add(templateDetailCursor.getString(0).toInt())
+                    //生成动作类，插入新键值
+                    val actionSelectCursor=recyclerViewDataInitTool.rawQuery("Select * From ActionTable where ActionID=?",arrayOf(templateDetailCursor.getString(0)))
+                    while(actionSelectCursor.moveToNext()){
+                        val action = Action(actionSelectCursor.getString(0).toInt(),actionSelectCursor.getString(1).toInt(),
+                            actionSelectCursor.getString(2),actionSelectCursor.getString(3).toInt(),actionSelectCursor.getString(4).toInt(),
+                            actionSelectCursor.getString(5),actionSelectCursor.getString(6).toFloat(),actionSelectCursor.getString(7).toInt(),
+                            actionSelectCursor.getString(8).toFloat(),actionSelectCursor.getString(9).toInt(),actionSelectCursor.getString(10).toInt())
+                        templateDetailMap[action] = arrayListOf(actionDetailInTemplate)
+                        break
+                    }
+                    actionSelectCursor.close()
+                }
+            }
+            templateDetailCursor.close()
+            recyclerViewDataInitTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("RecyclerView Init Failed(In TemplateDetailActivity):$e")
+            MyToast(this,this.resources.getString(R.string.loading_failed))
+        }finally{
+            recyclerViewDataInitTool.endTransaction()
+            recyclerViewDataInitTool.close()
+            recyclerViewDataInitDatabase.close()
+        }
+    }
+
+
+    private fun getKeyInTemplateDetailMap(id:Int):Action?{
+        for (action in templateDetailMap.keys){
+            if (action.actionID == id){
+                return action
+            }
+        }
+        return null
+    }
+
 
 }

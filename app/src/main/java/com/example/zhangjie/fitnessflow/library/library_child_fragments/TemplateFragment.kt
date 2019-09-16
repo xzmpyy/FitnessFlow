@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
 class TemplateFragment : Fragment(){
 
@@ -55,6 +56,7 @@ class TemplateFragment : Fragment(){
             templateCheckTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Template Check Failed(In TemplateFragment):$e")
+            MyToast(context,context.resources.getString(R.string.loading_failed))
         }finally{
             templateCheckTool.endTransaction()
             templateCheckTool.close()

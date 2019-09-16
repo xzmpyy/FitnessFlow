@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
 class MuscleGroupFragment : Fragment(){
 
@@ -54,6 +55,7 @@ class MuscleGroupFragment : Fragment(){
             actionSelectDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Select Failed(In MuscleGroupFragment):$e")
+            MyToast(context!!,context!!.resources.getString(R.string.loading_failed))
         }finally{
             actionSelectDataBaseTool.endTransaction()
             actionSelectDataBaseTool.close()

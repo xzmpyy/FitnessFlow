@@ -242,7 +242,9 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
             }else{
                 "UPDATE ActionTable SET IsShow=0 WHERE ActionID=${actionList[currentItemPosition].actionID}"
             }
+            val delSql2 = "DELETE FROM TemplateDetailTable WHERE ActionID=${actionList[currentItemPosition].actionID}"
             actionDeleteDataBaseTool.execSQL(delSql)
+            actionDeleteDataBaseTool.execSQL(delSql2)
             itemEditEndAnimation(currentViewHolder!!.upperLayout, currentViewHolder!!)
             currentViewHolder = null
             delAction(currentItemPosition)

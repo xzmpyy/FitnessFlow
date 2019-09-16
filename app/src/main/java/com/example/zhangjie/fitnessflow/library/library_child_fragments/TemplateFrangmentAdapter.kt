@@ -246,9 +246,9 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         templateDeleteDataBaseTool.beginTransaction()
         try{
             val delSql1 = "DELETE FROM TemplateTable WHERE TemplateID=${templateList[currentItemPosition].templateID}"
-            //val delSql2 = "DELETE FROM TemplateDetailTable WHERE TemplateID=${templateList[currentItemPosition].templateID}"
+            val delSql2 = "DELETE FROM TemplateDetailTable WHERE TemplateID=${templateList[currentItemPosition].templateID}"
             templateDeleteDataBaseTool.execSQL(delSql1)
-            //templateDeleteDataBaseTool.execSQL(delSql2)
+            templateDeleteDataBaseTool.execSQL(delSql2)
             itemEditEndAnimation(currentViewHolder!!.upperLayout, currentViewHolder!!)
             currentViewHolder = null
             delTemplate(currentItemPosition)

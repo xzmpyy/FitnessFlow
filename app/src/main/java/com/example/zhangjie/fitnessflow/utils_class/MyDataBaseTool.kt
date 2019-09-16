@@ -51,25 +51,24 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "  \"ActionName\" text,\n" +
                 "  \"IsHadWeightUnits\" integer,\n" +
                 "  \"Unit\" text,\n" +
-                "  \"Weight\" integer,\n" +
+                "  \"Weight\" real,\n" +
                 "  \"Num\" integer,\n" +
                 "  \"TemplateID\" integer,\n" +
                 "  \"ActionOrder\" integer,\n" +
                 "  \"TemplateOrder\" integer,\n" +
-                "  \"Num\" integer,\n" +
                 "  \"ID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
                 "  CONSTRAINT \"ID\" UNIQUE (\"ID\")\n" +
                 ");"
         //索引
-        val templateDetailString2 = "CREATE INDEX \"TemplateID\"\n" +
+        val templateDetailString2 = "CREATE INDEX \"TemplateIDInTemplateDetail\"\n" +
                 "ON \"TemplateDetailTable\" (\n" +
                 "  \"TemplateID\" ASC\n" +
                 ");"
-        val templateDetailString3="CREATE UNIQUE INDEX \"ID\"\n" +
+        val templateDetailString3="CREATE UNIQUE INDEX \"IDInTemplateDetail\"\n" +
                 "ON \"TemplateDetailTable\" (\n" +
                 "  \"ID\" ASC\n" +
                 ");"
-        val templateDetailString4 = "CREATE INDEX \"ActionID\"\n" +
+        val templateDetailString4 = "CREATE INDEX \"ActionIDInTemplateDetail\"\n" +
                 "ON \"TemplateDetailTable\" (\n" +
                 "  \"ActionID\" ASC\n" +
                 ");"
