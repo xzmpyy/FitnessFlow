@@ -55,7 +55,9 @@
     <string name="alert">提示</string>
     <string name="modify_successful">修改成功</string>
     <string name="modify_failed">修改失败，请重试</string>
+    <string name="save_failed">保存失败，请重试</string>
     <string name="template_name">模板名称</string>
     <string name="back">返回</string>
     <string name="save">保存</string>
+    <string name="save_process">保存中</string>
 </resources>

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/activity_parent_layout"
     tools:context=".library.TemplateDetailActivity">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,24 +39,16 @@
             android:textColor="@color/primaryTextColor"
             android:layout_marginStart="@dimen/viewMargin"
             android:text="@string/app_name" />
-        <LinearLayout
-            android:layout_width="@dimen/minButtonWidth"
+        <ImageButton
             android:layout_height="wrap_content"
+            android:layout_width="@dimen/minButtonWidth"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/viewMargin"
+            android:src="@drawable/text_edit_button"
             android:background="@null"
-            android:gravity="center"
+            android:textColor="@color/primaryGreen"
             android:id="@+id/template_name_edit"
-            android:clickable="true"
-            >
-            <ImageButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:background="@drawable/text_edit_button"
-                android:textColor="@color/primaryGreen"
-                tools:ignore="ContentDescription" />
-        </LinearLayout>
+            tools:ignore="ContentDescription" />
     </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

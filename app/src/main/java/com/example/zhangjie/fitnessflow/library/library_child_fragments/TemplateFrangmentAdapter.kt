@@ -2,7 +2,7 @@ package com.example.zhangjie.fitnessflow.library.library_child_fragments
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -11,22 +11,30 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Template
+import com.example.zhangjie.fitnessflow.library.TemplateDetailActivity
+import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
+import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.lang.Exception
 
 class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, private val layoutManager:LinearLayoutManagerForItemSwipe,
-                               private val context: Context):
-    RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(){
+                               private val context: AppCompatActivity
+):
+    RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(), MyAlertFragment.ConfirmButtonClickListener{
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
     private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*3 + context.resources.getDimension(R.dimen.viewMargin)*7)
     private var canScrollVerticallyFlag = true
     private val actionNum = context.resources.getString(R.string.action_num)
+    private var currentItemPosition = 0
+    private var currentViewHolder:RvHolder? = null
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
@@ -127,13 +135,44 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         }
         //按钮点击事件
         p0.deleteTemplateButton.setOnClickListener {
-            println("Delete")
+            currentItemPosition = p1
+            val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
+            alertView.findViewById<TextView>(R.id.alert_text).text = it.context.resources.getString(R.string.confirm_to_delete)
+            val alertFragment = MyAlertFragment(alertView)
+            alertFragment.setConfirmButtonClickListener(this)
+            alertFragment.show(context.supportFragmentManager, null)
+            currentViewHolder = p0
+        }
+        p0.editTemplateButton.setOnClickListener {
+            currentItemPosition = p1
+            TemplateModifyClass.setPosition(p1)
+            TemplateModifyClass.setTemplate(templateList[p1])
+            itemEditEndAnimation(p0.upperLayout,p0)
+            val intent = Intent(this.context, TemplateDetailActivity::class.java)
+            this.context.startActivity(intent)
         }
     }
 
     //onBindViewHolder只有在getItemViewType返回值不同时才调用，当有多种布局的Item时不重写会导致复用先前的条目，数据容易错乱
     override fun getItemViewType(position:Int):Int{
         return position
+    }
+
+    private fun itemEditEndAnimation(upperView: View, p0: RvHolder){
+        val swipeAnimation = ValueAnimator.ofFloat(upperView.translationX,0f)
+        swipeAnimation.addUpdateListener {
+            val translationDistance = it.animatedValue as Float
+            upperView.translationX = translationDistance
+        }
+        swipeAnimation.duration = 300
+        swipeAnimation.start()
+        p0.upperLayout.translationX = 0f
+        p0.editTemplateButton.isClickable = false
+        p0.deleteTemplateButton.isClickable = false
+        if (!canScrollVerticallyFlag){
+            canScrollVerticallyFlag = true
+            layoutManager.setCanScrollVerticallyFlag(canScrollVerticallyFlag)
+        }
     }
 
     private fun itemSwipeAnimation(upperView:View,p0:RvHolder){
@@ -189,6 +228,43 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         }
         notifyDataSetChanged()
         TemplateModifyClass.clear()
+    }
+
+    private fun delTemplate(position:Int){
+        templateList.removeAt(position)
+        notifyItemRemoved(position)
+        if (position != templateList.size){
+            notifyItemRangeChanged(position,templateList.size-position)
+        }else{
+            notifyItemRangeChanged(position-1,templateList.size-position+1)
+        }
+    }
+
+    private fun templateDeleteInDataBase(){
+        val templateDeleteDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val templateDeleteDataBaseTool=templateDeleteDatabase.writableDatabase
+        templateDeleteDataBaseTool.beginTransaction()
+        try{
+            val delSql1 = "DELETE FROM TemplateTable WHERE TemplateID=${templateList[currentItemPosition].templateID}"
+            //val delSql2 = "DELETE FROM TemplateDetailTable WHERE TemplateID=${templateList[currentItemPosition].templateID}"
+            templateDeleteDataBaseTool.execSQL(delSql1)
+            //templateDeleteDataBaseTool.execSQL(delSql2)
+            itemEditEndAnimation(currentViewHolder!!.upperLayout, currentViewHolder!!)
+            currentViewHolder = null
+            delTemplate(currentItemPosition)
+            templateDeleteDataBaseTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Template Delete Failed(In TemplateFragmentAdapter):$e")
+            MyToast(context, context.resources.getString(R.string.del_failed)).showToast()
+        }finally{
+            templateDeleteDataBaseTool.endTransaction()
+            templateDeleteDataBaseTool.close()
+            templateDeleteDatabase.close()
+        }
+    }
+
+    override fun onAlertConfirmButtonClick() {
+        templateDeleteInDataBase()
     }
 
 }

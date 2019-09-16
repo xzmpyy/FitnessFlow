@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
@@ -30,7 +31,7 @@ class TemplateFragment : Fragment(){
         templateListInit(view.context)
         layoutManager = LinearLayoutManagerForItemSwipe((view.context))
         templateRv!!.layoutManager = layoutManager
-        adapter = TemplateFragmentAdapter(templateList, layoutManager!!,view.context)
+        adapter = TemplateFragmentAdapter(templateList, layoutManager!!,this.activity as AppCompatActivity)
         templateRv!!.adapter = adapter
     }
 

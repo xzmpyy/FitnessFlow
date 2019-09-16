@@ -58,7 +58,7 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "  \"TemplateOrder\" integer,\n" +
                 "  \"Num\" integer,\n" +
                 "  \"ID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
-                "  CONSTRAINT \"TemplatesItemID\" UNIQUE (\"TemplatesItemID\")\n" +
+                "  CONSTRAINT \"ID\" UNIQUE (\"ID\")\n" +
                 ");"
         //索引
         val templateDetailString2 = "CREATE INDEX \"TemplateID\"\n" +
