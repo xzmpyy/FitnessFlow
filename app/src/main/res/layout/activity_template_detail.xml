@@ -50,7 +50,29 @@
             android:id="@+id/template_name_edit"
             tools:ignore="ContentDescription" />
     </RelativeLayout>
-    <androidx.recyclerview.widget.RecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_background"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/viewMargin"
+            >
+            <ImageButton
+                android:layout_width="@dimen/minButtonWidth"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/add_icon"
+                android:id="@+id/add_button"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+    </RelativeLayout>
+
 </LinearLayout>

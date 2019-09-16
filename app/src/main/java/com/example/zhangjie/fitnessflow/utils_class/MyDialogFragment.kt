@@ -29,8 +29,7 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
         //屏幕宽度,0撑满屏幕，1按内容宽度
         when(widthType){
             0->{
-                val windowWidth=ScreenInfoClass.getScreenWidthDP(this.context!!)
-                dialogWindow.setLayout(windowWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
+                dialogWindow.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 //dialog的位置
                 dialogWindow.setGravity(gravity)
             }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
@@ -20,6 +19,7 @@ import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import com.example.zhangjie.fitnessflow.utils_class.ProcessDialogFragment
+import com.example.zhangjie.fitnessflow.utils_class.action_pick.ActionPickDialog
 
 class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButtonClickListener{
 
@@ -36,6 +36,7 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
     private var editTextParent:LinearLayout? = null
     private var saveFlag = true
     private var muscleGroupInclude = StringBuilder()
+    private var addButton:ImageButton? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +63,10 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
             templateEditDialog(0)
         }
         templateName!!.text = template!!.templateName
+        addButton = findViewById(R.id.add_button)
+        addButton!!.setOnClickListener {
+            ActionPickDialog(arrayListOf(),this).show(supportFragmentManager,null)
+        }
     }
 
     //0是模板名称编辑，1是有重量编辑，2是无重量编辑
