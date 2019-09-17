@@ -19,7 +19,7 @@ import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import com.example.zhangjie.fitnessflow.utils_class.ScreenInfoClass
 
 class ActionPickDialog (private val actionIDList:ArrayList<Int>,context:Context): DialogFragment(),
-    MuscleGroupAdapterInActionPick.MuscleGroupClickListener{
+    MuscleGroupAdapterInActionPick.MuscleGroupClickListener,ActionListAdapterInActionPick.AddButtonClickListener{
 
     private var actionList = arrayListOf<Action>()
     private var muscleGroupRv:RecyclerView? = null
@@ -31,6 +31,7 @@ class ActionPickDialog (private val actionIDList:ArrayList<Int>,context:Context)
     private val muscleGroupNameList = arrayListOf<String>()
     private var actionListAdapter:ActionListAdapterInActionPick? = null
     private val actionListLayoutManager = LinearLayoutManager(context)
+    private var addButtonClickListener:AddButtonClickListener? = null
 
     //设置Fragment宽高
     override fun onStart() {
@@ -73,6 +74,7 @@ class ActionPickDialog (private val actionIDList:ArrayList<Int>,context:Context)
         getActionList(1)
         actionListRv!!.layoutManager = actionListLayoutManager
         actionListAdapter = ActionListAdapterInActionPick(actionList,view.context)
+        actionListAdapter!!.setAddButtonClickListener(this)
         actionListRv!!.adapter = actionListAdapter
     }
 
@@ -111,5 +113,19 @@ class ActionPickDialog (private val actionIDList:ArrayList<Int>,context:Context)
             actionListDatabase.close()
         }
     }
+
+    //动作添加的监听接口
+    interface AddButtonClickListener{
+        fun onAddButtonClick(action:Action)
+    }
+
+    fun setAddButtonClickListener(addButtonClickListener:AddButtonClickListener){
+        this.addButtonClickListener = addButtonClickListener
+    }
+
+    override fun onAddButtonClick(action: Action) {
+        this.addButtonClickListener!!.onAddButtonClick(action)
+    }
+
 
 }

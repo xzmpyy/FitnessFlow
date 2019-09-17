@@ -54,7 +54,6 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "  \"Weight\" real,\n" +
                 "  \"Num\" integer,\n" +
                 "  \"TemplateID\" integer,\n" +
-                "  \"ActionOrder\" integer,\n" +
                 "  \"TemplateOrder\" integer,\n" +
                 "  \"ID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
                 "  CONSTRAINT \"ID\" UNIQUE (\"ID\")\n" +

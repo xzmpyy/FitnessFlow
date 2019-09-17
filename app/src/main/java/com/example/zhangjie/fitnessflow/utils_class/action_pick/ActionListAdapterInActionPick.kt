@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -14,12 +15,14 @@ class ActionListAdapterInActionPick (private val actionList:ArrayList<Action>, p
     RecyclerView.Adapter<ActionListAdapterInActionPick.RvHolder>(){
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
+    private var addButtonClickListener:AddButtonClickListener? = null
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View):RecyclerView.ViewHolder(view){
         //找到加载的布局文件中需要进行设置的各项控件
         val actionName=view.findViewById<TextView>(R.id.action_name)!!
         val parentLayout = view.findViewById<LinearLayout>(R.id.item_parent_layout)!!
+        val addButton = view.findViewById<ImageButton>(R.id.action_add)!!
     }
 
     //复写控件类的生成方法
@@ -43,6 +46,12 @@ class ActionListAdapterInActionPick (private val actionList:ArrayList<Action>, p
         }
         //向viewHolder中的View控件赋值需显示的内容
         p0.actionName.text= actionList[p1].actionName
+        p0.addButton.setOnClickListener {
+            if (addButtonClickListener!=null){
+                addButtonClickListener!!.onAddButtonClick(actionList[p1])
+            }
+            delAction(p1)
+        }
     }
 
     //onBindViewHolder只有在getItemViewType返回值不同时才调用，当有多种布局的Item时不重写会导致复用先前的条目，数据容易错乱
@@ -52,6 +61,24 @@ class ActionListAdapterInActionPick (private val actionList:ArrayList<Action>, p
 
     fun listUpdate(){
         notifyDataSetChanged()
+    }
+
+    interface AddButtonClickListener{
+        fun onAddButtonClick(action:Action)
+    }
+
+    fun setAddButtonClickListener(addButtonClickListener:AddButtonClickListener){
+        this.addButtonClickListener = addButtonClickListener
+    }
+
+    private fun delAction(position:Int){
+        actionList.removeAt(position)
+        notifyItemRemoved(position)
+        if (position != actionList.size){
+            notifyItemRangeChanged(position,actionList.size-position)
+        }else{
+            notifyItemRangeChanged(position-1,actionList.size-position+1)
+        }
     }
 
 }

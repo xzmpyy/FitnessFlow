@@ -12,18 +12,19 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.TemplateModifyClass
-import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
-import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
-import com.example.zhangjie.fitnessflow.utils_class.MyToast
-import com.example.zhangjie.fitnessflow.utils_class.ProcessDialogFragment
+import com.example.zhangjie.fitnessflow.utils_class.*
 import com.example.zhangjie.fitnessflow.utils_class.action_pick.ActionPickDialog
 
-class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButtonClickListener{
+class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButtonClickListener,
+    ActionPickDialog.AddButtonClickListener{
 
     private var template:Template?=null
     private var backButton:Button? = null
@@ -31,6 +32,11 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
     private var templateName: TextView? = null
     private var editType = 0
     private var processDialogFragment: ProcessDialogFragment? = null
+    //RecyclerView相关
+    private var actionGroupRv:RecyclerViewForItemSwap? = null
+    private val actionGroupLayoutManager = LinearLayoutManager(this)
+    private var actionGroupRvAdapter:ActionGroupAdapterInTemplateDetailActivity? = null
+    private var myTouchHelperCallback:MyItemTouchHelperCallback? = null
     //编辑相关
     private var editDialog:MyDialogFragment? = null
     private var templateEditView:View? = null
@@ -63,31 +69,40 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
             dataSaving.execute()
         }
         templateNameEditButton!!.setOnClickListener {
-            templateEditDialog(0)
+            templateNameEditDialog()
         }
         templateName!!.text = template!!.templateName
         addButton = findViewById(R.id.add_button)
         addButton!!.setOnClickListener {
-            ActionPickDialog(actionIDListInTemplateDetail,this).show(supportFragmentManager,null)
+            val actionPickDialog = ActionPickDialog(actionIDListInTemplateDetail,this)
+            actionPickDialog.setAddButtonClickListener(this)
+            actionPickDialog.show(supportFragmentManager,null)
         }
+        //RecyclerView
         recyclerViewDataInit()
+        actionGroupRv = this.findViewById(R.id.action_group_rv)
+        actionGroupRv!!.layoutManager = actionGroupLayoutManager
+        actionGroupRvAdapter = ActionGroupAdapterInTemplateDetailActivity(template!!.templateID,templateDetailMap,actionIDListInTemplateDetail,this)
+        actionGroupRv!!.adapter = actionGroupRvAdapter
+        //RecyclerView中的移动换位
+        myTouchHelperCallback = MyItemTouchHelperCallback(templateDetailMap,actionIDListInTemplateDetail,actionGroupRvAdapter!!)
+        val helper = ItemTouchHelper(myTouchHelperCallback!!)
+        helper.attachToRecyclerView(actionGroupRv)
+        actionGroupRv!!.setHelper(helper)
+        actionGroupRvAdapter!!.setDragListener(actionGroupRv!!)
     }
 
-    //0是模板名称编辑，1是有重量编辑，2是无重量编辑
-    private fun templateEditDialog(type:Int){
-        when(type){
-            0->{
-                templateEditView = View.inflate(this,R.layout.template_create_dialog,null)
-                editTextParent = templateEditView!!.findViewById(R.id.parent_view)
-                val templateNameEdit = templateEditView!!.findViewById<EditText>(R.id.template_name)
-                templateNameEdit.setText(template!!.templateName.toCharArray(), 0, template!!.templateName.count())
-                editDialog = MyDialogFragment(2,Gravity.CENTER,1,templateEditView!!)
-                editDialog!!.setConfirmButtonClickListener(this)
-                //延时弹出键盘
-                Handler().postDelayed({ editTextGetFocus(templateNameEdit) },100)
-                editDialog!!.show(supportFragmentManager,null)
-            }
-        }
+    //模板名称编辑
+    private fun templateNameEditDialog(){
+        templateEditView = View.inflate(this,R.layout.template_create_dialog,null)
+        editTextParent = templateEditView!!.findViewById(R.id.parent_view)
+        val templateNameEdit = templateEditView!!.findViewById<EditText>(R.id.template_name)
+        templateNameEdit.setText(template!!.templateName.toCharArray(), 0, template!!.templateName.count())
+        editDialog = MyDialogFragment(2,Gravity.CENTER,1,templateEditView!!)
+        editDialog!!.setConfirmButtonClickListener(this)
+        //延时弹出键盘
+        Handler().postDelayed({ editTextGetFocus(templateNameEdit) },100)
+        editDialog!!.show(supportFragmentManager,null)
     }
 
     override fun onConfirmButtonClick() {
@@ -186,13 +201,13 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         val recyclerViewDataInitTool=recyclerViewDataInitDatabase.writableDatabase
         recyclerViewDataInitTool.beginTransaction()
         try{
-            val templateDetailCursor=recyclerViewDataInitTool.rawQuery("Select * From TemplateDetailTable where TemplateID=? Order By TemplateOrder,ActionOrder",arrayOf(template!!.templateID.toString()))
+            val templateDetailCursor=recyclerViewDataInitTool.rawQuery("Select * From TemplateDetailTable where TemplateID=? Order By TemplateOrder",arrayOf(template!!.templateID.toString()))
             while(templateDetailCursor.moveToNext()){
                 val actionDetailInTemplate = ActionDetailInTemplate(templateDetailCursor.getString(0).toInt(),
                     templateDetailCursor.getString(1).toInt(),templateDetailCursor.getString(2),
                     templateDetailCursor.getString(3).toInt(),templateDetailCursor.getString(4),
                     templateDetailCursor.getString(5).toFloat(),templateDetailCursor.getString(6).toInt(),
-                    templateDetailCursor.getString(8).toInt(),templateDetailCursor.getString(9).toInt())
+                    templateDetailCursor.getString(8).toInt())
                 if (actionIDListInTemplateDetail.contains(templateDetailCursor.getString(0).toInt())){
                     templateDetailMap[getKeyInTemplateDetailMap(actionDetailInTemplate.actionID)]!!.add(actionDetailInTemplate)
                 }else{
@@ -232,5 +247,9 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         return null
     }
 
+    //实现动作添加的监听接口
+    override fun onAddButtonClick(action: Action) {
+        actionGroupRvAdapter!!.addAction(action, actionIDListInTemplateDetail.size)
+    }
 
 }
