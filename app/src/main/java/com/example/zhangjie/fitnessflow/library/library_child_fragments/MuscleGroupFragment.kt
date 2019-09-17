@@ -72,4 +72,8 @@ class MuscleGroupFragment : Fragment(){
         adapter!!.addAction(actionList.size,action)
     }
 
+    fun actionAddTimesUpdate(actionIDList:ArrayList<Int>){
+        adapter!!.updateActionAddTimes(actionIDList,muscleGroupType)
+    }
+
 }

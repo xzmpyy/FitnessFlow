@@ -138,6 +138,7 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
             currentItemPosition = p1
             val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
             alertView.findViewById<TextView>(R.id.alert_text).text = it.context.resources.getString(R.string.confirm_to_delete)
+            alertView.findViewById<TextView>(R.id.delete_item).text = templateList[p1].templateName
             val alertFragment = MyAlertFragment(alertView)
             alertFragment.setConfirmButtonClickListener(this)
             alertFragment.show(context.supportFragmentManager, null)

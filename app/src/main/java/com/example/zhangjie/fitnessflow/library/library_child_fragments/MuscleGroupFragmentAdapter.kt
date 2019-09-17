@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
@@ -128,6 +129,7 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
             currentItemPosition = p1
             val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
             alertView.findViewById<TextView>(R.id.alert_text).text = it.context.resources.getString(R.string.confirm_to_delete)
+            alertView.findViewById<TextView>(R.id.delete_item).text = actionList[p1].actionName
             val alertFragment = MyAlertFragment(alertView)
             alertFragment.setConfirmButtonClickListener(this)
             alertFragment.show(context.supportFragmentManager, null)
@@ -261,6 +263,39 @@ class MuscleGroupFragmentAdapter (private var actionList:ArrayList<Action>, priv
 
     override fun onAlertConfirmButtonClick() {
         actionDeleteInDataBase()
+    }
+
+    fun updateActionAddTimes(actionIDList:ArrayList<Int>, actionType: Int){
+        val actionAddTimesDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val actionAddTimesTool=actionAddTimesDatabase.writableDatabase
+        actionAddTimesTool.beginTransaction()
+        try{
+            for (actionID in actionIDList){
+                val actionIDCursor = actionAddTimesTool.rawQuery("Select AddTimes From ActionTable where ActionID=?",arrayOf(actionID.toString()))
+                while (actionIDCursor.moveToNext()){
+                    updateAddTimes(actionID,actionIDCursor.getString(0).toInt())
+                    break
+                }
+                actionIDCursor.close()
+            }
+            LibraryUpdateClass.removeData(actionType)
+            notifyDataSetChanged()
+            actionAddTimesTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Action Add Times Update Failed(In MuscleGroupFragmentAdapter):$e")
+        }finally{
+            actionAddTimesTool.endTransaction()
+            actionAddTimesTool.close()
+            actionAddTimesDatabase.close()
+        }
+    }
+
+    private fun updateAddTimes(actionID:Int, addTimes:Int){
+        for (action in actionList){
+            if (action.actionID == actionID){
+                action.addTimes = addTimes
+            }
+        }
     }
 
 }

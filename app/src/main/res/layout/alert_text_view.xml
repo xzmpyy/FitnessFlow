@@ -17,4 +17,13 @@
         android:textAlignment="center"
         android:id="@+id/alert_text"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/primaryTextColor"
+        android:textSize="@dimen/navigatorTextSize"
+        android:textAlignment="center"
+        android:id="@+id/delete_item"
+        />
 </LinearLayout>

@@ -73,6 +73,9 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
     }
 
     override fun onNavigatorClick(position: Int) {
+        if (position == 2){
+            (indexFragmentInViewPagerList[2] as LibraryFragment).updateActionAddTimes()
+        }
         indexViewPager!!.setCurrentItem(position,false)
     }
 

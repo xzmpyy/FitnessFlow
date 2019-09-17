@@ -20,8 +20,8 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
                                                   private val actionIDList:ArrayList<Int>,private val context: AppCompatActivity
 ): RecyclerView.Adapter<ActionGroupAdapterInTemplateDetailActivity.RvHolder>(),MyAlertFragment.ConfirmButtonClickListener{
 
-    private var currentItemPosition = 0
     private var dragListener:OnStartDragListener?=null
+    private var toBeDeleteID = 0
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View):RecyclerView.ViewHolder(view){
@@ -48,10 +48,13 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
     override fun onBindViewHolder(p0:RvHolder, p1:Int){
         //向viewHolder中的View控件赋值需显示的内容
         p0.actionGroupName.text = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionName
+        //用Tag记录ID
+        p0.actionGroupName.tag = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionID
         p0.deleteButton.setOnClickListener {
-            currentItemPosition = p1
+            toBeDeleteID = p0.actionGroupName.tag.toString().toInt()
             val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
             alertView.findViewById<TextView>(R.id.alert_text).text = it.context.resources.getString(R.string.confirm_to_delete)
+            alertView.findViewById<TextView>(R.id.delete_item).text = p0.actionGroupName.text
             val alertFragment = MyAlertFragment(alertView)
             alertFragment.setConfirmButtonClickListener(this)
             alertFragment.show(context.supportFragmentManager, null)
@@ -78,31 +81,64 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
 
     fun addAction(action:Action,position:Int){
         actionIDList.add(action.actionID)
-        if (position == 0){
-            templateDetailMap[action] = arrayListOf(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
-                action.IsHadWeightUnits,action.unit,
-                action.initWeight,action.initNum,position))
-            notifyItemInserted(position)
-            notifyItemRangeChanged(position,actionIDList.size-position)
-        }else{
-            templateDetailMap[action] = arrayListOf(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
-                action.IsHadWeightUnits,action.unit,
-                action.initWeight,action.initNum,
-                templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1))
-            notifyItemInserted(position)
-            notifyItemRangeChanged(position-1,actionIDList.size-position+1)
+        //数据库中更新添加次数,插入第一组数据
+        val actionAddTimesDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val actionAddTimesTool=actionAddTimesDatabase.writableDatabase
+        actionAddTimesTool.beginTransaction()
+        try{
+            if (position == 0){
+                val insertSql = "Insert Into TemplateDetailTable (ActionID,ActionType,ActionName," +
+                        "IsHadWeightUnits,Unit,Weight,Num,TemplateID,TemplateOrder) Values(${action.actionID},${action.actionType}," +
+                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},$templateID,$position)"
+                actionAddTimesTool.execSQL(insertSql)
+                val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid()from TemplateDetailTable",null)
+                idCheckCursor.moveToNext()
+                val lastId = idCheckCursor.getString(0).toInt()
+                templateDetailMap[action] = arrayListOf(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
+                    action.IsHadWeightUnits,action.unit,
+                    action.initWeight,action.initNum,position,lastId))
+                idCheckCursor.close()
+                notifyItemInserted(position)
+                notifyItemRangeChanged(position,actionIDList.size-position)
+            }else{
+                val insertSql = "Insert Into TemplateDetailTable (ActionID,ActionType,ActionName," +
+                        "IsHadWeightUnits,Unit,Weight,Num,TemplateID,TemplateOrder) Values(${action.actionID},${action.actionType}," +
+                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},$templateID," +
+                        "${templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1})"
+                actionAddTimesTool.execSQL(insertSql)
+                val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid()from TemplateDetailTable",null)
+                idCheckCursor.moveToNext()
+                val lastId = idCheckCursor.getString(0).toInt()
+                templateDetailMap[action] = arrayListOf(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
+                    action.IsHadWeightUnits,action.unit,
+                    action.initWeight,action.initNum,
+                    (templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1),lastId))
+                idCheckCursor.close()
+                notifyItemInserted(position)
+                notifyItemRangeChanged(position-1,actionIDList.size-position+1)
+            }
+            actionAddTimesTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Action Add In Template Failed(In ActionGroupAdapterInTemplateDetailActivity):$e")
+            MyToast(context,context.resources.getString(R.string.add_failed))
+        }finally{
+            actionAddTimesTool.endTransaction()
+            actionAddTimesTool.close()
+            actionAddTimesDatabase.close()
         }
+
     }
 
-    private fun delAction(position:Int){
+    private fun delAction(toBeDeleteID:Int){
         //数据库删除
         val actionDeleteInTemplateDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
         val actionDeleteInTemplateTool=actionDeleteInTemplateDatabase.writableDatabase
         actionDeleteInTemplateTool.beginTransaction()
         try{
-            val delSql = "Delete From TemplateDetailTable Where ActionID=${actionIDList[position]} And TemplateID=$templateID"
+            val delSql = "Delete From TemplateDetailTable Where ActionID=$toBeDeleteID And TemplateID=$templateID"
             actionDeleteInTemplateTool.execSQL(delSql)
-            templateDetailMap.remove(getKeyInTemplateDetailMap(actionIDList[position]))
+            templateDetailMap.remove(getKeyInTemplateDetailMap(toBeDeleteID))
+            val position = actionIDList.indexOf(toBeDeleteID)
             actionIDList.removeAt(position)
             notifyItemRemoved(position)
             if (position != actionIDList.size){
@@ -122,7 +158,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
     }
 
     override fun onAlertConfirmButtonClick() {
-        delAction(currentItemPosition)
+        delAction(toBeDeleteID)
     }
 
     //定义一个接口，在item拖拽时回调

@@ -7,4 +7,4 @@ data class Action(val actionType:Int,val actionID:Int, var actionName:String,var
 data class Template(var templateName:String, var actionNum:Int, var muscleGroupInclude:ArrayList<String>,val templateID:Int)
 
 data class ActionDetailInTemplate(val actionID:Int,val actionType:Int,val actionName:String,val isHadWeightUnits:Int,val unit:String,
-                                  var weight:Float,var num:Int,var templateOrder:Int)
+                                  var weight:Float,var num:Int,var templateOrder:Int,val ID:Int)

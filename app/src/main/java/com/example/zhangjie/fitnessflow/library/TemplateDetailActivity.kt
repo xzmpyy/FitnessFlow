@@ -43,7 +43,9 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
     private var templateNameEditButton:ImageButton? = null
     private var editTextParent:LinearLayout? = null
     private var saveFlag = true
+    private var detailSaveFlag = true
     private var muscleGroupInclude = StringBuilder()
+    private var muscleGroupIncludeList = arrayListOf<String>()
     private var addButton:ImageButton? = null
     private val templateDetailMap = mutableMapOf<Action,ArrayList<ActionDetailInTemplate>>()
     private val actionIDListInTemplateDetail = arrayListOf<Int>()
@@ -63,7 +65,6 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
             finish()
         }
         saveButton!!.setOnClickListener {
-            TemplateModifyClass.setTemplate(template!!)
             processDialogFragment!!.show(supportFragmentManager, null)
             val dataSaving = DataSaving()
             dataSaving.execute()
@@ -144,25 +145,69 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         templateName!!.text = newName
     }
 
-    private fun templateUpdate(){
-        for (muscleGroup in template!!.muscleGroupInclude){
-            if (template!!.muscleGroupInclude.indexOf(muscleGroup) == template!!.muscleGroupInclude.count()-1){
-                muscleGroupInclude.append(muscleGroup)
-            }else{
-                muscleGroupInclude.append("$muscleGroup;")
+    private fun templateMuscleGroupIncludeUpdate():String{
+        val muscleGroupNameList = this.resources.getStringArray(R.array.muscle_group)
+        val includeTypeList = arrayListOf<Int>()
+        for (actionID in actionIDListInTemplateDetail){
+            if (!includeTypeList.contains(getKeyInTemplateDetailMap(actionID)!!.actionType)){
+                includeTypeList.add(getKeyInTemplateDetailMap(actionID)!!.actionType)
             }
         }
+        for (actionType in includeTypeList){
+            if (includeTypeList.indexOf(actionType) == includeTypeList.size-1){
+                muscleGroupInclude.append(muscleGroupNameList[actionType])
+            }else{
+                muscleGroupInclude.append("${muscleGroupNameList[actionType]};")
+            }
+            muscleGroupIncludeList.add(muscleGroupNameList[actionType])
+        }
+        return muscleGroupInclude.toString()
+    }
+
+    private fun templateDetailUpdate(){
+        val templateDetailUpdateDatabase= MyDataBaseTool(this,"FitnessFlowDB",null,1)
+        val templateDetailUpdateDataBaseTool=templateDetailUpdateDatabase.writableDatabase
+        templateDetailUpdateDataBaseTool.beginTransaction()
+        try{
+            for (key in templateDetailMap.keys){
+                for (detail in templateDetailMap[key]!!){
+                    val updateSql = "Update TemplateDetailTable Set ActionID=${detail.actionID},ActionType=${detail.actionType}," +
+                            "ActionName=\"${detail.actionName}\",IsHadWeightUnits=${detail.isHadWeightUnits}," +
+                            "Unit=\"${detail.unit}\",Weight=${detail.weight},Num=${detail.num}," +
+                            "TemplateID=${template!!.templateID},TemplateOrder=${detail.templateOrder} WHERE ID=${detail.ID}"
+                    templateDetailUpdateDataBaseTool.execSQL(updateSql)
+                }
+            }
+            if (!detailSaveFlag){
+                detailSaveFlag = true
+            }
+            templateDetailUpdateDataBaseTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Template Detail Update Failed(In TemplateDetailActivity):$e")
+            if (detailSaveFlag){
+                detailSaveFlag = false
+            }
+        }finally{
+            templateDetailUpdateDataBaseTool.endTransaction()
+            templateDetailUpdateDataBaseTool.close()
+            templateDetailUpdateDatabase.close()
+        }
+    }
+
+    private fun templateUpdate(){
         val templateUpdateDatabase= MyDataBaseTool(this,"FitnessFlowDB",null,1)
         val templateUpdateDataBaseTool=templateUpdateDatabase.writableDatabase
+        template!!.actionNum = actionIDListInTemplateDetail.size
+        template!!.muscleGroupInclude = muscleGroupIncludeList
         templateUpdateDataBaseTool.beginTransaction()
         try{
-            val updateSql = "Update TemplateTable Set TemplateName=\"${template!!.templateName}\",ActionNum=${template!!.actionNum}," +
-                    "MuscleGroupInclude=\"$muscleGroupInclude\" Where TemplateID=${template!!.templateID}"
+            val updateSql = "Update TemplateTable Set TemplateName=\"${template!!.templateName}\",ActionNum=${actionIDListInTemplateDetail.size}," +
+                    "MuscleGroupInclude=\"${templateMuscleGroupIncludeUpdate()}\" Where TemplateID=${template!!.templateID}"
             templateUpdateDataBaseTool.execSQL(updateSql)
-            templateUpdateDataBaseTool.setTransactionSuccessful()
             if (!saveFlag){
                 saveFlag = true
             }
+            templateUpdateDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Template Update Failed(In TemplateDetailActivity):$e")
             if (saveFlag){
@@ -179,12 +224,14 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
     @SuppressLint("StaticFieldLeak")
     inner class DataSaving: AsyncTask<Void, Int, Boolean>() {
         override fun doInBackground(vararg params: Void?): Boolean {
+            templateDetailUpdate()
             templateUpdate()
             return true
         }
 
         override fun onPostExecute(result: Boolean?) {
-            if (saveFlag){
+            if (saveFlag && detailSaveFlag){
+                TemplateModifyClass.setTemplate(template!!)
                 processDialogFragment!!.dismiss()
                 finish()
             }else{
@@ -207,7 +254,7 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
                     templateDetailCursor.getString(1).toInt(),templateDetailCursor.getString(2),
                     templateDetailCursor.getString(3).toInt(),templateDetailCursor.getString(4),
                     templateDetailCursor.getString(5).toFloat(),templateDetailCursor.getString(6).toInt(),
-                    templateDetailCursor.getString(8).toInt())
+                    templateDetailCursor.getString(8).toInt(),templateDetailCursor.getString(9).toInt())
                 if (actionIDListInTemplateDetail.contains(templateDetailCursor.getString(0).toInt())){
                     templateDetailMap[getKeyInTemplateDetailMap(actionDetailInTemplate.actionID)]!!.add(actionDetailInTemplate)
                 }else{

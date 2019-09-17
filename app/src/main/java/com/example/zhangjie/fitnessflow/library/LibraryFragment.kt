@@ -110,4 +110,12 @@ class LibraryFragment : Fragment(){
         return if (templateID == null){null}else{Template(templateName,0, arrayListOf(),templateID)}
     }
 
+    fun updateActionAddTimes(){
+        for (type in 1..8){
+            if (LibraryUpdateClass.getData(type)!=null){
+                (muscleGroupFragmentsList[type] as MuscleGroupFragment).actionAddTimesUpdate(LibraryUpdateClass.getData(type)!!)
+            }
+        }
+    }
+
 }
