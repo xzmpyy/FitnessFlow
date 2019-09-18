@@ -70,6 +70,7 @@ class MuscleGroupFragment : Fragment(){
 
     fun actionAdd(action: Action){
         adapter!!.addAction(actionList.size,action)
+        muscleGroupRv!!.scrollToPosition(actionList.size-1)
     }
 
     fun actionAddTimesUpdate(actionIDList:ArrayList<Int>){

@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,9 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
 
     private var dragListener:OnStartDragListener?=null
     private var toBeDeleteID = 0
+    private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
+    private val itemBottomMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
+    private var lastViewHolder:RvHolder? = null
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View):RecyclerView.ViewHolder(view){
@@ -29,6 +33,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
         val actionGroupName = view.findViewById<TextView>(R.id.action_name)!!
         val deleteButton = view.findViewById<ImageButton>(R.id.action_delete_button)!!
         val actionGroupMoveButton = view.findViewById<ImageButton>(R.id.action_group_move_button)!!
+        val parentLayout = view.findViewById<LinearLayout>(R.id.parent_layout)!!
     }
 
     //复写控件类的生成方法
@@ -46,6 +51,12 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(p0:RvHolder, p1:Int){
+        if (p1 == actionIDList.size - 1){
+            val layoutParams = LinearLayout.LayoutParams(p0.parentLayout.layoutParams)
+            layoutParams.bottomMargin = lastItemBottomMargin
+            p0.parentLayout.layoutParams = layoutParams
+            lastViewHolder = p0
+        }
         //向viewHolder中的View控件赋值需显示的内容
         p0.actionGroupName.text = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionName
         //用Tag记录ID
@@ -114,6 +125,8 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
                     action.initWeight,action.initNum,
                     (templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1),lastId))
                 idCheckCursor.close()
+                //修改上一个item的底边距
+                onBindViewHolder(lastViewHolder!!,position-1)
                 notifyItemInserted(position)
                 notifyItemRangeChanged(position-1,actionIDList.size-position+1)
             }
@@ -126,7 +139,6 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
             actionAddTimesTool.close()
             actionAddTimesDatabase.close()
         }
-
     }
 
     private fun delAction(toBeDeleteID:Int){
@@ -139,6 +151,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
             actionDeleteInTemplateTool.execSQL(delSql)
             templateDetailMap.remove(getKeyInTemplateDetailMap(toBeDeleteID))
             val position = actionIDList.indexOf(toBeDeleteID)
+            println("$toBeDeleteID,$position")
             actionIDList.removeAt(position)
             notifyItemRemoved(position)
             if (position != actionIDList.size){
@@ -168,6 +181,23 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
 
     fun setDragListener(dragListener:OnStartDragListener){
         this.dragListener=dragListener
+    }
+
+    //0正常，1加长
+    fun parentLayoutMarginSet(viewHolder: RvHolder,type:Int){
+        when(type){
+            0->{
+                val layoutParams = LinearLayout.LayoutParams(viewHolder.parentLayout.layoutParams)
+                layoutParams.bottomMargin = itemBottomMargin
+                viewHolder.parentLayout.layoutParams = layoutParams
+            }
+            1->{
+                val layoutParams = LinearLayout.LayoutParams(viewHolder.parentLayout.layoutParams)
+                layoutParams.bottomMargin = lastItemBottomMargin
+                viewHolder.parentLayout.layoutParams = layoutParams
+                lastViewHolder = viewHolder
+            }
+        }
     }
 
 }

@@ -297,6 +297,7 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
     //实现动作添加的监听接口
     override fun onAddButtonClick(action: Action) {
         actionGroupRvAdapter!!.addAction(action, actionIDListInTemplateDetail.size)
+        actionGroupRv!!.scrollToPosition(actionIDListInTemplateDetail.size-1)
     }
 
 }

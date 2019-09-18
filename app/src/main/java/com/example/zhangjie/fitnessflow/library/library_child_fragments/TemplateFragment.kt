@@ -66,6 +66,7 @@ class TemplateFragment : Fragment(){
 
     fun templateAdd(template: Template){
         adapter!!.addTemplate(templateList.size,template)
+        templateRv!!.scrollToPosition(templateList.size-1)
     }
 
     override fun onResume() {
