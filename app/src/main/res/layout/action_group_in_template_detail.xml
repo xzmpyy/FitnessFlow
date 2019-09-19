@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/primaryRed"
+        android:background="@color/colorPrimary"
         android:weightSum="1"
         android:elevation="@dimen/viewElevation"
         android:gravity="center_vertical"

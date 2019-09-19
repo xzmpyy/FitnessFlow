@@ -201,7 +201,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
                 lastViewHolder = viewHolder
             }
         }
-        println(actionIDList)
     }
+
 
 }

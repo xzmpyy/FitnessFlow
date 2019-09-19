@@ -24,23 +24,37 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
     }
 
     override fun onMove(p0:RecyclerView,p1:RecyclerView.ViewHolder,p2:RecyclerView.ViewHolder):Boolean{
-        println("${p1.adapterPosition+1},${p2.adapterPosition+1}")
-        //重新排序
-        if (templateDetailMap!=null){
-            for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[p1.adapterPosition])]!!){
-                actionDetail.templateOrder = p2.adapterPosition
-            }
-            for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[p2.adapterPosition])]!!){
-                actionDetail.templateOrder = p1.adapterPosition
-            }
-        }
         if (p2.adapterPosition == actionIDList.size -1){
             lastViewHolder = p2
         }
-        //交换两个数据列表中两个数据的位置
-        Collections.swap(actionIDList,p1.adapterPosition,p2.adapterPosition)
-        //通知adapter刷新
-        adapter.notifyItemMoved(p1.adapterPosition,p2.adapterPosition)
+        if (p1.adapterPosition < p2.adapterPosition) {
+            for (i in p1.adapterPosition until p2.adapterPosition) {
+                if (templateDetailMap!=null){
+                    for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[i])]!!){
+                        actionDetail.templateOrder = i+1
+                    }
+                    for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[i+1])]!!){
+                        actionDetail.templateOrder = i
+                    }
+                }
+                Collections.swap(actionIDList, i, i + 1)
+                //通知adapter刷新
+                adapter.notifyItemMoved(i,i + 1)
+            }
+        } else {
+            for (i in p1.adapterPosition downTo p2.adapterPosition) {
+                if (templateDetailMap!=null){
+                    for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[i-1])]!!){
+                        actionDetail.templateOrder = i
+                    }
+                    for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[i])]!!){
+                        actionDetail.templateOrder = i-1
+                    }
+                }
+                Collections.swap(actionIDList, i, i - 1)
+                adapter.notifyItemMoved(i,i - 1)
+            }
+        }
         if (p2.adapterPosition == actionIDList.size -1){
             lastViewHolder = p2
         }
