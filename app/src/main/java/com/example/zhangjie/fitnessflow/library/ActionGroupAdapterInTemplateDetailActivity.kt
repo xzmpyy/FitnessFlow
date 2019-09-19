@@ -27,6 +27,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
     private val itemBottomMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private var lastViewHolder:RvHolder? = null
 
+
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View):RecyclerView.ViewHolder(view){
         //找到加载的布局文件中需要进行设置的各项控件
@@ -51,13 +52,18 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(p0:RvHolder, p1:Int){
+        //向viewHolder中的View控件赋值需显示的内容
         if (p1 == actionIDList.size - 1){
             val layoutParams = LinearLayout.LayoutParams(p0.parentLayout.layoutParams)
             layoutParams.bottomMargin = lastItemBottomMargin
             p0.parentLayout.layoutParams = layoutParams
             lastViewHolder = p0
+        }else{
+            val layoutParams = LinearLayout.LayoutParams(p0.parentLayout.layoutParams)
+            layoutParams.bottomMargin = itemBottomMargin
+            p0.parentLayout.layoutParams = layoutParams
+            lastViewHolder = p0
         }
-        //向viewHolder中的View控件赋值需显示的内容
         p0.actionGroupName.text = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionName
         //用Tag记录ID
         p0.actionGroupName.tag = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionID
@@ -109,8 +115,6 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
                     action.IsHadWeightUnits,action.unit,
                     action.initWeight,action.initNum,position,lastId))
                 idCheckCursor.close()
-                notifyItemInserted(position)
-                notifyItemRangeChanged(position,actionIDList.size-position)
             }else{
                 val insertSql = "Insert Into TemplateDetailTable (ActionID,ActionType,ActionName," +
                         "IsHadWeightUnits,Unit,Weight,Num,TemplateID,TemplateOrder) Values(${action.actionID},${action.actionType}," +
@@ -125,15 +129,15 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
                     action.initWeight,action.initNum,
                     (templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1),lastId))
                 idCheckCursor.close()
-                //修改上一个item的底边距
-                onBindViewHolder(lastViewHolder!!,position-1)
-                notifyItemInserted(position)
-                notifyItemRangeChanged(position-1,actionIDList.size-position+1)
+                //修改上一个底边距
+                parentLayoutMarginSet(lastViewHolder!!,0)
             }
+            notifyItemInserted(position)
+            notifyItemRangeChanged(position,actionIDList.size-position)
             actionAddTimesTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Add In Template Failed(In ActionGroupAdapterInTemplateDetailActivity):$e")
-            MyToast(context,context.resources.getString(R.string.add_failed))
+            MyToast(context,context.resources.getString(R.string.add_failed)).showToast()
         }finally{
             actionAddTimesTool.endTransaction()
             actionAddTimesTool.close()
@@ -151,18 +155,17 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
             actionDeleteInTemplateTool.execSQL(delSql)
             templateDetailMap.remove(getKeyInTemplateDetailMap(toBeDeleteID))
             val position = actionIDList.indexOf(toBeDeleteID)
-            println("$toBeDeleteID,$position")
             actionIDList.removeAt(position)
             notifyItemRemoved(position)
-            if (position != actionIDList.size){
-                notifyItemRangeChanged(position,actionIDList.size-position)
+            if (position == actionIDList.size){
+                notifyItemRangeChanged(position-1,actionIDList.size+1-position)
             }else{
-                notifyItemRangeChanged(position-1,actionIDList.size-position+1)
+                notifyItemRangeChanged(position,actionIDList.size-position)
             }
             actionDeleteInTemplateTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Delete In Template Failed(In ActionGroupAdapterInTemplateDetailActivity):$e")
-            MyToast(context,context.resources.getString(R.string.del_failed))
+            MyToast(context,context.resources.getString(R.string.del_failed)).showToast()
         }finally{
             actionDeleteInTemplateTool.endTransaction()
             actionDeleteInTemplateTool.close()
@@ -183,7 +186,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
         this.dragListener=dragListener
     }
 
-    //0正常，1加长
+    //修改padding_bottom,0正常，1加长
     fun parentLayoutMarginSet(viewHolder: RvHolder,type:Int){
         when(type){
             0->{
@@ -198,6 +201,7 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
                 lastViewHolder = viewHolder
             }
         }
+        println(actionIDList)
     }
 
 }

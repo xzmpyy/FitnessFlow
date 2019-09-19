@@ -15,7 +15,6 @@
         android:elevation="@dimen/viewElevation"
         android:gravity="center_vertical"
         android:id="@+id/parent_layout"
-        android:layout_marginBottom="@dimen/viewMargin"
         tools:ignore="UselessParent">
         <ImageButton
             android:layout_width="@dimen/minButtonWidth"

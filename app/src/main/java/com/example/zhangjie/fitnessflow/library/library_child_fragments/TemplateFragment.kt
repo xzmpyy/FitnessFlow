@@ -56,7 +56,7 @@ class TemplateFragment : Fragment(){
             templateCheckTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Template Check Failed(In TemplateFragment):$e")
-            MyToast(context,context.resources.getString(R.string.loading_failed))
+            MyToast(context,context.resources.getString(R.string.loading_failed)).showToast()
         }finally{
             templateCheckTool.endTransaction()
             templateCheckTool.close()

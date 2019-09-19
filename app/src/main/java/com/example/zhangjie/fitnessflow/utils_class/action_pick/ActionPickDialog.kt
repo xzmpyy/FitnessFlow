@@ -106,7 +106,7 @@ class ActionPickDialog (private val actionIDList:ArrayList<Int>,context:Context)
             actionListDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Check Failed(In ActionPickDialog):$e")
-            MyToast(context!!,context!!.resources.getString(R.string.loading_failed))
+            MyToast(context!!,context!!.resources.getString(R.string.loading_failed)).showToast()
         }finally{
             actionListDataBaseTool.endTransaction()
             actionListDataBaseTool.close()

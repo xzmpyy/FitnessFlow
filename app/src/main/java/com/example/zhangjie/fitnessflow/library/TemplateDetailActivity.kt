@@ -276,7 +276,7 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
             recyclerViewDataInitTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("RecyclerView Init Failed(In TemplateDetailActivity):$e")
-            MyToast(this,this.resources.getString(R.string.loading_failed))
+            MyToast(this,this.resources.getString(R.string.loading_failed)).showToast()
         }finally{
             recyclerViewDataInitTool.endTransaction()
             recyclerViewDataInitTool.close()

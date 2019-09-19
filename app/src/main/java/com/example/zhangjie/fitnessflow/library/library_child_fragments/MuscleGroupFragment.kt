@@ -55,7 +55,7 @@ class MuscleGroupFragment : Fragment(){
             actionSelectDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Select Failed(In MuscleGroupFragment):$e")
-            MyToast(context!!,context!!.resources.getString(R.string.loading_failed))
+            MyToast(context!!,context!!.resources.getString(R.string.loading_failed)).showToast()
         }finally{
             actionSelectDataBaseTool.endTransaction()
             actionSelectDataBaseTool.close()

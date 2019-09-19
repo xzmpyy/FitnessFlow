@@ -24,6 +24,7 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
     }
 
     override fun onMove(p0:RecyclerView,p1:RecyclerView.ViewHolder,p2:RecyclerView.ViewHolder):Boolean{
+        println("${p1.adapterPosition+1},${p2.adapterPosition+1}")
         //重新排序
         if (templateDetailMap!=null){
             for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[p1.adapterPosition])]!!){
