@@ -9,17 +9,20 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
+import com.example.zhangjie.fitnessflow.library.library_child_fragments.LinearLayoutManagerForItemSwipe
 import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
 class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,private val templateDetailMap:MutableMap<Action,ArrayList<ActionDetailInTemplate>>,
                                                   private val actionIDList:ArrayList<Int>,private val context: AppCompatActivity
-): RecyclerView.Adapter<ActionGroupAdapterInTemplateDetailActivity.RvHolder>(),MyAlertFragment.ConfirmButtonClickListener{
+): RecyclerView.Adapter<ActionGroupAdapterInTemplateDetailActivity.RvHolder>(),MyAlertFragment.ConfirmButtonClickListener,
+    ActionDetailAdapterInTemplateDetailActivity.LastItemDeleteListener{
 
     private var dragListener:OnStartDragListener?=null
     private var toBeDeleteID = 0
@@ -35,6 +38,8 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
         val deleteButton = view.findViewById<ImageButton>(R.id.action_delete_button)!!
         val actionGroupMoveButton = view.findViewById<ImageButton>(R.id.action_group_move_button)!!
         val parentLayout = view.findViewById<LinearLayout>(R.id.parent_layout)!!
+        val actionDetailRv = view.findViewById<RecyclerView>(R.id.action_detail_rv)!!
+        val detailAddButton = view.findViewById<ImageButton>(R.id.detail_add_button)!!
     }
 
     //复写控件类的生成方法
@@ -82,7 +87,16 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
             }
             false
         }
-
+        //每个动作的细节RecyclerView设置
+        val layoutManager = LinearLayoutManager(context)
+        val actionForChild = getKeyInTemplateDetailMap(actionIDList[p1])!!
+        val adapterForChild = ActionDetailAdapterInTemplateDetailActivity(actionForChild,templateDetailMap[actionForChild]!!,templateID,context)
+        adapterForChild.setLastItemDeleteListener(this)
+        p0.actionDetailRv.layoutManager = layoutManager
+        p0.actionDetailRv.adapter = adapterForChild
+        p0.detailAddButton.setOnClickListener {
+            adapterForChild.addActionDetail()
+        }
     }
 
 
@@ -203,5 +217,9 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
         }
     }
 
+
+    override fun onLastItemDelete(actionID: Int) {
+        delAction(actionID)
+    }
 
 }

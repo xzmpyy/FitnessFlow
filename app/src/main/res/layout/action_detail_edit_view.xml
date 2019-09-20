@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="2"
+    android:minWidth="250dp"
+    android:padding="@dimen/paddingInRecyclerView"
+    android:baselineAligned="false">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            style="@style/universalTextStyle"
+            android:text="@string/weight_string"/>
+        <EditText
+            style="@style/editTextStyle"
+            android:inputType="numberDecimal"
+            android:hint="@string/fill_in"
+            android:id="@+id/weight"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            style="@style/universalTextStyle"
+            android:text="@string/target_string"/>
+        <EditText
+            style="@style/editTextStyle"
+            android:inputType="number"
+            android:hint="@string/fill_in"
+            android:id="@+id/target"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+    </LinearLayout>
+</LinearLayout>

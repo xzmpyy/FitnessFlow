@@ -42,7 +42,7 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
                 adapter.notifyItemMoved(i,i + 1)
             }
         } else {
-            for (i in p1.adapterPosition downTo p2.adapterPosition) {
+            for (i in p1.adapterPosition downTo (p2.adapterPosition+1)) {
                 if (templateDetailMap!=null){
                     for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[i-1])]!!){
                         actionDetail.templateOrder = i
