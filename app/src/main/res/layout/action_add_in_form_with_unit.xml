@@ -72,7 +72,7 @@
                 android:text="@string/WeightOfIncreaseProgressively"/>
             <EditText
                 style="@style/editTextStyle"
-                android:inputType="numberDecimal"
+                android:inputType="numberSigned|numberDecimal"
                 android:hint="@string/fill_in"
                 android:id="@+id/weight_increase"
                 android:importantForAutofill="no"
@@ -88,7 +88,7 @@
                 android:text="@string/NumOfIncreaseProgressively"/>
             <EditText
                 style="@style/editTextStyle"
-                android:inputType="number"
+                android:inputType="numberSigned"
                 android:hint="@string/fill_in"
                 android:id="@+id/num_increase"
                 android:importantForAutofill="no"

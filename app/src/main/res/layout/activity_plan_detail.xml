@@ -1,9 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".plan.PlanDetailActivity">
+    android:orientation="vertical"
+    android:id="@+id/activity_parent_layout"
+    tools:context=".library.TemplateDetailActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            style="@style/muscleGroupNavigator"
+            android:layout_width="wrap_content"
+            android:id="@+id/back"
+            android:textColor="@color/primaryRed"
+            android:text="@string/back"
+            tools:ignore="RelativeOverlap" />
+        <Button
+            style="@style/muscleGroupNavigator"
+            android:layout_width="wrap_content"
+            android:id="@+id/save"
+            android:text="@string/save"
+            android:textColor="@color/primaryGreen"
+            android:layout_alignParentEnd="true"
+            tools:ignore="RelativeOverlap" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/navigatorTextSize"
+        android:id="@+id/date_info"
+        android:textColor="@color/primaryTextColor"
+        android:layout_marginStart="@dimen/viewMargin"
+        android:text="@string/app_name" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <com.example.zhangjie.fitnessflow.utils_class.RecyclerViewForItemSwap
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/action_group_rv"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_background"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/viewMargin"
+            >
+            <ImageButton
+                android:layout_width="@dimen/minButtonWidth"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/add_icon"
+                android:id="@+id/add_button"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+    </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
