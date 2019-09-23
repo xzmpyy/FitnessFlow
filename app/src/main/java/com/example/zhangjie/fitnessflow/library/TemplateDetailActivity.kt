@@ -86,7 +86,7 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         actionGroupRvAdapter = ActionGroupAdapterInTemplateDetailActivity(template!!.templateID,templateDetailMap,actionIDListInTemplateDetail,this)
         actionGroupRv!!.adapter = actionGroupRvAdapter
         //RecyclerView中的移动换位
-        myTouchHelperCallback = MyItemTouchHelperCallback(templateDetailMap,actionIDListInTemplateDetail,actionGroupRvAdapter!!)
+        myTouchHelperCallback = MyItemTouchHelperCallback(templateDetailMap,null,actionIDListInTemplateDetail,actionGroupRvAdapter!!)
         val helper = ItemTouchHelper(myTouchHelperCallback!!)
         helper.attachToRecyclerView(actionGroupRv)
         actionGroupRv!!.setHelper(helper)

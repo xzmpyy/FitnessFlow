@@ -1,4 +1,4 @@
-package com.example.zhangjie.fitnessflow.library
+package com.example.zhangjie.fitnessflow.plan.plan_detail
 
 import android.animation.ValueAnimator
 import android.text.TextUtils
@@ -11,23 +11,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
-import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
+import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
-import java.lang.Exception
 
-class ActionDetailAdapterInTemplateDetailActivity (private val action:Action,
-                                                   private val actionDetailList:ArrayList<ActionDetailInTemplate>,
-                                                   private val templateID:Int,
-                                                   private val context:AppCompatActivity):
-    RecyclerView.Adapter<ActionDetailAdapterInTemplateDetailActivity.RvHolder>(),MyDialogFragment.ConfirmButtonClickListener{
+class ActionDetailAdapterInPlanDetailActivity (private val action: Action,
+                                               private val actionDetailList:ArrayList<ActionDetailInPlan>,
+                                               private val dateInfo:String,
+                                               private val context: AppCompatActivity
+):
+    RecyclerView.Adapter<ActionDetailAdapterInPlanDetailActivity.RvHolder>(), MyDialogFragment.ConfirmButtonClickListener{
 
     private val maxSwipeDistance = -(context.resources.getDimension(R.dimen.iconSize)*2 + context.resources.getDimension(
         R.dimen.viewMargin)*5)
     private var lastItemDeleteListener:LastItemDeleteListener? = null
     private var currentPosition = 0
-    private var formView:View? = null
+    private var formView: View? = null
     private var formDialog:MyDialogFragment? = null
     private var currentViewHolder:RvHolder? = null
 
@@ -156,27 +156,28 @@ class ActionDetailAdapterInTemplateDetailActivity (private val action:Action,
         val actionDetailAddTool=actionDetailAddDatabase.writableDatabase
         actionDetailAddTool.beginTransaction()
         try{
-            val insertSql = "Insert Into TemplateDetailTable (ActionID,ActionType,ActionName," +
-                    "IsHadWeightUnits,Unit,Weight,Num,TemplateID,TemplateOrder) Values(${action.actionID},${action.actionType}," +
+            val insertSql = "Insert Into PlanDetailTable (ActionID,ActionType,ActionName," +
+                    "IsHadWeightUnits,Unit,Weight,Num,Done,PlanOrder,Date) Values(${action.actionID},${action.actionType}," +
                     "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\"" +
                     ",${(action.weightOfIncreaseProgressively + actionDetailList[actionDetailList.size-1].weight)}," +
                     "${(action.numOfIncreaseProgressively + actionDetailList[actionDetailList.size-1].num)}," +
-                    "$templateID,${actionDetailList[actionDetailList.size-1].templateOrder})"
+                    "${actionDetailList[actionDetailList.size-1].done},${actionDetailList[actionDetailList.size-1].planOrder},\"$dateInfo\")"
             actionDetailAddTool.execSQL(insertSql)
-            val idCheckCursor = actionDetailAddTool.rawQuery("select last_insert_rowid() from TemplateDetailTable",null)
+            val idCheckCursor = actionDetailAddTool.rawQuery("select last_insert_rowid() from PlanDetailTable",null)
             idCheckCursor.moveToNext()
             val newDetailID = idCheckCursor.getString(0).toInt()
             idCheckCursor.close()
-            actionDetailList.add(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
+            actionDetailList.add(
+                ActionDetailInPlan(action.actionID,action.actionType,action.actionName,
                 action.IsHadWeightUnits,action.unit,
                 (action.weightOfIncreaseProgressively + actionDetailList[actionDetailList.size-1].weight),
                 (action.numOfIncreaseProgressively + actionDetailList[actionDetailList.size-1].num),
-                actionDetailList[actionDetailList.size-1].templateOrder,newDetailID))
+                actionDetailList[actionDetailList.size-1].done,actionDetailList[actionDetailList.size-1].planOrder,newDetailID))
             notifyItemInserted(actionDetailList.size -1)
             notifyItemRangeChanged(actionDetailList.size -1,1)
             actionDetailAddTool.setTransactionSuccessful()
         }catch(e:Exception){
-            println("Action Detail Add In Action Group Failed(In ActionDetailAdapterInTemplateDetailActivity):$e")
+            println("Action Detail Add In Action Group Failed(In ActionDetailAdapterInPlanDetailActivity):$e")
             MyToast(context,context.resources.getString(R.string.add_failed)).showToast()
         }finally{
             actionDetailAddTool.endTransaction()
@@ -195,14 +196,14 @@ class ActionDetailAdapterInTemplateDetailActivity (private val action:Action,
             val actionDetailDeleteTool=actionDetailDeleteDatabase.writableDatabase
             actionDetailDeleteTool.beginTransaction()
             try{
-                val delSql = "Delete From TemplateDetailTable Where ID=$actionDetailID"
+                val delSql = "Delete From PlanDetailTable Where ID=$actionDetailID"
                 actionDetailDeleteTool.execSQL(delSql)
                 actionDetailList.removeAt(position)
                 notifyItemRemoved(position)
                 notifyItemRangeChanged(position,actionDetailList.size-position)
                 actionDetailDeleteTool.setTransactionSuccessful()
             }catch(e:Exception){
-                println("Action Detail Delete In Action Group Failed(In ActionDetailAdapterInTemplateDetailActivity):$e")
+                println("Action Detail Delete In Action Group Failed(In ActionDetailAdapterInPlanDetailActivity):$e")
                 MyToast(context,context.resources.getString(R.string.del_failed)).showToast()
             }finally{
                 actionDetailDeleteTool.endTransaction()
@@ -244,6 +245,9 @@ class ActionDetailAdapterInTemplateDetailActivity (private val action:Action,
                 actionDetailList[currentPosition].num = numValue
                 currentViewHolder!!.targetText.text = numValue.toString()
             }
+        }
+        if (actionDetailList[currentPosition].num < actionDetailList[currentPosition].done){
+            actionDetailList[currentPosition].done = actionDetailList[currentPosition].num
         }
         formDialog!!.dismiss()
         itemSwipeAnimation(currentViewHolder!!.upperLayout,currentViewHolder!!)

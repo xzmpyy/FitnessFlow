@@ -8,3 +8,6 @@ data class Template(var templateName:String, var actionNum:Int, var muscleGroupI
 
 data class ActionDetailInTemplate(val actionID:Int,val actionType:Int,val actionName:String,val isHadWeightUnits:Int,val unit:String,
                                   var weight:Float,var num:Int,var templateOrder:Int,val ID:Int)
+
+data class ActionDetailInPlan(val actionID:Int,val actionType:Int,val actionName:String,val isHadWeightUnits:Int,val unit:String,
+                                  var weight:Float,var num:Int,var done:Int,var planOrder:Int,val ID:Int)

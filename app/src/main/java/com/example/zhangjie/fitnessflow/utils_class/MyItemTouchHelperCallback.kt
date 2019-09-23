@@ -3,12 +3,14 @@ package com.example.zhangjie.fitnessflow.utils_class
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
 import com.example.zhangjie.fitnessflow.library.ActionGroupAdapterInTemplateDetailActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
 class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,ArrayList<ActionDetailInTemplate>>?,
+                                private val planDetailMap:MutableMap<Action,ArrayList<ActionDetailInPlan>>?,
                                 private val actionIDList:ArrayList<Int>,
                                 private val adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>):
     ItemTouchHelper.Callback(){
@@ -37,6 +39,14 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
                         actionDetail.templateOrder = i
                     }
                 }
+                if (planDetailMap!=null){
+                    for (actionDetail in planDetailMap[getKeyInTemplateDetailMap(actionIDList[i])]!!){
+                        actionDetail.planOrder = i+1
+                    }
+                    for (actionDetail in planDetailMap[getKeyInTemplateDetailMap(actionIDList[i+1])]!!){
+                        actionDetail.planOrder = i
+                    }
+                }
                 Collections.swap(actionIDList, i, i + 1)
                 //通知adapter刷新
                 adapter.notifyItemMoved(i,i + 1)
@@ -49,6 +59,14 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
                     }
                     for (actionDetail in templateDetailMap[getKeyInTemplateDetailMap(actionIDList[i])]!!){
                         actionDetail.templateOrder = i-1
+                    }
+                }
+                if (planDetailMap!=null){
+                    for (actionDetail in planDetailMap[getKeyInTemplateDetailMap(actionIDList[i-1])]!!){
+                        actionDetail.planOrder = i
+                    }
+                    for (actionDetail in planDetailMap[getKeyInTemplateDetailMap(actionIDList[i])]!!){
+                        actionDetail.planOrder = i-1
                     }
                 }
                 Collections.swap(actionIDList, i, i - 1)
@@ -101,11 +119,21 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
     }
 
     private fun getKeyInTemplateDetailMap(id:Int):Action?{
-        for (action in templateDetailMap!!.keys){
-            if (action.actionID == id){
-                return action
+        if (templateDetailMap!=null){
+            for (action in templateDetailMap.keys){
+                if (action.actionID == id){
+                    return action
+                }
             }
         }
+        if (planDetailMap!=null){
+            for (action in planDetailMap.keys){
+                if (action.actionID == id){
+                    return action
+                }
+            }
+        }
+
         return null
     }
 

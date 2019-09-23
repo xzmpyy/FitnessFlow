@@ -1,4 +1,4 @@
-package com.example.zhangjie.fitnessflow.library
+package com.example.zhangjie.fitnessflow.plan.plan_detail
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -13,16 +13,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
-import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
-import com.example.zhangjie.fitnessflow.library.library_child_fragments.LinearLayoutManagerForItemSwipe
+import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
+import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
-class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,private val templateDetailMap:MutableMap<Action,ArrayList<ActionDetailInTemplate>>,
-                                                  private val actionIDList:ArrayList<Int>,private val context: AppCompatActivity
-): RecyclerView.Adapter<ActionGroupAdapterInTemplateDetailActivity.RvHolder>(),MyAlertFragment.ConfirmButtonClickListener,
-    ActionDetailAdapterInTemplateDetailActivity.LastItemDeleteListener{
+class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, private val planDetailMap:MutableMap<Action,ArrayList<ActionDetailInPlan>>,
+                                              private val actionIDList:ArrayList<Int>, private val context: AppCompatActivity
+): RecyclerView.Adapter<ActionGroupAdapterInPlanDetailActivity.RvHolder>(), MyAlertFragment.ConfirmButtonClickListener,
+    ActionDetailAdapterInPlanDetailActivity.LastItemDeleteListener{
 
     private var dragListener:OnStartDragListener?=null
     private var toBeDeleteID = 0
@@ -69,9 +69,9 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
             p0.parentLayout.layoutParams = layoutParams
             lastViewHolder = p0
         }
-        p0.actionGroupName.text = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionName
+        p0.actionGroupName.text = getKeyInPlanDetailMap(actionIDList[p1])!!.actionName
         //用Tag记录ID
-        p0.actionGroupName.tag = getKeyInTemplateDetailMap(actionIDList[p1])!!.actionID
+        p0.actionGroupName.tag = getKeyInPlanDetailMap(actionIDList[p1])!!.actionID
         p0.deleteButton.setOnClickListener {
             toBeDeleteID = p0.actionGroupName.tag.toString().toInt()
             val alertView = View.inflate(it.context,R.layout.alert_text_view, null)
@@ -89,8 +89,8 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
         }
         //每个动作的细节RecyclerView设置
         val layoutManager = LinearLayoutManager(context)
-        val actionForChild = getKeyInTemplateDetailMap(actionIDList[p1])!!
-        val adapterForChild = ActionDetailAdapterInTemplateDetailActivity(actionForChild,templateDetailMap[actionForChild]!!,templateID,context)
+        val actionForChild = getKeyInPlanDetailMap(actionIDList[p1])!!
+        val adapterForChild = ActionDetailAdapterInPlanDetailActivity(actionForChild,planDetailMap[actionForChild]!!,dateInfo,context)
         adapterForChild.setLastItemDeleteListener(this)
         p0.actionDetailRv.layoutManager = layoutManager
         p0.actionDetailRv.adapter = adapterForChild
@@ -100,8 +100,8 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
     }
 
 
-    private fun getKeyInTemplateDetailMap(id:Int):Action?{
-        for (action in templateDetailMap.keys){
+    private fun getKeyInPlanDetailMap(id:Int):Action?{
+        for (action in planDetailMap.keys){
             if (action.actionID == id){
                 return action
             }
@@ -118,39 +118,43 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
         actionAddTimesTool.beginTransaction()
         try{
             if (position == 0){
-                val insertSql = "Insert Into TemplateDetailTable (ActionID,ActionType,ActionName," +
-                        "IsHadWeightUnits,Unit,Weight,Num,TemplateID,TemplateOrder) Values(${action.actionID},${action.actionType}," +
-                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},$templateID,$position)"
+                val insertSql = "Insert Into PlanDetailTable (ActionID,ActionType,ActionName," +
+                        "IsHadWeightUnits,Unit,Weight,Num,Done,PlanOrder,Date) Values(${action.actionID},${action.actionType}," +
+                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},0,$position.\"$dateInfo\")"
                 actionAddTimesTool.execSQL(insertSql)
-                val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid() from TemplateDetailTable",null)
+                val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid() from PlanDetailTable",null)
                 idCheckCursor.moveToNext()
                 val lastId = idCheckCursor.getString(0).toInt()
-                templateDetailMap[action] = arrayListOf(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
+                planDetailMap[action] = arrayListOf(ActionDetailInPlan(action.actionID,action.actionType,action.actionName,
                     action.IsHadWeightUnits,action.unit,
-                    action.initWeight,action.initNum,position,lastId))
+                    action.initWeight,action.initNum,0,position,lastId))
                 idCheckCursor.close()
             }else{
-                val insertSql = "Insert Into TemplateDetailTable (ActionID,ActionType,ActionName," +
-                        "IsHadWeightUnits,Unit,Weight,Num,TemplateID,TemplateOrder) Values(${action.actionID},${action.actionType}," +
-                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},$templateID," +
-                        "${templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1})"
+                val insertSql = "Insert Into PlanDetailTable (ActionID,ActionType,ActionName," +
+                        "IsHadWeightUnits,Unit,Weight,Num,Done,PlanOrder,Date) Values(${action.actionID},${action.actionType}," +
+                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},0," +
+                        "${planDetailMap[getKeyInPlanDetailMap(actionIDList[position-1])]!![0].planOrder + 1},\"$dateInfo\")"
                 actionAddTimesTool.execSQL(insertSql)
-                val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid() from TemplateDetailTable",null)
+                val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid() from PlanDetailTable",null)
                 idCheckCursor.moveToNext()
                 val lastId = idCheckCursor.getString(0).toInt()
-                templateDetailMap[action] = arrayListOf(ActionDetailInTemplate(action.actionID,action.actionType,action.actionName,
+                planDetailMap[action] = arrayListOf(ActionDetailInPlan(action.actionID,action.actionType,action.actionName,
                     action.IsHadWeightUnits,action.unit,
-                    action.initWeight,action.initNum,
-                    (templateDetailMap[getKeyInTemplateDetailMap(actionIDList[position-1])]!![0].templateOrder + 1),lastId))
+                    action.initWeight,action.initNum,0,
+                    (planDetailMap[getKeyInPlanDetailMap(actionIDList[position-1])]!![0].planOrder + 1),lastId))
                 idCheckCursor.close()
                 //修改上一个底边距
                 parentLayoutMarginSet(lastViewHolder!!,0)
             }
             notifyItemInserted(position)
             notifyItemRangeChanged(position,actionIDList.size-position)
+            //更新添加次数
+            val actionUpdateSql = "Update ActionTable Set AddTimes=AddTimes+1 Where ActionID=${action.actionID}"
+            LibraryUpdateClass.putData(action.actionType,action.actionID)
+            actionAddTimesTool.execSQL(actionUpdateSql)
             actionAddTimesTool.setTransactionSuccessful()
         }catch(e:Exception){
-            println("Action Add In Template Failed(In ActionGroupAdapterInTemplateDetailActivity):$e")
+            println("Action Add In Plan Failed(In ActionGroupAdapterInPlanDetailActivity):$e")
             MyToast(context,context.resources.getString(R.string.add_failed)).showToast()
         }finally{
             actionAddTimesTool.endTransaction()
@@ -161,13 +165,17 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
 
     private fun delAction(toBeDeleteID:Int){
         //数据库删除
-        val actionDeleteInTemplateDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
-        val actionDeleteInTemplateTool=actionDeleteInTemplateDatabase.writableDatabase
-        actionDeleteInTemplateTool.beginTransaction()
+        val actionDeleteInDatabase= MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val actionDeleteTool=actionDeleteInDatabase.writableDatabase
+        actionDeleteTool.beginTransaction()
         try{
-            val delSql = "Delete From TemplateDetailTable Where ActionID=$toBeDeleteID And TemplateID=$templateID"
-            actionDeleteInTemplateTool.execSQL(delSql)
-            templateDetailMap.remove(getKeyInTemplateDetailMap(toBeDeleteID))
+            val delSql = "Delete From PlanDetailTable Where ActionID=$toBeDeleteID And Date=$dateInfo"
+            actionDeleteTool.execSQL(delSql)
+            //更新添加次数
+            val actionUpdateSql = "Update ActionTable Set AddTimes=AddTimes-1 Where ActionID=$toBeDeleteID"
+            LibraryUpdateClass.putData(getKeyInPlanDetailMap(toBeDeleteID)!!.actionType,toBeDeleteID)
+            actionDeleteTool.execSQL(actionUpdateSql)
+            planDetailMap.remove(getKeyInPlanDetailMap(toBeDeleteID))
             val position = actionIDList.indexOf(toBeDeleteID)
             actionIDList.removeAt(position)
             notifyItemRemoved(position)
@@ -176,14 +184,14 @@ class ActionGroupAdapterInTemplateDetailActivity (private val templateID:Int,pri
             }else{
                 notifyItemRangeChanged(position,actionIDList.size-position)
             }
-            actionDeleteInTemplateTool.setTransactionSuccessful()
+            actionDeleteTool.setTransactionSuccessful()
         }catch(e:Exception){
-            println("Action Delete In Template Failed(In ActionGroupAdapterInTemplateDetailActivity):$e")
+            println("Action Delete In Plan Failed(In ActionGroupAdapterInPlanDetailActivity):$e")
             MyToast(context,context.resources.getString(R.string.del_failed)).showToast()
         }finally{
-            actionDeleteInTemplateTool.endTransaction()
-            actionDeleteInTemplateTool.close()
-            actionDeleteInTemplateDatabase.close()
+            actionDeleteTool.endTransaction()
+            actionDeleteTool.close()
+            actionDeleteInDatabase.close()
         }
     }
 

@@ -71,6 +71,34 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "ON \"TemplateDetailTable\" (\n" +
                 "  \"ActionID\" ASC\n" +
                 ");"
+        //今日计划详情表
+        val planDetailString1 = "CREATE TABLE \"PlanDetailTable\" (\n" +
+                "  \"ActionID\" integer,\n" +
+                "  \"ActionType\" integer,\n" +
+                "  \"ActionName\" text,\n" +
+                "  \"IsHadWeightUnits\" integer,\n" +
+                "  \"Unit\" text,\n" +
+                "  \"Weight\" real,\n" +
+                "  \"Num\" integer,\n" +
+                "  \"Done\" integer,\n" +
+                "  \"PlanOrder\" integer,\n" +
+                "  \"Date\" text,\n" +
+                "  \"ID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
+                "  CONSTRAINT \"ID\" UNIQUE (\"ID\")\n" +
+                ");"
+        //索引
+        val planDetailString2="CREATE UNIQUE INDEX \"IDInPlanDetail\"\n" +
+                "ON \"PlanDetailTable\" (\n" +
+                "  \"ID\" ASC\n" +
+                ");"
+        val planDetailString3 = "CREATE INDEX \"ActionIDInPlanDetail\"\n" +
+                "ON \"PlanDetailTable\" (\n" +
+                "  \"ActionID\" ASC\n" +
+                ");"
+        val planDetailString4 = "CREATE INDEX \"Date\"\n" +
+                "ON \"PlanDetailTable\" (\n" +
+                "  \"Date\" ASC\n" +
+                ");"
         db!!.execSQL(actionTableString1)
         //执行语句
         db.run{
@@ -82,6 +110,10 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
             execSQL(templateDetailString2)
             execSQL(templateDetailString3)
             execSQL(templateDetailString4)
+            execSQL(planDetailString1)
+            execSQL(planDetailString2)
+            execSQL(planDetailString3)
+            execSQL(planDetailString4)
         }
     }
 

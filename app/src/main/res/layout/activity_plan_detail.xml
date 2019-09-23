@@ -26,14 +26,43 @@
             android:layout_alignParentEnd="true"
             tools:ignore="RelativeOverlap" />
     </RelativeLayout>
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/navigatorTextSize"
-        android:id="@+id/date_info"
-        android:textColor="@color/primaryTextColor"
-        android:layout_marginStart="@dimen/viewMargin"
-        android:text="@string/app_name" />
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/navigatorTextSize"
+            android:maxWidth="250dp"
+            android:id="@+id/date_info"
+            android:layout_centerInParent="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/primaryTextColor"
+            android:layout_marginStart="@dimen/viewMargin"
+            android:text="@string/app_name"
+            tools:ignore="RelativeOverlap" />
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:src="@drawable/send_button"
+            android:background="@null"
+            android:textColor="@color/primaryGreen"
+            android:id="@+id/day_send"
+            tools:ignore="ContentDescription" />
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_toStartOf="@+id/day_send"
+            android:layout_centerInParent="true"
+            android:src="@drawable/new_template_button"
+            android:background="@null"
+            android:textColor="@color/primaryGreen"
+            android:id="@+id/new_template"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,5 +90,4 @@
                 tools:ignore="ContentDescription" />
         </LinearLayout>
     </RelativeLayout>
-
 </LinearLayout>
