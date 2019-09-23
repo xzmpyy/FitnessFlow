@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment
 import com.example.zhangjie.fitnessflow.R
 import kotlin.collections.ArrayList
 
-class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractionLimitedChangedListener,CalendarMonthView.ItemClickListener{
+class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractionLimitedChangedListener,
+    CalendarMonthView.ItemClickListener{
 
     private var monthViewGroup:RelativeLayout? = null
     private var monthView:CalendarMonthView? = null

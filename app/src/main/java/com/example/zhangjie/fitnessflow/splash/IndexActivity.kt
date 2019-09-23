@@ -1,6 +1,7 @@
 package com.example.zhangjie.fitnessflow.splash
 
 import android.app.Service
+import android.content.Intent
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -13,9 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
+import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupItemAddFormView
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
+import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
 import com.example.zhangjie.fitnessflow.plan.PlanFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
@@ -66,6 +70,19 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                         formDialog = MyDialogFragment(1,Gravity.CENTER,1,formView!!)
                         formDialog!!.setConfirmButtonClickListener(this)
                         formDialog!!.show(supportFragmentManager,null)
+                    }
+                }
+            }
+            1->{
+                val date=SelectedItemClass.getSelectedList()[0]
+                when (GetMonthInfo.compareDate(date,GetMonthInfo.getTodayString())){
+                    0->{
+
+                    }
+                    else->{
+                        val intentToPlanDetailActivity = Intent(this@IndexActivity,PlanDetailActivity::class.java)
+                        intentToPlanDetailActivity.putExtra("Date",date)
+                        startActivity(intentToPlanDetailActivity)
                     }
                 }
             }

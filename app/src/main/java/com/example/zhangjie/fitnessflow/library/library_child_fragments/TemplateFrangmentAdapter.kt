@@ -3,10 +3,8 @@ package com.example.zhangjie.fitnessflow.library.library_child_fragments
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.util.Xml
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -17,16 +15,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Template
+import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
+import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
+import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.TemplateDetailActivity
 import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.lang.Exception
 
 class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, private val layoutManager:LinearLayoutManagerForItemSwipe,
                                private val context: AppCompatActivity
 ):
-    RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(), MyAlertFragment.ConfirmButtonClickListener{
+    RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(), MyAlertFragment.ConfirmButtonClickListener,
+    MyDialogFragment.DateSelectedListener, FitCalendarView.DefaultSelectedListGenerator{
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
@@ -35,6 +38,7 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
     private val actionNum = context.resources.getString(R.string.action_num)
     private var currentItemPosition = 0
     private var currentViewHolder:RvHolder? = null
+    private var singlePickDate:String? = null
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
@@ -152,6 +156,15 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
             val intent = Intent(this.context, TemplateDetailActivity::class.java)
             this.context.startActivity(intent)
         }
+        p0.sendTemplateButton.setOnClickListener {
+            singlePickDate = SelectedItemClass.getSelectedList()[0]
+            SelectedItemClass.clear()
+            val calendarView = View.inflate(context,R.layout.multiple_select_calendar,null) as FitCalendarView
+            calendarView.setDefaultSelectedListGenerator(this)
+            val calendarDialog = MyDialogFragment(3,Gravity.CENTER,1,calendarView)
+            calendarDialog.setDateSelectedListener(this)
+            calendarDialog.show(context.supportFragmentManager,null)
+        }
     }
 
     //onBindViewHolder只有在getItemViewType返回值不同时才调用，当有多种布局的Item时不重写会导致复用先前的条目，数据容易错乱
@@ -266,6 +279,29 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
 
     override fun onAlertConfirmButtonClick() {
         templateDeleteInDataBase()
+    }
+
+    private fun copyToTargetDays(templateID:Int){
+
+    }
+
+    override fun onDateCancelButtonClick() {
+        SelectedItemClass.clear()
+        SelectedItemClass.addItem(singlePickDate!!)
+    }
+
+    override fun onDateConfirmButtonClick() {
+        SelectedItemClass.clear()
+        SelectedItemClass.addItem(singlePickDate!!)
+    }
+
+    override fun setDefaultSelectedList(year: Int, month: Int): ArrayList<String> {
+        val defaultSelectedList = arrayListOf<String>()
+        val yearAndMonthText = GetMonthInfo.getYearAndMonthString(year,month)
+        for (i in 11..15){
+            defaultSelectedList.add("$yearAndMonthText-$i")
+        }
+        return defaultSelectedList
     }
 
 }

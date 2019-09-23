@@ -63,4 +63,5 @@
     <string name="loading_failed">加载失败，请重试</string>
     <string name="weight_string">重量：</string>
     <string name="target_string">目标：</string>
+    <string name="multiple_select_toast">过往日期不可选择</string>
 </resources>

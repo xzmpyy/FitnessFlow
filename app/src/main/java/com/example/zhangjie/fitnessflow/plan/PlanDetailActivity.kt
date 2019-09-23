@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
@@ -12,18 +14,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
+import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
+import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
+import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.plan.plan_detail.ActionGroupAdapterInPlanDetailActivity
 import com.example.zhangjie.fitnessflow.utils_class.*
 import com.example.zhangjie.fitnessflow.utils_class.action_pick.ActionPickDialog
 
 class PlanDetailActivity : AppCompatActivity() ,
-    ActionPickDialog.AddButtonClickListener{
+    ActionPickDialog.AddButtonClickListener,MyDialogFragment.DateSelectedListener, FitCalendarView.DefaultSelectedListGenerator{
 
     private var dateInfo:String?=null
     private var backButton: Button? = null
     private var saveButton:Button? = null
     private var dateInFoTextView: TextView? = null
-    private var editType = 0
     private var processDialogFragment: ProcessDialogFragment? = null
     //RecyclerView相关
     private var actionGroupRv: RecyclerViewForItemSwap? = null
@@ -36,15 +40,18 @@ class PlanDetailActivity : AppCompatActivity() ,
     private var addButton: ImageButton? = null
     private val planDetailMap = mutableMapOf<Action,ArrayList<ActionDetailInPlan>>()
     private val actionIDListInPlanDetail = arrayListOf<Int>()
+    private var sendButton:ImageButton? = null
+    private var singlePickDate:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_template_detail)
+        setContentView(R.layout.activity_plan_detail)
         dateInfo = intent!!.extras!!.getString("Date")
         //相关视图
         backButton = this.findViewById(R.id.back)
         saveButton = this.findViewById(R.id.save)
         dateInFoTextView = this.findViewById(R.id.date_info)
+        sendButton = this.findViewById(R.id.day_send)
         processDialogFragment = ProcessDialogFragment(this.resources.getString(R.string.save_process))
         backButton!!.setOnClickListener {
             finish()
@@ -60,6 +67,15 @@ class PlanDetailActivity : AppCompatActivity() ,
             val actionPickDialog = ActionPickDialog(actionIDListInPlanDetail,this)
             actionPickDialog.setAddButtonClickListener(this)
             actionPickDialog.show(supportFragmentManager,null)
+        }
+        sendButton!!.setOnClickListener {
+            singlePickDate = SelectedItemClass.getSelectedList()[0]
+            SelectedItemClass.clear()
+            val calendarView = View.inflate(this,R.layout.multiple_select_calendar,null) as FitCalendarView
+            calendarView.setDefaultSelectedListGenerator(this)
+            val calendarDialog = MyDialogFragment(3, Gravity.CENTER,1,calendarView)
+            calendarDialog.setDateSelectedListener(this)
+            calendarDialog.show(this.supportFragmentManager,null)
         }
         //RecyclerView
         recyclerViewDataInit()
@@ -182,6 +198,25 @@ class PlanDetailActivity : AppCompatActivity() ,
     override fun onAddButtonClick(action: Action) {
         actionGroupRvAdapter!!.addAction(action, actionIDListInPlanDetail.size)
         actionGroupRv!!.scrollToPosition(actionIDListInPlanDetail.size-1)
+    }
+
+    override fun onDateCancelButtonClick() {
+        SelectedItemClass.clear()
+        SelectedItemClass.addItem(singlePickDate!!)
+    }
+
+    override fun onDateConfirmButtonClick() {
+        SelectedItemClass.clear()
+        SelectedItemClass.addItem(singlePickDate!!)
+    }
+
+    override fun setDefaultSelectedList(year: Int, month: Int): ArrayList<String> {
+        val defaultSelectedList = arrayListOf<String>()
+        val yearAndMonthText = GetMonthInfo.getYearAndMonthString(year,month)
+        for (i in 11..15){
+            defaultSelectedList.add("$yearAndMonthText-$i")
+        }
+        return defaultSelectedList
     }
 
 }

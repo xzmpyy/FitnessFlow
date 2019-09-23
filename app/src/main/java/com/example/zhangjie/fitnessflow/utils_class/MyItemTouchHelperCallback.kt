@@ -6,6 +6,7 @@ import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
 import com.example.zhangjie.fitnessflow.library.ActionGroupAdapterInTemplateDetailActivity
+import com.example.zhangjie.fitnessflow.plan.plan_detail.ActionGroupAdapterInPlanDetailActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -96,23 +97,44 @@ class MyItemTouchHelperCallback(private val templateDetailMap:MutableMap<Action,
     override fun onSelectedChanged(viewHolder:RecyclerView.ViewHolder?,actionState:Int){
         super.onSelectedChanged(viewHolder,actionState)
         if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
-            (viewHolder!! as ActionGroupAdapterInTemplateDetailActivity.RvHolder).parentLayout.alpha=0.6f
+            if (templateDetailMap!=null){
+                (viewHolder!! as ActionGroupAdapterInTemplateDetailActivity.RvHolder).parentLayout.alpha=0.6f
+            }
+            if (planDetailMap!=null){
+                (viewHolder!! as ActionGroupAdapterInPlanDetailActivity.RvHolder).parentLayout.alpha=0.6f
+            }
         }
     }
 
     //结束拖拽后，还原透明度
     override fun clearView(recyclerView:RecyclerView,viewHolder:RecyclerView.ViewHolder){
         super.clearView(recyclerView,viewHolder)
-        (viewHolder as ActionGroupAdapterInTemplateDetailActivity.RvHolder).parentLayout.alpha=1f
-        if (viewHolder.adapterPosition == actionIDList.size -1){
-            (adapter as ActionGroupAdapterInTemplateDetailActivity).parentLayoutMarginSet(viewHolder, 1)
-            if (lastViewHolder!=null){
-                adapter.parentLayoutMarginSet(lastViewHolder as ActionGroupAdapterInTemplateDetailActivity.RvHolder, 0)
+        if (templateDetailMap!=null){
+            (viewHolder as ActionGroupAdapterInTemplateDetailActivity.RvHolder).parentLayout.alpha=1f
+            if (viewHolder.adapterPosition == actionIDList.size -1){
+                (adapter as ActionGroupAdapterInTemplateDetailActivity).parentLayoutMarginSet(viewHolder, 1)
+                if (lastViewHolder!=null){
+                    adapter.parentLayoutMarginSet(lastViewHolder as ActionGroupAdapterInTemplateDetailActivity.RvHolder, 0)
+                }
+            }else{
+                (adapter as ActionGroupAdapterInTemplateDetailActivity).parentLayoutMarginSet(viewHolder, 0)
+                if (lastViewHolder!=null){
+                    adapter.parentLayoutMarginSet(lastViewHolder as ActionGroupAdapterInTemplateDetailActivity.RvHolder, 1)
+                }
             }
-        }else{
-            (adapter as ActionGroupAdapterInTemplateDetailActivity).parentLayoutMarginSet(viewHolder, 0)
-            if (lastViewHolder!=null){
-                adapter.parentLayoutMarginSet(lastViewHolder as ActionGroupAdapterInTemplateDetailActivity.RvHolder, 1)
+        }
+        if (planDetailMap!=null){
+            (viewHolder as ActionGroupAdapterInPlanDetailActivity.RvHolder).parentLayout.alpha=1f
+            if (viewHolder.adapterPosition == actionIDList.size -1){
+                (adapter as ActionGroupAdapterInPlanDetailActivity).parentLayoutMarginSet(viewHolder, 1)
+                if (lastViewHolder!=null){
+                    adapter.parentLayoutMarginSet(lastViewHolder as ActionGroupAdapterInPlanDetailActivity.RvHolder, 0)
+                }
+            }else{
+                (adapter as ActionGroupAdapterInPlanDetailActivity).parentLayoutMarginSet(viewHolder, 0)
+                if (lastViewHolder!=null){
+                    adapter.parentLayoutMarginSet(lastViewHolder as ActionGroupAdapterInPlanDetailActivity.RvHolder, 1)
+                }
             }
         }
         lastViewHolder = null

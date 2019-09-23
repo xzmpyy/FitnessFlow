@@ -20,9 +20,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class FitCalendarView (context: Context?, attrs: AttributeSet?):
-    LinearLayout(context,attrs),CalendarMonthFragment.ExpansionAndContractionLimitedChangedListener,CalendarMonthFragment.ItemClickListener{
+    LinearLayout(context,attrs),CalendarMonthFragment.ExpansionAndContractionLimitedChangedListener,
+    CalendarMonthFragment.ItemClickListener{
 
     private var selectMode:Int? = null
+
 
     //三个部位
     private var fitCalendarView:View? = null
@@ -76,7 +78,9 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     init {
         //获取attrs中的值，如果不为空，则进行组件的修改
         val attrsList=context!!.obtainStyledAttributes(attrs, R.styleable.FitCalendarView)
-        selectMode = attrsList.getInt(R.styleable.FitCalendarView_selectMode,0)
+        if (selectMode == null){
+            selectMode = attrsList.getInt(R.styleable.FitCalendarView_selectMode,0)
+        }
         attrsList.recycle()
         monthFragmentInit()
         initView(context)
@@ -674,10 +678,12 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
             viewPagerLayoutParams!!.topMargin = marginTop
             viewPager!!.layoutParams = viewPagerLayoutParams
             isMonthViewInit = false
-            fragmentMiddleLeft!!.setExpansionAndContractionLimitedChangedListener(this)
-            fragmentMiddleRight!!.setExpansionAndContractionLimitedChangedListener(this)
-            fragmentMiddleLeft!!.setItemClickListener(this)
-            fragmentMiddleRight!!.setItemClickListener(this)
+            if (selectMode != 1){
+                fragmentMiddleLeft!!.setExpansionAndContractionLimitedChangedListener(this)
+                fragmentMiddleRight!!.setExpansionAndContractionLimitedChangedListener(this)
+                fragmentMiddleLeft!!.setItemClickListener(this)
+                fragmentMiddleRight!!.setItemClickListener(this)
+            }
         }
         super.onWindowFocusChanged(hasWindowFocus)
     }
@@ -865,7 +871,6 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
                     minMargin = (monthViewInitMargin!! - changeLimited[1]).toInt()
                 }
             }
-            currentItemChanged = false
         }
     }
 
@@ -932,5 +937,6 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
     fun setScaleAnimationListener(scaleAnimationListener:ScaleAnimationListener){
         this.scaleAnimationListener = scaleAnimationListener
     }
+
 
 }

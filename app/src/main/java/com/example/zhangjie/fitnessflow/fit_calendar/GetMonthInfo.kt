@@ -57,4 +57,28 @@ object GetMonthInfo {
         return dateString
     }
 
+    //0是小，1相等，2是大
+    fun compareDate(dateNow:String,dateTarget:String):Int{
+        val nowList = dateNow.split("-".toRegex())
+        val targetList = dateTarget.split("-".toRegex())
+        return if (nowList[0].toInt()<targetList[0].toInt()){
+            0
+        }else if (nowList[0].toInt()>targetList[0].toInt()){
+            2
+        }else if (nowList[0].toInt()==targetList[0].toInt() && nowList[1].toInt()<targetList[1].toInt()){
+            0
+        }else if (nowList[0].toInt()==targetList[0].toInt() && nowList[1].toInt()>targetList[1].toInt()){
+            2
+        }else if (nowList[0].toInt()==targetList[0].toInt() && nowList[1].toInt()==targetList[1].toInt()){
+            when {
+                nowList[2] == targetList[2] -> 1
+                nowList[2]<targetList[2] -> 0
+                else -> 2
+            }
+        }
+        else{
+            1
+        }
+    }
+
 }

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.util.*
 
 
@@ -195,13 +196,20 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
                             this.invalidate()
                         }
                     }else{
-                        if (SelectedItemClass.checkItem(dateClick)){
-                            SelectedItemClass.removeItem(dateClick)
+                        when (GetMonthInfo.compareDate(dateClick,GetMonthInfo.getTodayString())){
+                            0->{
+                                MyToast(context,context.resources.getString(R.string.multiple_select_toast)).showToast()
+                            }
+                            else->{
+                                if (SelectedItemClass.checkItem(dateClick)){
+                                    SelectedItemClass.removeItem(dateClick)
+                                }
+                                else{
+                                    SelectedItemClass.addItem(dateClick)
+                                }
+                                this.invalidate()
+                            }
                         }
-                        else{
-                            SelectedItemClass.addItem(dateClick)
-                        }
-                        this.invalidate()
                     }
                     if (itemClickListener!=null){
                         itemClickListener!!.onItemClickListener(dateClick)

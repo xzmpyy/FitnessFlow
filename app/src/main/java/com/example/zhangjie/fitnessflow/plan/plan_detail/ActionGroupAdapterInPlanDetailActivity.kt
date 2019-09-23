@@ -120,7 +120,7 @@ class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, priva
             if (position == 0){
                 val insertSql = "Insert Into PlanDetailTable (ActionID,ActionType,ActionName," +
                         "IsHadWeightUnits,Unit,Weight,Num,Done,PlanOrder,Date) Values(${action.actionID},${action.actionType}," +
-                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},0,$position.\"$dateInfo\")"
+                        "\"${action.actionName}\",${action.IsHadWeightUnits},\"${action.unit}\",${action.initWeight},${action.initNum},0,$position,\"$dateInfo\")"
                 actionAddTimesTool.execSQL(insertSql)
                 val idCheckCursor = actionAddTimesTool.rawQuery("select last_insert_rowid() from PlanDetailTable",null)
                 idCheckCursor.moveToNext()
@@ -169,7 +169,7 @@ class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, priva
         val actionDeleteTool=actionDeleteInDatabase.writableDatabase
         actionDeleteTool.beginTransaction()
         try{
-            val delSql = "Delete From PlanDetailTable Where ActionID=$toBeDeleteID And Date=$dateInfo"
+            val delSql = "Delete From PlanDetailTable Where ActionID=$toBeDeleteID And Date=\"$dateInfo\" "
             actionDeleteTool.execSQL(delSql)
             //更新添加次数
             val actionUpdateSql = "Update ActionTable Set AddTimes=AddTimes-1 Where ActionID=$toBeDeleteID"
@@ -229,5 +229,7 @@ class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, priva
     override fun onLastItemDelete(actionID: Int) {
         delAction(actionID)
     }
+
+
 
 }
