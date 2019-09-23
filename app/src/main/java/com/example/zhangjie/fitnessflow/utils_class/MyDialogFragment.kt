@@ -1,7 +1,6 @@
 package com.example.zhangjie.fitnessflow.utils_class
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +19,6 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
 
     private var parentLayout:LinearLayout? = null
     private var confirmButtonClickListener:ConfirmButtonClickListener?=null
-    private var dateSelectedListener:DateSelectedListener?=null
 
     //设置Fragment宽高
     override fun onStart(){
@@ -108,17 +106,6 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
                     }
                 }
             }
-            3->{
-                view.findViewById<Button>(R.id.cancel_button).setOnClickListener {
-                    this.dismiss()
-                }
-                view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
-                    if (dateSelectedListener!=null){
-                        dateSelectedListener!!.onDateConfirmButtonClick()
-                    }
-                    this.dismiss()
-                }
-            }
         }
     }
 
@@ -132,23 +119,6 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
 
     override fun dialogDismiss() {
         this.dismiss()
-    }
-
-    override fun onDismiss(dialog: DialogInterface?) {
-        if (dateSelectedListener!=null){
-            dateSelectedListener!!.onDateCancelButtonClick()
-        }
-        super.onDismiss(dialog)
-    }
-
-    interface DateSelectedListener{
-        fun onDateConfirmButtonClick()
-
-        fun onDateCancelButtonClick()
-    }
-
-    fun setDateSelectedListener(dateSelectedListener:DateSelectedListener){
-        this.dateSelectedListener = dateSelectedListener
     }
 
 

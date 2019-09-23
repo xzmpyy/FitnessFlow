@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
-import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
@@ -14,15 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
-import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
-import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.plan.plan_detail.ActionGroupAdapterInPlanDetailActivity
 import com.example.zhangjie.fitnessflow.utils_class.*
 import com.example.zhangjie.fitnessflow.utils_class.action_pick.ActionPickDialog
 
 class PlanDetailActivity : AppCompatActivity() ,
-    ActionPickDialog.AddButtonClickListener,MyDialogFragment.DateSelectedListener, FitCalendarView.DefaultSelectedListGenerator{
+    ActionPickDialog.AddButtonClickListener,CalendarDialog.DateSelectedListener{
 
     private var dateInfo:String?=null
     private var backButton: Button? = null
@@ -71,9 +67,7 @@ class PlanDetailActivity : AppCompatActivity() ,
         sendButton!!.setOnClickListener {
             singlePickDate = SelectedItemClass.getSelectedList()[0]
             SelectedItemClass.clear()
-            val calendarView = View.inflate(this,R.layout.multiple_select_calendar,null) as FitCalendarView
-            calendarView.setDefaultSelectedListGenerator(this)
-            val calendarDialog = MyDialogFragment(3, Gravity.CENTER,1,calendarView)
+            val calendarDialog = CalendarDialog()
             calendarDialog.setDateSelectedListener(this)
             calendarDialog.show(this.supportFragmentManager,null)
         }
@@ -208,15 +202,6 @@ class PlanDetailActivity : AppCompatActivity() ,
     override fun onDateConfirmButtonClick() {
         SelectedItemClass.clear()
         SelectedItemClass.addItem(singlePickDate!!)
-    }
-
-    override fun setDefaultSelectedList(year: Int, month: Int): ArrayList<String> {
-        val defaultSelectedList = arrayListOf<String>()
-        val yearAndMonthText = GetMonthInfo.getYearAndMonthString(year,month)
-        for (i in 11..15){
-            defaultSelectedList.add("$yearAndMonthText-$i")
-        }
-        return defaultSelectedList
     }
 
 }

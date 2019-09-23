@@ -3,7 +3,6 @@ package com.example.zhangjie.fitnessflow.library.library_child_fragments
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Xml
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -15,21 +14,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Template
-import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.TemplateDetailActivity
-import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
-import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
-import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
-import com.example.zhangjie.fitnessflow.utils_class.MyToast
+import com.example.zhangjie.fitnessflow.utils_class.*
 import java.lang.Exception
 
 class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, private val layoutManager:LinearLayoutManagerForItemSwipe,
                                private val context: AppCompatActivity
 ):
     RecyclerView.Adapter<TemplateFragmentAdapter.RvHolder>(), MyAlertFragment.ConfirmButtonClickListener,
-    MyDialogFragment.DateSelectedListener, FitCalendarView.DefaultSelectedListGenerator{
+    CalendarDialog.DateSelectedListener{
 
     private val firstItemTopMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val lastItemBottomMargin = context.resources.getDimension(R.dimen.LastBottomInRvBottom).toInt()
@@ -159,9 +154,7 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         p0.sendTemplateButton.setOnClickListener {
             singlePickDate = SelectedItemClass.getSelectedList()[0]
             SelectedItemClass.clear()
-            val calendarView = View.inflate(context,R.layout.multiple_select_calendar,null) as FitCalendarView
-            calendarView.setDefaultSelectedListGenerator(this)
-            val calendarDialog = MyDialogFragment(3,Gravity.CENTER,1,calendarView)
+            val calendarDialog = CalendarDialog()
             calendarDialog.setDateSelectedListener(this)
             calendarDialog.show(context.supportFragmentManager,null)
         }
@@ -293,15 +286,6 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
     override fun onDateConfirmButtonClick() {
         SelectedItemClass.clear()
         SelectedItemClass.addItem(singlePickDate!!)
-    }
-
-    override fun setDefaultSelectedList(year: Int, month: Int): ArrayList<String> {
-        val defaultSelectedList = arrayListOf<String>()
-        val yearAndMonthText = GetMonthInfo.getYearAndMonthString(year,month)
-        for (i in 11..15){
-            defaultSelectedList.add("$yearAndMonthText-$i")
-        }
-        return defaultSelectedList
     }
 
 }
