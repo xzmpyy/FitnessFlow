@@ -938,5 +938,16 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         this.scaleAnimationListener = scaleAnimationListener
     }
 
+    fun updateDefaultSelectedList(){
+        middleLeftDefaultSelectedList = getDefaultSelectedList(middleLeftYear!!,middleLeftMonth!!)
+        fragmentMiddleLeft!!.updateDefaultSelectedList(middleLeftDefaultSelectedList!!)
+        leftDefaultSelectedList = getDefaultSelectedList(leftYear!!,leftMonth!!)
+        fragmentLeft!!.updateDefaultSelectedList(leftDefaultSelectedList!!)
+        middleRightDefaultSelectedList = getDefaultSelectedList(middleRightYear!!,middleRightMonth!!)
+        fragmentMiddleRight!!.updateDefaultSelectedList(middleRightDefaultSelectedList!!)
+        rightDefaultSelectedList = getDefaultSelectedList(rightYear!!,rightMonth!!)
+        fragmentRight!!.updateDefaultSelectedList(rightDefaultSelectedList!!)
+        GetMonthInfo.setDefaultSelectedListChangedFlag(false)
+    }
 
 }

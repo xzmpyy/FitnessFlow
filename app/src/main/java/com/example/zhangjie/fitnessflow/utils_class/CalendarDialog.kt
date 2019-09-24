@@ -19,6 +19,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.fit_calendar.*
+import java.lang.Exception
 import java.util.*
 
 class CalendarDialog : DialogFragment(){
@@ -96,6 +97,7 @@ class CalendarDialog : DialogFragment(){
             if (dateSelectedListener!=null){
                 dateSelectedListener!!.onDateConfirmButtonClick()
             }
+            GetMonthInfo.setDefaultSelectedListChangedFlag(true)
             this.dismiss()
         }
         parentLayout = view.findViewById(R.id.parent_layout)
@@ -275,9 +277,24 @@ class CalendarDialog : DialogFragment(){
     //获取默认标记列表
     private fun getDefaultSelectedList(year:Int,month:Int):ArrayList<String>{
         val defaultSelectedList = arrayListOf<String>()
-        val yearAndMonthText = GetMonthInfo.getYearAndMonthString(year,month)
-        for (i in 11..15){
-            defaultSelectedList.add("$yearAndMonthText-$i")
+        val defaultSelectedDatabase= MyDataBaseTool(context!!,"FitnessFlowDB",null,1)
+        val defaultSelectedDataBaseTool=defaultSelectedDatabase.writableDatabase
+        defaultSelectedDataBaseTool.beginTransaction()
+        try{
+            val dateLikeString = GetMonthInfo.getYearAndMonthString(year,month)
+            val cursor=defaultSelectedDataBaseTool.rawQuery("Select Date From PlanDetailTable where Date like '$dateLikeString-%' Group By Date",
+                null)
+            while(cursor.moveToNext()){
+                defaultSelectedList.add(cursor.getString(0))
+            }
+            cursor.close()
+            defaultSelectedDataBaseTool.setTransactionSuccessful()
+        }catch(e: Exception){
+            println("DefaultSelectedList Init Failed(In Calendar Dialog):$e")
+        }finally{
+            defaultSelectedDataBaseTool.endTransaction()
+            defaultSelectedDataBaseTool.close()
+            defaultSelectedDatabase.close()
         }
         return defaultSelectedList
     }

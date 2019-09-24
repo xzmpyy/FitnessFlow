@@ -2,7 +2,6 @@ package com.example.zhangjie.fitnessflow.plan
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -15,6 +14,7 @@ import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.LinearLayoutManagerForItemSwipe
+import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import java.lang.Exception
 
 class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener,
@@ -159,9 +159,24 @@ FitCalendarView.ScaleAnimationListener{
     //默认选中项
     override fun setDefaultSelectedList(year: Int, month: Int): ArrayList<String> {
         val defaultSelectedList = arrayListOf<String>()
-        val yearAndMonthText = GetMonthInfo.getYearAndMonthString(year,month)
-        for (i in 11..15){
-            defaultSelectedList.add("$yearAndMonthText-$i")
+        val defaultSelectedDatabase= MyDataBaseTool(context!!,"FitnessFlowDB",null,1)
+        val defaultSelectedDataBaseTool=defaultSelectedDatabase.writableDatabase
+        defaultSelectedDataBaseTool.beginTransaction()
+        try{
+            val dateLikeString = GetMonthInfo.getYearAndMonthString(year,month)
+            val cursor=defaultSelectedDataBaseTool.rawQuery("Select Date From PlanDetailTable where Date like '$dateLikeString-%' Group By Date",
+                null)
+            while(cursor.moveToNext()){
+                defaultSelectedList.add(cursor.getString(0))
+            }
+            cursor.close()
+            defaultSelectedDataBaseTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("DefaultSelectedList Init Failed(In PlanFragment):$e")
+        }finally{
+            defaultSelectedDataBaseTool.endTransaction()
+            defaultSelectedDataBaseTool.close()
+            defaultSelectedDatabase.close()
         }
         return defaultSelectedList
     }
@@ -205,5 +220,16 @@ FitCalendarView.ScaleAnimationListener{
         }
     }
 
+    //当默认标记日期有变化时，更新视图
+    override fun onResume() {
+        updateDefaultSelectedList()
+        super.onResume()
+    }
+
+    fun updateDefaultSelectedList(){
+        if (GetMonthInfo.getDefaultSelectedListChangedFlag()){
+            fitCalendar!!.updateDefaultSelectedList()
+        }
+    }
 
 }

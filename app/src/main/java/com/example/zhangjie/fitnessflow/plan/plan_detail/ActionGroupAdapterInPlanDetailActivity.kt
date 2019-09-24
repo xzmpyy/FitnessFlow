@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
+import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.utils_class.MyAlertFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
@@ -152,6 +153,7 @@ class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, priva
             val actionUpdateSql = "Update ActionTable Set AddTimes=AddTimes+1 Where ActionID=${action.actionID}"
             LibraryUpdateClass.putData(action.actionType,action.actionID)
             actionAddTimesTool.execSQL(actionUpdateSql)
+            GetMonthInfo.setDefaultSelectedListChangedFlag(true)
             actionAddTimesTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Action Add In Plan Failed(In ActionGroupAdapterInPlanDetailActivity):$e")
@@ -183,6 +185,9 @@ class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, priva
                 notifyItemRangeChanged(position-1,actionIDList.size+1-position)
             }else{
                 notifyItemRangeChanged(position,actionIDList.size-position)
+            }
+            if (actionIDList.size == 0){
+                GetMonthInfo.setDefaultSelectedListChangedFlag(true)
             }
             actionDeleteTool.setTransactionSuccessful()
         }catch(e:Exception){

@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CalendarMonthView (context: Context, set: AttributeSet): View(context, set){
@@ -280,6 +281,9 @@ class CalendarMonthView (context: Context, set: AttributeSet): View(context, set
         return floatArrayOf(eachItemWidth!!.toFloat()*5 ,0f)
     }
 
-
+    fun setDefaultSelectedList(defaultSelectedList:ArrayList<String>){
+        this.defaultSelectedStateList = defaultSelectedList
+        invalidate()
+    }
 
 }

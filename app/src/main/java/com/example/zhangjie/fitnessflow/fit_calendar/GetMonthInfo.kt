@@ -8,6 +8,7 @@ object GetMonthInfo {
     @SuppressLint("SimpleDateFormat")
     private val sdf= SimpleDateFormat("yyyy-MM-dd")
     private val date = Date()
+    private var defaultSelectedListChangedFlag = false
     //获取当月有多少天
     fun getDaysByYearAndMonth(year:Int, month:Int):Int{
         val cal = Calendar.getInstance()
@@ -79,6 +80,14 @@ object GetMonthInfo {
         else{
             1
         }
+    }
+
+    fun setDefaultSelectedListChangedFlag(flag:Boolean){
+        defaultSelectedListChangedFlag = flag
+    }
+
+    fun getDefaultSelectedListChangedFlag():Boolean{
+        return defaultSelectedListChangedFlag
     }
 
 }

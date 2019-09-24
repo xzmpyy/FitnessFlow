@@ -93,6 +93,9 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
         if (position == 2){
             (indexFragmentInViewPagerList[2] as LibraryFragment).updateActionAddTimes()
         }
+        if (position == 1){
+            (indexFragmentInViewPagerList[1] as PlanFragment).updateDefaultSelectedList()
+        }
         indexViewPager!!.setCurrentItem(position,false)
     }
 

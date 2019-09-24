@@ -108,4 +108,9 @@ class CalendarMonthFragment: Fragment(),CalendarMonthView.ExpansionAndContractio
         }
     }
 
+    fun updateDefaultSelectedList(defaultSelectedStateList:ArrayList<String>){
+        this.defaultSelectedStateList = defaultSelectedStateList
+        monthView!!.setDefaultSelectedList(defaultSelectedStateList)
+    }
+
 }
