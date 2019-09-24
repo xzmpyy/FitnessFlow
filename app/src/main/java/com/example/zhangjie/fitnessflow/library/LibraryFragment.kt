@@ -54,6 +54,11 @@ class LibraryFragment : Fragment(){
                     muscleGroupButtonList!![currentPageNo].setTextColor(unselectedColor!!)
                     currentPageNo = muscleGroupButtonList!!.indexOf(muscleGroup)
                     muscleViewPager!!.setCurrentItem(currentPageNo,false)
+                    if (currentPageNo!=0){
+                        if (LibraryUpdateClass.getData(currentPageNo)!=null){
+                            (muscleGroupFragmentsList[currentPageNo] as MuscleGroupFragment).actionAddTimesUpdate(LibraryUpdateClass.getData(currentPageNo)!!)
+                        }
+                    }
                 }
             }
         }

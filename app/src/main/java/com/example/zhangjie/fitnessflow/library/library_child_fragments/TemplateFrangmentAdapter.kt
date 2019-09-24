@@ -3,6 +3,7 @@ package com.example.zhangjie.fitnessflow.library.library_child_fragments
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.AsyncTask
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -34,6 +35,10 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
     private var currentItemPosition = 0
     private var currentViewHolder:RvHolder? = null
     private var singlePickDate:String? = null
+    private var processDialogFragment: ProcessDialogFragment? = null
+    private var templateCopyFlag = true
+    private var planOrderCorrectFlag = true
+    private val targetDaysList = arrayListOf<String>()
 
     //控件类，代表了每一个Item的布局
     class RvHolder(view: View): RecyclerView.ViewHolder(view){
@@ -75,6 +80,7 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
             p0.parentLayout.layoutParams = layoutParams
             p0.parentLayout.background = ContextCompat.getDrawable(context,R.drawable.last_item_underline)
         }
+        processDialogFragment = ProcessDialogFragment(context.resources.getString(R.string.save_process))
         //向viewHolder中的View控件赋值需显示的内容
         p0.templateName.text = templateList[p1].templateName
         p0.includeNum.text = actionNum + templateList[p1].actionNum.toString()
@@ -152,11 +158,13 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
             this.context.startActivity(intent)
         }
         p0.sendTemplateButton.setOnClickListener {
+            currentItemPosition = p1
             singlePickDate = SelectedItemClass.getSelectedList()[0]
             SelectedItemClass.clear()
             val calendarDialog = CalendarDialog()
             calendarDialog.setDateSelectedListener(this)
             calendarDialog.show(context.supportFragmentManager,null)
+            currentViewHolder = p0
         }
     }
 
@@ -274,8 +282,41 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         templateDeleteInDataBase()
     }
 
+    //模板复制到计划中
     private fun copyToTargetDays(templateID:Int){
-
+        val sendDatabase=MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val sendTool=sendDatabase.writableDatabase
+        sendTool.beginTransaction()
+        try{
+            val templateDetailCursor=sendTool.rawQuery("Select * From TemplateDetailTable where TemplateID=?",arrayOf(templateID.toString()))
+            while(templateDetailCursor.moveToNext()){
+                //向每日中插入数据
+                for (day in targetDaysList){
+                    val insertSql = "Insert Into PlanDetailTable (ActionID,ActionType,ActionName," +
+                    "IsHadWeightUnits,Unit,Weight,Num,Done,PlanOrder,Date) Values(${templateDetailCursor.getString(0)}," +
+                            "${templateDetailCursor.getString(1)},\"${templateDetailCursor.getString(2)}\"," +
+                            "${templateDetailCursor.getString(3)},\"${templateDetailCursor.getString(4)}\"," +
+                            "${templateDetailCursor.getString(5)},${templateDetailCursor.getString(6)}," +
+                            "0,0,\"$day\")"
+                    sendTool.execSQL(insertSql)
+                }
+            }
+            templateDetailCursor.close()
+            if (!templateCopyFlag){
+                templateCopyFlag = true
+            }
+            sendTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("Template Copy To Target Days Failed(In TemplateFragmentAdapter):$e")
+            if (templateCopyFlag){
+                templateCopyFlag = false
+            }
+        }finally{
+            sendTool.endTransaction()
+            sendTool.close()
+            sendDatabase.close()
+        }
+        planOrderCorrectFlag = ActionOrderInPlanDetailCorrect.correct(context,targetDaysList)
     }
 
     override fun onDateCancelButtonClick() {
@@ -284,8 +325,34 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
     }
 
     override fun onDateConfirmButtonClick() {
-        SelectedItemClass.clear()
-        SelectedItemClass.addItem(singlePickDate!!)
+        targetDaysList.clear()
+        for (day in SelectedItemClass.getSelectedList()){
+            targetDaysList.add(day)
+        }
+        println(targetDaysList)
+        processDialogFragment!!.show(context.supportFragmentManager, null)
+        val dataSaving = DataSaving()
+        dataSaving.execute()
+        itemEditEndAnimation(currentViewHolder!!.upperLayout,currentViewHolder!!)
+    }
+
+    //后台保存任务
+    @SuppressLint("StaticFieldLeak")
+    inner class DataSaving: AsyncTask<Void, Int, Boolean>() {
+        override fun doInBackground(vararg params: Void?): Boolean {
+            copyToTargetDays(templateList[currentItemPosition].templateID)
+            return true
+        }
+
+        override fun onPostExecute(result: Boolean?) {
+            if (templateCopyFlag && planOrderCorrectFlag){
+                processDialogFragment!!.dismiss()
+            }else{
+                MyToast(context,context.resources.getString(R.string.add_failed)).showToast()
+                processDialogFragment!!.dismiss()
+            }
+        }
+
     }
 
 }
