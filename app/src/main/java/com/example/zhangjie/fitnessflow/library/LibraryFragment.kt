@@ -123,4 +123,14 @@ class LibraryFragment : Fragment(){
         }
     }
 
+    override fun onResume() {
+        if (LibraryUpdateClass.getTemplateList().size !=0){
+            for (newTemplate in LibraryUpdateClass.getTemplateList()){
+                (muscleGroupFragmentsList[0] as TemplateFragment).templateAdd(newTemplate)
+            }
+            LibraryUpdateClass.clearTemplateList()
+        }
+        super.onResume()
+    }
+
 }

@@ -1,9 +1,12 @@
 package com.example.zhangjie.fitnessflow.library
 
+import com.example.zhangjie.fitnessflow.data_class.Template
+
 object LibraryUpdateClass {
 
     //键为动作类型，值为动作ID
     private val toBeUpdateMap = mutableMapOf<Int,ArrayList<Int>>()
+    private val newTemplateList = arrayListOf<Template>()
 
     fun putData(type:Int, actionID:Int){
         if (toBeUpdateMap.keys.contains(type)){
@@ -25,6 +28,18 @@ object LibraryUpdateClass {
 
     fun removeData(type:Int){
         toBeUpdateMap.remove(type)
+    }
+
+    fun putNewTemplate(template: Template){
+        newTemplateList.add(template)
+    }
+
+    fun getTemplateList():ArrayList<Template>{
+        return newTemplateList
+    }
+
+    fun clearTemplateList(){
+        newTemplateList.clear()
     }
 
 }

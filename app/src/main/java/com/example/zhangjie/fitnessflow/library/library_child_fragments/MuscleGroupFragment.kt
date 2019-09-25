@@ -43,7 +43,7 @@ class MuscleGroupFragment : Fragment(){
         val actionSelectDataBaseTool=actionSelectDatabase.writableDatabase
         actionSelectDataBaseTool.beginTransaction()
         try{
-            val actionSelectCursor=actionSelectDataBaseTool.rawQuery("Select * From ActionTable where ActionType=? And IsShow=? ORDER BY AddTimes",arrayOf(muscleGroupType.toString(), "1"))
+            val actionSelectCursor=actionSelectDataBaseTool.rawQuery("Select * From ActionTable where ActionType=? And IsShow=? ORDER BY AddTimes DESC",arrayOf(muscleGroupType.toString(), "1"))
             while(actionSelectCursor.moveToNext()){
                 val action = Action(actionSelectCursor.getString(0).toInt(),actionSelectCursor.getString(1).toInt(),
                     actionSelectCursor.getString(2),actionSelectCursor.getString(3).toInt(),actionSelectCursor.getString(4).toInt(),

@@ -5,11 +5,15 @@ object SelectedItemClass {
     private val selectedItemList = arrayListOf<String>()
 
     fun addItem(item:String){
-        selectedItemList.add(item)
+        if (!selectedItemList.contains(item)){
+            selectedItemList.add(item)
+        }
     }
 
     fun removeItem(item:String){
-        selectedItemList.remove(item)
+        if (selectedItemList.contains(item)){
+            selectedItemList.remove(item)
+        }
     }
 
     fun checkItem(item:String):Boolean{

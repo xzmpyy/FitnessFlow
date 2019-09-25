@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Template
-import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.TemplateDetailActivity
 import com.example.zhangjie.fitnessflow.utils_class.*
@@ -329,7 +328,6 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
         for (day in SelectedItemClass.getSelectedList()){
             targetDaysList.add(day)
         }
-        println(targetDaysList)
         processDialogFragment!!.show(context.supportFragmentManager, null)
         val dataSaving = DataSaving()
         dataSaving.execute()
@@ -351,6 +349,7 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
                 MyToast(context,context.resources.getString(R.string.add_failed)).showToast()
                 processDialogFragment!!.dismiss()
             }
+            SelectedItemClass.addItem(singlePickDate!!)
         }
 
     }
