@@ -2,6 +2,7 @@ package com.example.zhangjie.fitnessflow.plan
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,10 +12,13 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
 import com.example.zhangjie.fitnessflow.fit_calendar.FitCalendarView
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.LinearLayoutManagerForItemSwipe
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
+import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.lang.Exception
 
 class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener,
@@ -22,7 +26,9 @@ class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener,
 FitCalendarView.ScaleAnimationListener{
 
     //测试数据
-    private val testDataList = arrayListOf<String>()
+    private val actionList = arrayListOf<Action>()
+    private val actionDetailMap = mutableMapOf<Action, ArrayList<ActionDetailInPlan>>()
+    private val actionIdList = arrayListOf<Int>()
     //RecyclerView相关
     private var planRecyclerView:RecyclerView? = null
     private var layoutManager:LinearLayoutManagerForItemSwipe?=null
@@ -72,27 +78,31 @@ FitCalendarView.ScaleAnimationListener{
                 }
             }
         }
-        for (i in 1..30){
-            testDataList.add(i.toString())
-        }
         planRecyclerView = view.findViewById(R.id.rv_in_plan)
         layoutManager = LinearLayoutManagerForItemSwipe(view.context)
         layoutManager!!.setCanScrollVerticallyFlag(canRecyclerViewScroll)
         planRecyclerView!!.layoutManager = layoutManager
-        adapter = AdapterInPlanFragment(testDataList, view.context)
-        planRecyclerView!!.adapter = adapter
+        //初始化第一天数据
+        dayDataInit(GetMonthInfo.getTodayString(),view.context)
         planRecyclerView!!.setOnTouchListener { _, event ->
             try{
                 when(event!!.action){
                     MotionEvent.ACTION_DOWN ->{
+                        println("D")
                         //要使用rawY，否则会抖动
                         initRecyclerViewPosition = event.rawY
                     }
                     MotionEvent.ACTION_MOVE->{
+                        println("M")
                         recyclerViewMovedDistance = event.rawY - initRecyclerViewPosition
                         initRecyclerViewPosition = event.rawY
-                        if (recyclerViewMovedDistance <-2 || (recyclerViewMovedDistance>2 && layoutManager!!.findFirstCompletelyVisibleItemPosition() == 0)){
-                            fitCalendar!!.scrollerListener(recyclerViewMovedDistance)
+                        if (recyclerViewMovedDistance <-2 || recyclerViewMovedDistance>2 ){
+                            if (actionList.size!=0 && layoutManager!!.findFirstCompletelyVisibleItemPosition() == 0){
+                                fitCalendar!!.scrollerListener(recyclerViewMovedDistance)
+                            }
+                            if (actionList.size==0){
+                                fitCalendar!!.scrollerListener(recyclerViewMovedDistance)
+                            }
                         }
                     }
                     MotionEvent.ACTION_UP->{
@@ -183,7 +193,7 @@ FitCalendarView.ScaleAnimationListener{
 
     //日期点击事件监听
     override fun onItemClickListener(date: String) {
-        println(date)
+        dayDataInit(date,view!!.context)
     }
 
     override fun duringScaleAnimation(expansionAndContractionState: Int) {
@@ -230,6 +240,63 @@ FitCalendarView.ScaleAnimationListener{
         if (GetMonthInfo.getDefaultSelectedListChangedFlag()){
             fitCalendar!!.updateDefaultSelectedList()
         }
+    }
+
+    private fun getKeyInPlanDetailMap(id:Int):Action?{
+        for (action in actionDetailMap.keys){
+            if (action.actionID == id){
+                return action
+            }
+        }
+        return null
+    }
+
+    private fun dayDataInit(date:String,context: Context){
+        actionIdList.clear()
+        actionList.clear()
+        actionDetailMap.clear()
+        val planCheckDatabase=MyDataBaseTool(context,"FitnessFlowDB",null,1)
+        val planCheckTool=planCheckDatabase.writableDatabase
+        planCheckTool.beginTransaction()
+        try{
+            val planDetailCursor=planCheckTool.rawQuery("Select * From PlanDetailTable where Date=\"$date\" Order By PlanOrder",null)
+            while(planDetailCursor.moveToNext()){
+                val actionDetailInPlan = ActionDetailInPlan(planDetailCursor.getString(0).toInt(),
+                    planDetailCursor.getString(1).toInt(),planDetailCursor.getString(2),
+                    planDetailCursor.getString(3).toInt(),planDetailCursor.getString(4),
+                    planDetailCursor.getString(5).toFloat(),planDetailCursor.getString(6).toInt(),
+                    planDetailCursor.getString(7).toInt(),planDetailCursor.getString(8).toInt(),
+                    planDetailCursor.getString(10).toInt())
+                if (actionIdList.contains(planDetailCursor.getString(0).toInt())){
+                    actionDetailMap[getKeyInPlanDetailMap(actionDetailInPlan.actionID)]!!.add(actionDetailInPlan)
+                }else{
+                    actionIdList.add(planDetailCursor.getString(0).toInt())
+                    //生成动作类，插入新键值
+                    val actionSelectCursor=planCheckTool.rawQuery("Select * From ActionTable where ActionID=?",arrayOf(planDetailCursor.getString(0)))
+                    while(actionSelectCursor.moveToNext()){
+                        val action = Action(actionSelectCursor.getString(0).toInt(),actionSelectCursor.getString(1).toInt(),
+                            actionSelectCursor.getString(2),actionSelectCursor.getString(3).toInt(),actionSelectCursor.getString(4).toInt(),
+                            actionSelectCursor.getString(5),actionSelectCursor.getString(6).toFloat(),actionSelectCursor.getString(7).toInt(),
+                            actionSelectCursor.getString(8).toFloat(),actionSelectCursor.getString(9).toInt(),actionSelectCursor.getString(10).toInt())
+                        actionList.add(action)
+                        actionDetailMap[action] = arrayListOf(actionDetailInPlan)
+                        break
+                    }
+                    actionSelectCursor.close()
+                }
+            }
+            planDetailCursor.close()
+            planCheckTool.setTransactionSuccessful()
+        }catch(e:Exception){
+            println("$date Data Check Failed(In PlanFragment):$e")
+            MyToast(context,context.resources.getString(R.string.loading_failed)).showToast()
+        }finally{
+            planCheckTool.endTransaction()
+            planCheckTool.close()
+            planCheckDatabase.close()
+        }
+        adapter = AdapterInPlanFragment(actionList, actionDetailMap,context)
+        planRecyclerView!!.adapter = adapter
     }
 
 }

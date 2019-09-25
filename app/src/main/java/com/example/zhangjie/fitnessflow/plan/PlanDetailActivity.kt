@@ -244,7 +244,7 @@ class PlanDetailActivity : AppCompatActivity() ,
         val sendTool=sendDatabase.writableDatabase
         sendTool.beginTransaction()
         try{
-            val planDetailCursor=sendTool.rawQuery("Select * From PlanDetailTable where Date=? " ,arrayOf(date))
+            val planDetailCursor=sendTool.rawQuery("Select * From PlanDetailTable where Date=? Order By PlanOrder" ,arrayOf(date))
             while(planDetailCursor.moveToNext()){
                 //向每日中插入数据
                 for (day in targetDaysList){
@@ -313,7 +313,7 @@ class PlanDetailActivity : AppCompatActivity() ,
             newTemplate = Template(templateName,0, arrayListOf(),templateID)
             idCheckCursor.close()
             //查询计划，向模板详情添加数据
-            val planDetailCheckCursor = templateCreateTool.rawQuery("select * from PlanDetailTable where Date=?",
+            val planDetailCheckCursor = templateCreateTool.rawQuery("select * from PlanDetailTable where Date=? Order By PlanOrder",
                 arrayOf(dateInfo))
             val muscleGroupList = arrayListOf<Int>()
             val actionList = arrayListOf<String>()
