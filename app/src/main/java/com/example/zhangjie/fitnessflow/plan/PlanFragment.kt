@@ -30,7 +30,7 @@ FitCalendarView.ScaleAnimationListener{
     private val actionDetailMap = mutableMapOf<Action, ArrayList<ActionDetailInPlan>>()
     private val actionIdList = arrayListOf<Int>()
     //RecyclerView相关
-    private var planRecyclerView:RecyclerView? = null
+    private var planRecyclerView:RecyclerViewForPlanDataShow? = null
     private var layoutManager:LinearLayoutManagerForItemSwipe?=null
     private var adapter:AdapterInPlanFragment? = null
     private var canRecyclerViewScroll = false
@@ -88,12 +88,10 @@ FitCalendarView.ScaleAnimationListener{
             try{
                 when(event!!.action){
                     MotionEvent.ACTION_DOWN ->{
-                        println("D")
                         //要使用rawY，否则会抖动
                         initRecyclerViewPosition = event.rawY
                     }
                     MotionEvent.ACTION_MOVE->{
-                        println("M")
                         recyclerViewMovedDistance = event.rawY - initRecyclerViewPosition
                         initRecyclerViewPosition = event.rawY
                         if (recyclerViewMovedDistance <-2 || recyclerViewMovedDistance>2 ){
@@ -118,7 +116,6 @@ FitCalendarView.ScaleAnimationListener{
             false
         }
     }
-
 
     override fun onYearAndMonthChangedListener(year: Int, month: Int) {
         if (initScaleAnimationButtonX == null){

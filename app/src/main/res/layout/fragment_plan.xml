@@ -35,7 +35,7 @@
             android:id="@+id/expand_contract_button"
             />
     </FrameLayout>
-    <androidx.recyclerview.widget.RecyclerView
+    <com.example.zhangjie.fitnessflow.plan.RecyclerViewForPlanDataShow
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/rv_in_plan"
