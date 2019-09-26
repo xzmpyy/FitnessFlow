@@ -65,4 +65,5 @@
     <string name="target_string">目标：</string>
     <string name="multiple_select_toast">过往日期不可选择</string>
     <string name="weight_boundary">重量区间：</string>
+    <string name="today_has_no_plan">今日无计划，请点击添加</string>
 </resources>

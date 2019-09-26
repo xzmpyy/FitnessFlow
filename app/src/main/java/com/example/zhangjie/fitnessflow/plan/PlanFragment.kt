@@ -25,7 +25,6 @@ class PlanFragment : Fragment(),FitCalendarView.YearAndMonthChangedListener,
     FitCalendarView.DefaultSelectedListGenerator,FitCalendarView.ItemClickListener,
 FitCalendarView.ScaleAnimationListener{
 
-    //测试数据
     private val actionList = arrayListOf<Action>()
     private val actionDetailMap = mutableMapOf<Action, ArrayList<ActionDetailInPlan>>()
     private val actionIdList = arrayListOf<Int>()

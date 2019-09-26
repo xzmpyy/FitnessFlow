@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/primaryRed"
-        android:layout_gravity="center"
-        android:id="@+id/text"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/action_detail"
         />
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:id="@+id/no_plan">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/today_has_no_plan"
+            android:textColor="@color/unSelectedTextColor"
+            android:layout_marginBottom="@dimen/viewMargin"
+            android:textSize="@dimen/navigatorTextSize"/>
+        <ImageButton
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_height="wrap_content"
+            android:src="@drawable/add_icon"
+            android:background="@drawable/round_rect_background"
+            android:id="@+id/add_plan"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+</RelativeLayout>

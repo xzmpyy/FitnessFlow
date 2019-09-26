@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/viewMargin"
+    android:elevation="@dimen/viewElevation"
+    android:background="@color/colorPrimary"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:padding="@dimen/viewPaddingHorizontal"
+        style="@style/navigationTextStyle"
+        android:text="@string/app_name"
+        android:id="@+id/action_name"
+        android:singleLine="true"
+        android:textAlignment="textStart"
+        android:ellipsize="middle"
+        android:textColor="@color/primaryTextColor"
+        />
+</LinearLayout>
