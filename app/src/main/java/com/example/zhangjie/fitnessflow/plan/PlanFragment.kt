@@ -45,6 +45,7 @@ FitCalendarView.ScaleAnimationListener{
     //0日历展开，1日历收起
     private var expansionAndContractionState = 0
     private var jumTodayButton:ImageButton? = null
+    private var currentSelectDay = GetMonthInfo.getTodayString()
 
     //视图加载
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
@@ -82,8 +83,6 @@ FitCalendarView.ScaleAnimationListener{
         layoutManager = LinearLayoutManagerForItemSwipe(view.context)
         layoutManager!!.setCanScrollVerticallyFlag(canRecyclerViewScroll)
         planRecyclerView!!.layoutManager = layoutManager
-        //初始化第一天数据
-        dayDataInit(GetMonthInfo.getTodayString(),view.context)
         planRecyclerView!!.setOnTouchListener { _, event ->
             try{
                 when(event!!.action){
@@ -191,6 +190,7 @@ FitCalendarView.ScaleAnimationListener{
     //日期点击事件监听
     override fun onItemClickListener(date: String) {
         dayDataInit(date,view!!.context)
+        currentSelectDay = date
     }
 
     override fun duringScaleAnimation(expansionAndContractionState: Int) {
@@ -229,6 +229,7 @@ FitCalendarView.ScaleAnimationListener{
 
     //当默认标记日期有变化时，更新视图
     override fun onResume() {
+        dayDataInit(currentSelectDay,view!!.context)
         updateDefaultSelectedList()
         super.onResume()
     }
@@ -294,6 +295,12 @@ FitCalendarView.ScaleAnimationListener{
         }
         adapter = AdapterInPlanFragment(actionList, actionDetailMap,context)
         planRecyclerView!!.adapter = adapter
+    }
+
+    fun updateTodayDetail(){
+        if (currentSelectDay == GetMonthInfo.getTodayString()){
+            dayDataInit(currentSelectDay,view!!.context)
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.zhangjie.fitnessflow.plan
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Xml
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,10 @@ class AdapterInPlanFragment(private val actionList:ArrayList<Action>,
             val targetString = getTargetString(actionDetailMap[actionList[p1]]!!)
             p0.actionDetailInfo.text = context.resources.getString(R.string.target_string) + "$targetString ${actionList[p1].unit}"
         }
+        val parser = context.resources.getXml(R.xml.action_detail_in_plan_fragment_view)
+        val attributesForDateInfo = Xml.asAttributeSet(parser)
+        val dataShowView = ActionDetailInPlanFragmentView(context,attributesForDateInfo,actionList[p1],actionDetailMap[actionList[p1]]!!)
+        p0.dataSpace.addView(dataShowView)
     }
 
     //onBindViewHolder只有在getItemViewType返回值不同时才调用，当有多种布局的Item时不重写会导致复用先前的条目，数据容易错乱

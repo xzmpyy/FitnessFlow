@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class RecyclerViewForPlanDataShow(context: Context,set:AttributeSet) :RecyclerView(context,set){
 
+
     override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
         return true
     }
