@@ -11,3 +11,16 @@ data class ActionDetailInTemplate(val actionID:Int,val actionType:Int,val action
 
 data class ActionDetailInPlan(val actionID:Int,val actionType:Int,val actionName:String,val isHadWeightUnits:Int,val unit:String,
                                   var weight:Float,var num:Int,var done:Int,var planOrder:Int,val ID:Int)
+
+object TodayPlanNum{
+    private var flag = false
+
+    fun setFlag(flag:Boolean){
+        this.flag = flag
+    }
+
+    fun checkFlag():Boolean{
+        return true
+    }
+
+}

@@ -21,6 +21,7 @@ import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGr
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
 import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
 import com.example.zhangjie.fitnessflow.plan.PlanFragment
+import com.example.zhangjie.fitnessflow.today.TodayFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
@@ -86,16 +87,27 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                     }
                 }
             }
+            0->{
+                (indexFragmentInViewPagerList[0] as TodayFragment).onOperatorClick()
+            }
+            4->{
+                (indexFragmentInViewPagerList[0] as TodayFragment).onOperatorClick()
+            }
         }
     }
 
     override fun onNavigatorClick(position: Int) {
-        if (position == 2){
-            (indexFragmentInViewPagerList[2] as LibraryFragment).updateActionAddTimes()
-        }
-        if (position == 1){
-            (indexFragmentInViewPagerList[1] as PlanFragment).updateTodayDetail()
-            (indexFragmentInViewPagerList[1] as PlanFragment).updateDefaultSelectedList()
+        when(position){
+            2->{
+                (indexFragmentInViewPagerList[2] as LibraryFragment).updateActionAddTimes()
+            }
+            1->{
+                (indexFragmentInViewPagerList[1] as PlanFragment).updateTodayDetail()
+                (indexFragmentInViewPagerList[1] as PlanFragment).updateDefaultSelectedList()
+            }
+            0->{
+                navigatorBar!!.resetOperationButtonInTodayPageClickFlag()
+            }
         }
         indexViewPager!!.setCurrentItem(position,false)
     }

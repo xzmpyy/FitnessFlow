@@ -7,6 +7,7 @@
     android:layout_marginBottom="@dimen/viewMargin"
     android:elevation="@dimen/viewElevation"
     android:background="@color/colorPrimary"
+    android:id="@+id/parent_layout"
     >
     <TextView
         android:layout_width="match_parent"
@@ -18,5 +19,10 @@
         android:textAlignment="textStart"
         android:ellipsize="middle"
         android:textColor="@color/primaryTextColor"
+        android:layout_marginBottom="@dimen/viewMargin"
         />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/action_detail"/>
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.TodayPlanNum
 import com.example.zhangjie.fitnessflow.utils_class.OverturnAnimation
 import com.example.zhangjie.fitnessflow.utils_class.ScreenInfoClass
 
@@ -61,8 +62,10 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
                         if (operationButtonClickListener != null){
                             operationButtonClickListener!!.onOperationButtonClick(operationButtonInTodayPageClickFlag)
                         }
-                        operationButtonInTodayPageClickFlag = 4
-                        operationButton!!.startAnimation(anim)
+                        if (TodayPlanNum.checkFlag()){
+                            operationButtonInTodayPageClickFlag = 4
+                            operationButton!!.startAnimation(anim)
+                        }
                     }
                     4->{
                         if (operationButtonClickListener != null){
@@ -118,12 +121,12 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     }
 
 
-//    fun setCurrentSelected(position:Int){
-//        navigatorList!![selectedPosition].setTextColor(ContextCompat.getColor(context, R.color.unSelectedTextColor))
-//        navigatorList!![position].setTextColor(ContextCompat.getColor(context, R.color.primaryTextColor))
-//        selectedPosition = position
-//        operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[position]))
-//    }
+    fun resetOperationButtonInTodayPageClickFlag(){
+        if (operationButtonInTodayPageClickFlag == 4 && !TodayPlanNum.checkFlag()){
+            operationButtonInTodayPageClickFlag = 4
+            operationButton!!.startAnimation(anim)
+        }
+    }
 
     interface OperationButtonClickListener{
         //type值从0到3位4个页面，为4时代表点击的是pause
