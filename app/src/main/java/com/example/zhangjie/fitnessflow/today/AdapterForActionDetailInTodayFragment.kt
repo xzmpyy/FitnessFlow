@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
@@ -82,6 +83,7 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         p0.parentLayout.addView(barView)
         barViewList.add(barView)
         foldViewList.add(p0.toBeFold)
+        p0.toBeFold.visibility = LinearLayout.GONE
         if (detailList[p1].done == detailList[p1].num){
             p0.allDoneButton.setImageDrawable(allDoneGreen)
             allDoneButtonFlagList.add(1)
@@ -237,7 +239,6 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         return position
     }
 
-
     fun fold(){
         val foldAnimator = ValueAnimator.ofInt(barViewList[0].getBarHeight(),0)
         foldAnimator.addUpdateListener {
@@ -250,6 +251,9 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         }
         foldAnimator.duration = 200
         foldAnimator.start()
+        for (foldView in foldViewList){
+            foldView.visibility = LinearLayout.GONE
+        }
     }
 
     fun unfold(){
@@ -263,6 +267,9 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
             }
         }
         unfoldAnimator.duration = 200
+        for (foldView in foldViewList){
+            foldView.visibility = LinearLayout.VISIBLE
+        }
         unfoldAnimator.start()
     }
 
