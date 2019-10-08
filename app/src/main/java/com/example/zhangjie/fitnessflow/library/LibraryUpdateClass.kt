@@ -7,6 +7,7 @@ object LibraryUpdateClass {
     //键为动作类型，值为动作ID
     private val toBeUpdateMap = mutableMapOf<Int,ArrayList<Int>>()
     private val newTemplateList = arrayListOf<Template>()
+    private var todayDataUpdateFlag = false
 
     fun putData(type:Int, actionID:Int){
         if (toBeUpdateMap.keys.contains(type)){
@@ -40,6 +41,14 @@ object LibraryUpdateClass {
 
     fun clearTemplateList(){
         newTemplateList.clear()
+    }
+
+    fun setTodayDataUpdateFlag(flag:Boolean){
+        todayDataUpdateFlag = flag
+    }
+
+    fun checkTodayDataUpdateFlag():Boolean{
+        return todayDataUpdateFlag
     }
 
 }

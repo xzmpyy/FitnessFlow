@@ -7,10 +7,7 @@ import android.util.Xml
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
@@ -28,8 +25,13 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
     private val slash = context.resources.getString(R.string.slash)
     private val allDoneGreen = ContextCompat.getDrawable(context,R.drawable.all_done_green)!!
     private val allDoneGray = ContextCompat.getDrawable(context,R.drawable.all_done_gray)!!
+    private val selectNumBackground = ContextCompat.getDrawable(context,R.drawable.round_rect_background)!!
+    private val unSelectNumBackground = ContextCompat.getDrawable(context,R.drawable.round_rect_background_gray)!!
+    private val numPickButtonMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
+    private val allNumButtonList = arrayListOf<ArrayList<Button>>()
+    private val buttonWidth = context.resources.getDimension(R.dimen.minButtonWidth).toInt()
     //默认零未选中
-    private var allDoneButtonFlag = 0
+    private var allDoneButtonFlagList = arrayListOf<Int>()
 
     init {
         getMaxNum()
@@ -41,6 +43,8 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         val weightText = view.findViewById<TextView>(R.id.weight)!!
         val executionText = view.findViewById<TextView>(R.id.num)!!
         val allDoneButton = view.findViewById<ImageButton>(R.id.all_done)!!
+        val numSelectLayout = view.findViewById<LinearLayout>(R.id.select)!!
+        val horBar = view.findViewById<HorizontalScrollView>(R.id.hor)!!
     }
 
     //复写控件类的生成方法
@@ -62,6 +66,7 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         return detailList.size
     }
 
+
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(p0:RvHolder, p1:Int){
         if (action.IsHadWeightUnits == 1){
@@ -77,8 +82,115 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         p0.parentLayout.addView(barView)
         barViewList.add(barView)
         foldViewList.add(p0.toBeFold)
+        if (detailList[p1].done == detailList[p1].num){
+            p0.allDoneButton.setImageDrawable(allDoneGreen)
+            allDoneButtonFlagList.add(1)
+        }else{
+            allDoneButtonFlagList.add(0)
+        }
+        val numButtonList = arrayListOf<Button>()
+        if (detailList[p1].num<=25){
+            //数值选择器
+            for (pickNum in detailList[p1].num downTo 0){
+                val numPickButton = View.inflate(context,R.layout.num_pick_button_in_today_fragment,null) as Button
+                numPickButton.text = pickNum.toString()
+                p0.numSelectLayout.addView(numPickButton)
+                p0.numSelectLayout.tag = detailList[p1].done
+                numButtonList.add(numPickButton)
+                numPickButton.layoutParams.width = buttonWidth
+                if (pickNum!=0){
+                    val numLayoutParams = LinearLayout.LayoutParams(numPickButton.layoutParams)
+                    numLayoutParams.marginEnd = numPickButtonMargin
+                    numPickButton.layoutParams = numLayoutParams
+                }
+                if (pickNum == p0.numSelectLayout.tag){
+                    numPickButton.background = selectNumBackground
+                }
+                numPickButton.setOnClickListener {
+                    if (p0.numSelectLayout.tag!=pickNum){
+                        allNumButtonList[p1][detailList[p1].num - p0.numSelectLayout.tag!!.toString().toInt()].background = unSelectNumBackground
+                        numPickButton.background = selectNumBackground
+                        p0.numSelectLayout.tag = pickNum
+                        barViewList[p1].doneNumChanged(pickNum)
+                        if (action.IsHadWeightUnits == 1){
+                            detailList[p1].done = pickNum
+                            p0.executionText.text = "${detailList[p1].done}$slash${detailList[p1].num}"
+                        }else{
+                            detailList[p1].done = pickNum
+                            p0.weightText.text = "${detailList[p1].done}${action.unit}"
+                        }
+                        if (pickNum == detailList[p1].num){
+                            barViewList[p1].allDoneButtonClick()
+                            p0.allDoneButton.setImageDrawable(allDoneGreen)
+                            allDoneButtonFlagList[p1] = 1
+                        }
+                        if (pickNum == 0){
+                            barViewList[p1].allDoneButtonClickForClear()
+                            p0.allDoneButton.setImageDrawable(allDoneGray)
+                            allDoneButtonFlagList[p1] = 0
+                        }
+                        if (pickNum>0 && pickNum<detailList[p1].num && allDoneButtonFlagList[p1] == 1){
+                            p0.allDoneButton.setImageDrawable(allDoneGray)
+                            allDoneButtonFlagList[p1] = 0
+                        }
+                    }
+                }
+            }
+            allNumButtonList.add(numButtonList)
+        }else{
+            for (pickNum in 10 downTo 0){
+                val numPickButton = View.inflate(context,R.layout.num_pick_button_in_today_fragment,null) as Button
+                if (pickNum == 0){
+                    numPickButton.text = "$pickNum%"
+                }else{
+                    numPickButton.text = "${pickNum}0%"
+                }
+                p0.numSelectLayout.addView(numPickButton)
+                p0.numSelectLayout.tag =  ((detailList[p1].done.toFloat()/detailList[p1].num.toFloat())*10f).toInt()*10
+                numButtonList.add(numPickButton)
+                numPickButton.layoutParams.width = buttonWidth
+                if (pickNum!=0){
+                    val numLayoutParams = LinearLayout.LayoutParams(numPickButton.layoutParams)
+                    numLayoutParams.marginEnd = numPickButtonMargin
+                    numPickButton.layoutParams = numLayoutParams
+                }
+                if (pickNum == p0.numSelectLayout.tag){
+                    numPickButton.background = selectNumBackground
+                }
+                numPickButton.setOnClickListener {
+                    if (p0.numSelectLayout.tag!=pickNum){
+                        allNumButtonList[p1][10 - p0.numSelectLayout.tag!!.toString().toInt()].background = unSelectNumBackground
+                        numPickButton.background = selectNumBackground
+                        p0.numSelectLayout.tag = pickNum
+                        barViewList[p1].doneNumChanged((pickNum.toFloat()/10f*detailList[p1].num.toFloat()).toInt())
+                        if (action.IsHadWeightUnits == 1){
+                            detailList[p1].done = (pickNum.toFloat()/10f*detailList[p1].num.toFloat()).toInt()
+                            p0.executionText.text = "${detailList[p1].done}$slash${detailList[p1].num}"
+                        }else{
+                            detailList[p1].done = (pickNum.toFloat()/10f*detailList[p1].num.toFloat()).toInt()
+                            p0.weightText.text = "${detailList[p1].done}${action.unit}"
+                        }
+                        if (pickNum==10){
+                            barViewList[p1].allDoneButtonClick()
+                            p0.allDoneButton.setImageDrawable(allDoneGreen)
+                            allDoneButtonFlagList[p1] = 1
+                        }
+                        if (pickNum == 0){
+                            barViewList[p1].allDoneButtonClickForClear()
+                            p0.allDoneButton.setImageDrawable(allDoneGray)
+                            allDoneButtonFlagList[p1] = 0
+                        }
+                        if (pickNum in 1..9 && allDoneButtonFlagList[p1] == 1){
+                            p0.allDoneButton.setImageDrawable(allDoneGray)
+                            allDoneButtonFlagList[p1] = 0
+                        }
+                    }
+                }
+            }
+            allNumButtonList.add(numButtonList)
+        }
         p0.allDoneButton.setOnClickListener {
-            if (allDoneButtonFlag == 0){
+            if (allDoneButtonFlagList[p1] == 0){
                 barViewList[p1].allDoneButtonClick()
                 p0.allDoneButton.setImageDrawable(allDoneGreen)
                 if (action.IsHadWeightUnits == 1){
@@ -88,10 +200,35 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
                     detailList[p1].done = detailList[p1].num
                     p0.weightText.text = "${detailList[p1].done}${action.unit}"
                 }
-                allDoneButtonFlag = 1
+                if (detailList[p1].num<=25){
+                    allNumButtonList[p1][detailList[p1].num - p0.numSelectLayout.tag!!.toString().toInt()].background = unSelectNumBackground
+                    p0.numSelectLayout.tag = detailList[p1].num
+                }else{
+                    allNumButtonList[p1][10- p0.numSelectLayout.tag!!.toString().toInt()].background = unSelectNumBackground
+                    p0.numSelectLayout.tag = 10
+                }
+                allNumButtonList[p1][0].background = selectNumBackground
+                p0.horBar.smoothScrollTo(0,allNumButtonList[p1][0].pivotY.toInt())
+                allDoneButtonFlagList[p1] = 1
             }else{
+                barViewList[p1].allDoneButtonClickForClear()
                 p0.allDoneButton.setImageDrawable(allDoneGray)
-                allDoneButtonFlag = 0
+                if (action.IsHadWeightUnits == 1){
+                    detailList[p1].done = 0
+                    p0.executionText.text = "0$slash${detailList[p1].num}"
+                }else{
+                    detailList[p1].done = 0
+                    p0.weightText.text = "0${action.unit}"
+                }
+                if (detailList[p1].num<=25){
+                    allNumButtonList[p1][detailList[p1].num - p0.numSelectLayout.tag!!.toString().toInt()].background = unSelectNumBackground
+                }else{
+                    allNumButtonList[p1][10- p0.numSelectLayout.tag!!.toString().toInt()].background = unSelectNumBackground
+                }
+                allNumButtonList[p1][allNumButtonList[p1].size-1].background = selectNumBackground
+                p0.horBar.smoothScrollTo(allNumButtonList[p1][0].scrollX,allNumButtonList[p1][0].scrollY)
+                p0.numSelectLayout.tag = 0
+                allDoneButtonFlagList[p1] = 0
             }
         }
     }

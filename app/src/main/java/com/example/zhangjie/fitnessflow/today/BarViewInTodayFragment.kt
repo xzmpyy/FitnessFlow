@@ -55,7 +55,7 @@ class BarViewInTodayFragment (context: Context, set: AttributeSet): View(context
     }
 
     fun getBarHeight():Int{
-        return this.height
+        return this.height + paddingInView.toInt()
     }
 
     fun allDoneButtonClick(){
@@ -67,6 +67,30 @@ class BarViewInTodayFragment (context: Context, set: AttributeSet): View(context
             invalidate()
         }
         doneNumAnimation.duration = 200
+        doneNumAnimation.start()
+    }
+
+    fun allDoneButtonClickForClear(){
+        val initDone = actionDetail!!.done
+        val doneNumAnimation = ValueAnimator.ofInt(initDone,0)
+        doneNumAnimation.addUpdateListener {
+            val value = it.animatedValue as Int
+            actionDetail!!.done = value
+            invalidate()
+        }
+        doneNumAnimation.duration = 200
+        doneNumAnimation.start()
+    }
+
+    fun doneNumChanged(done:Int){
+        val initDone = actionDetail!!.done
+        val doneNumAnimation = ValueAnimator.ofInt(initDone,done)
+        doneNumAnimation.addUpdateListener {
+            val value = it.animatedValue as Int
+            actionDetail!!.done = value
+            invalidate()
+        }
+        doneNumAnimation.duration = 100
         doneNumAnimation.start()
     }
 

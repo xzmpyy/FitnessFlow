@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
+import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.library.TemplateDetailActivity
 import com.example.zhangjie.fitnessflow.utils_class.*
 import java.lang.Exception
@@ -303,6 +304,9 @@ class TemplateFragmentAdapter (private val templateList:ArrayList<Template>, pri
             templateDetailCursor.close()
             if (!templateCopyFlag){
                 templateCopyFlag = true
+            }
+            if (!LibraryUpdateClass.checkTodayDataUpdateFlag()){
+                LibraryUpdateClass.setTodayDataUpdateFlag(true)
             }
             sendTool.setTransactionSuccessful()
         }catch(e:Exception){

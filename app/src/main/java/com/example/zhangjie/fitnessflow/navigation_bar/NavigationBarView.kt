@@ -56,7 +56,7 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
             }
         }
         operationButton!!.setOnClickListener {
-            if (selectedPosition == 0){
+            if (selectedPosition == 0 && TodayPlanNum.checkFlag()){
                 when(operationButtonInTodayPageClickFlag){
                     0->{
                         if (operationButtonClickListener != null){
@@ -87,7 +87,7 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
     }
 
     private fun setOperationButtonBackground(){
-        if (selectedPosition == 0){
+        if (selectedPosition == 0 && TodayPlanNum.checkFlag()){
             when (operationButtonInTodayPageClickFlag){
                 0 ->{
                     operationButton!!.setImageDrawable(ContextCompat.getDrawable(context,operationDrawableListId[selectedPosition]))
@@ -122,7 +122,7 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
 
 
     fun resetOperationButtonInTodayPageClickFlag(){
-        if (operationButtonInTodayPageClickFlag == 4 && !TodayPlanNum.checkFlag()){
+        if (operationButtonInTodayPageClickFlag == 4){
             operationButtonInTodayPageClickFlag = 4
             operationButton!!.startAnimation(anim)
         }
@@ -135,6 +135,13 @@ class NavigationBarView (context:Context,set: AttributeSet):LinearLayout(context
 
     fun setOperationButtonClickListener(operationButtonClickListener:OperationButtonClickListener){
         this.operationButtonClickListener = operationButtonClickListener
+    }
+
+    fun todayDataRefresh(){
+        if (operationButtonInTodayPageClickFlag == 4){
+            operationButtonInTodayPageClickFlag = 0
+            operationButton!!.startAnimation(anim)
+        }
     }
 
 }

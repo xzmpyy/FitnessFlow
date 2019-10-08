@@ -20,7 +20,7 @@ object TodayPlanNum{
     }
 
     fun checkFlag():Boolean{
-        return true
+        return flag
     }
 
 }

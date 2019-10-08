@@ -17,6 +17,7 @@ import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
+import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupItemAddFormView
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
 import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
@@ -27,7 +28,7 @@ import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
 class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClickListener,
     NavigationBarView.NavigatorClickListener,MyDialogFragment.ConfirmButtonClickListener,
-    MuscleGroupItemAddFormView.SubmitListener{
+    MuscleGroupItemAddFormView.SubmitListener,TodayFragment.OnDataRefresh{
 
     private var indexViewPager: ViewPagerScrollerFalse? = null
     private var indexFragmentInViewPagerList = FragmentInit.getIndexFragmentInViewPagerList()
@@ -48,6 +49,7 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
         indexViewPagerAdapter = IndexViewPagerAdapter(supportFragmentManager, indexFragmentInViewPagerList)
         indexViewPager!!.adapter = indexViewPagerAdapter
         indexViewPager!!.currentItem = 1
+        (indexFragmentInViewPagerList[0] as TodayFragment).setOnDataRefresh(this)
     }
 
     //OperatorButton点击事件
@@ -106,7 +108,11 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                 (indexFragmentInViewPagerList[1] as PlanFragment).updateDefaultSelectedList()
             }
             0->{
-                navigatorBar!!.resetOperationButtonInTodayPageClickFlag()
+                if (LibraryUpdateClass.checkTodayDataUpdateFlag()){
+                    (indexFragmentInViewPagerList[0] as TodayFragment).dataRefresh()
+                }else{
+                    navigatorBar!!.resetOperationButtonInTodayPageClickFlag()
+                }
             }
         }
         indexViewPager!!.setCurrentItem(position,false)
@@ -144,6 +150,11 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
     //收藏添加动作
     override fun onSubmit(actionType:Int,action: Action) {
         (indexFragmentInViewPagerList[2] as LibraryFragment).actionAdd(actionType,action)
+    }
+
+    //TodayFragment的数据更新监听
+    override fun onDataRefresh() {
+        navigatorBar!!.todayDataRefresh()
     }
 
 }

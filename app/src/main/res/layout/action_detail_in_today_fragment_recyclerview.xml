@@ -19,18 +19,21 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:background="@null"
+            android:background="@color/colorPrimary"
             android:src="@drawable/all_done_gray"
             android:id="@+id/all_done"
             tools:ignore="ContentDescription" />
         <HorizontalScrollView
             android:layout_width="0dp"
             android:layout_weight="5"
+            android:scrollbars="none"
+            android:id="@+id/hor"
             android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:id="@+id/select"/>
         </HorizontalScrollView>
     </LinearLayout>

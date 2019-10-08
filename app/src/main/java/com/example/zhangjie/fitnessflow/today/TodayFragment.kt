@@ -18,6 +18,7 @@ import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
 import com.example.zhangjie.fitnessflow.data_class.TodayPlanNum
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
+import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
@@ -38,6 +39,7 @@ class TodayFragment : Fragment(){
     private var adapter:AdapterForTodayFragment? = null
     private var foldFlag = true
     private var processDialogFragment: ProcessDialogFragment? = null
+    private var onDataRefresh:OnDataRefresh?=null
 
     //视图加载
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
@@ -70,7 +72,7 @@ class TodayFragment : Fragment(){
         super.onResume()
     }
 
-    private fun dataRefresh(){
+    fun dataRefresh(){
         //加载数据
         actionIdList.clear()
         actionList.clear()
@@ -108,6 +110,9 @@ class TodayFragment : Fragment(){
                 }
             }
             planDetailCursor.close()
+            if (LibraryUpdateClass.checkTodayDataUpdateFlag()){
+                LibraryUpdateClass.setTodayDataUpdateFlag(false)
+            }
             planCheckTool.setTransactionSuccessful()
         }catch(e: Exception){
             println("$toDayString Data Check Failed(In TodayFragment):$e")
@@ -138,6 +143,10 @@ class TodayFragment : Fragment(){
             noPlanPrompt!!.visibility = LinearLayout.GONE
             actionDetailRecyclerView!!.visibility = LinearLayout.VISIBLE
         }
+        if (onDataRefresh!=null){
+            onDataRefresh!!.onDataRefresh()
+        }
+        foldFlag = true
     }
 
     private fun getKeyInPlanDetailMap(id:Int):Action?{
@@ -197,7 +206,7 @@ class TodayFragment : Fragment(){
     }
 
     @SuppressLint("StaticFieldLeak")
-    inner class DataSaving(): AsyncTask<Void, Int, Boolean>() {
+    inner class DataSaving: AsyncTask<Void, Int, Boolean>() {
 
         override fun doInBackground(vararg params: Void?): Boolean {
             updateData()
@@ -207,6 +216,14 @@ class TodayFragment : Fragment(){
         override fun onPostExecute(result: Boolean?) {
             processDialogFragment!!.dismiss()
         }
+    }
+
+    interface OnDataRefresh{
+        fun onDataRefresh()
+    }
+
+    fun setOnDataRefresh(onDataRefresh:OnDataRefresh){
+        this.onDataRefresh = onDataRefresh
     }
 
 }
