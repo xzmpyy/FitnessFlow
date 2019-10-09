@@ -25,6 +25,7 @@
         <activity
             android:name=".splash.IndexActivity"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".plan.PastPlanDetailActivity" />
     </application>
 
 </manifest>

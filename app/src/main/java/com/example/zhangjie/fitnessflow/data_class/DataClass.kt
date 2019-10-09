@@ -24,3 +24,28 @@ object TodayPlanNum{
     }
 
 }
+
+object FoldState{
+    private var foldFlag = true
+
+    fun setFlag(flag:Boolean){
+        foldFlag = flag
+    }
+
+    fun checkFlag():Boolean{
+        return foldFlag
+    }
+
+}
+
+object IsScreenRestart{
+    private var restartFlag = false
+
+    fun setFlag(flag:Boolean){
+        restartFlag = flag
+    }
+
+    fun checkFlag():Boolean{
+        return restartFlag
+    }
+}

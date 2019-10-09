@@ -14,9 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
-import com.example.zhangjie.fitnessflow.data_class.Action
-import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
-import com.example.zhangjie.fitnessflow.data_class.TodayPlanNum
+import com.example.zhangjie.fitnessflow.data_class.*
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
@@ -68,7 +66,11 @@ class TodayFragment : Fragment(){
     }
 
     override fun onResume() {
-        dataRefresh()
+        if (IsScreenRestart.checkFlag()){
+            IsScreenRestart.setFlag(false)
+        }else{
+            dataRefresh()
+        }
         super.onResume()
     }
 
@@ -147,6 +149,9 @@ class TodayFragment : Fragment(){
             onDataRefresh!!.onDataRefresh()
         }
         foldFlag = true
+        if (!FoldState.checkFlag()){
+            FoldState.setFlag(foldFlag)
+        }
     }
 
     private fun getKeyInPlanDetailMap(id:Int):Action?{

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/activity_parent_layout"
+    tools:context=".library.TemplateDetailActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            style="@style/muscleGroupNavigator"
+            android:layout_width="wrap_content"
+            android:id="@+id/back"
+            android:textColor="@color/primaryRed"
+            android:text="@string/back"
+            tools:ignore="RelativeOverlap" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/navigatorTextSize"
+            android:maxWidth="250dp"
+            android:id="@+id/date_info"
+            android:layout_centerInParent="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/primaryTextColor"
+            android:layout_marginStart="@dimen/viewMargin"
+            android:text="@string/app_name"
+            tools:ignore="RelativeOverlap" />
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:src="@drawable/send_button"
+            android:background="@null"
+            android:textColor="@color/primaryGreen"
+            android:id="@+id/day_send"
+            tools:ignore="ContentDescription" />
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_toStartOf="@+id/day_send"
+            android:layout_centerInParent="true"
+            android:src="@drawable/new_template_button"
+            android:background="@null"
+            android:textColor="@color/primaryGreen"
+            android:id="@+id/new_template"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/action_detail"
+        />
+</LinearLayout>

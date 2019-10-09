@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
+import com.example.zhangjie.fitnessflow.utils_class.ScreenInfoClass
 
 class BarViewInTodayFragment (context: Context, set: AttributeSet): View(context, set){
 
@@ -48,14 +49,15 @@ class BarViewInTodayFragment (context: Context, set: AttributeSet): View(context
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         //获取宽高-测量规则的模式和大小
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        barHeight = widthSize/10
+//        barHeight = widthSize/10
+        barHeight = context!!.resources.getDimension(R.dimen.iconSize).toInt()
         if (layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
             setMeasuredDimension(widthSize, barHeight!!)
         }
     }
 
     fun getBarHeight():Int{
-        return this.height + paddingInView.toInt()
+        return context!!.resources.getDimension(R.dimen.iconSize).toInt() + paddingInView.toInt()
     }
 
     fun allDoneButtonClick(){

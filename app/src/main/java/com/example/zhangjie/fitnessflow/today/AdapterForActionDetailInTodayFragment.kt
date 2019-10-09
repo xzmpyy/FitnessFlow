@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
+import com.example.zhangjie.fitnessflow.data_class.FoldState
 
 class AdapterForActionDetailInTodayFragment (private val action:Action,
                                              private val detailList:ArrayList<ActionDetailInPlan>,
@@ -23,6 +23,7 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
     private var maxNum = 0
     private val barViewList = arrayListOf<BarViewInTodayFragment>()
     private val foldViewList = arrayListOf<LinearLayout>()
+    private val marginViewList = arrayListOf<LinearLayout>()
     private val slash = context.resources.getString(R.string.slash)
     private val allDoneGreen = ContextCompat.getDrawable(context,R.drawable.all_done_green)!!
     private val allDoneGray = ContextCompat.getDrawable(context,R.drawable.all_done_gray)!!
@@ -31,6 +32,7 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
     private val numPickButtonMargin = context.resources.getDimension(R.dimen.viewMargin).toInt()
     private val allNumButtonList = arrayListOf<ArrayList<Button>>()
     private val buttonWidth = context.resources.getDimension(R.dimen.minButtonWidth).toInt()
+    private var barHeight:Int? = null
     //默认零未选中
     private var allDoneButtonFlagList = arrayListOf<Int>()
 
@@ -46,6 +48,7 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         val allDoneButton = view.findViewById<ImageButton>(R.id.all_done)!!
         val numSelectLayout = view.findViewById<LinearLayout>(R.id.select)!!
         val horBar = view.findViewById<HorizontalScrollView>(R.id.hor)!!
+        val marginLayout = view.findViewById<LinearLayout>(R.id.margin_layout)!!
     }
 
     //复写控件类的生成方法
@@ -83,7 +86,16 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         p0.parentLayout.addView(barView)
         barViewList.add(barView)
         foldViewList.add(p0.toBeFold)
-        p0.toBeFold.visibility = LinearLayout.GONE
+        if (barHeight == null){
+            barHeight = barViewList[0].getBarHeight()
+        }
+        if (FoldState.checkFlag()){
+            p0.marginLayout.layoutParams.height = 0
+            p0.toBeFold.visibility = LinearLayout.GONE
+        }else{
+            p0.marginLayout.layoutParams.height = barHeight!!
+        }
+        marginViewList.add(p0.marginLayout)
         if (detailList[p1].done == detailList[p1].num){
             p0.allDoneButton.setImageDrawable(allDoneGreen)
             allDoneButtonFlagList.add(1)
@@ -240,13 +252,16 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
     }
 
     fun fold(){
-        val foldAnimator = ValueAnimator.ofInt(barViewList[0].getBarHeight(),0)
+        val foldAnimator = ValueAnimator.ofInt(barHeight!!,0)
         foldAnimator.addUpdateListener {
             val marginValue = it.animatedValue as Int
-            for (foldView in foldViewList){
-                val layoutParams = FrameLayout.LayoutParams(foldView.layoutParams)
-                layoutParams.topMargin = marginValue
-                foldView.layoutParams = layoutParams
+//            for (foldView in foldViewList){
+//                val layoutParams = FrameLayout.LayoutParams(foldView.layoutParams)
+//                layoutParams.topMargin = marginValue
+//                foldView.layoutParams = layoutParams
+//            }
+            for (marginLayout in marginViewList){
+                marginLayout.layoutParams.height = marginValue
             }
         }
         foldAnimator.duration = 200
@@ -254,16 +269,22 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
         for (foldView in foldViewList){
             foldView.visibility = LinearLayout.GONE
         }
+        FoldState.setFlag(true)
     }
 
     fun unfold(){
-        val unfoldAnimator = ValueAnimator.ofInt(0,barViewList[0].getBarHeight())
+        val unfoldAnimator = ValueAnimator.ofInt(0,barHeight!!)
         unfoldAnimator.addUpdateListener {
             val marginValue = it.animatedValue as Int
-            for (foldView in foldViewList){
-                val layoutParams = FrameLayout.LayoutParams(foldView.layoutParams)
-                layoutParams.topMargin = marginValue
-                foldView.layoutParams = layoutParams
+//            for (foldView in foldViewList){
+//                val layoutParams = FrameLayout.LayoutParams(foldView.layoutParams)
+//                layoutParams.topMargin = marginValue
+//                foldView.layoutParams = layoutParams
+//            }
+            for (marginLayout in marginViewList){
+                val layoutParams = LinearLayout.LayoutParams(marginLayout.layoutParams)
+                layoutParams.height = marginValue
+                marginLayout.layoutParams = layoutParams
             }
         }
         unfoldAnimator.duration = 200
@@ -271,6 +292,7 @@ class AdapterForActionDetailInTodayFragment (private val action:Action,
             foldView.visibility = LinearLayout.VISIBLE
         }
         unfoldAnimator.start()
+        FoldState.setFlag(false)
     }
 
     private fun getMaxNum(){

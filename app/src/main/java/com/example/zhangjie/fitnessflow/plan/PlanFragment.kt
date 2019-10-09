@@ -186,6 +186,10 @@ FitCalendarView.ScaleAnimationListener{
         return defaultSelectedList
     }
 
+    fun checkDatePlanNum(date:String):Boolean{
+        return fitCalendar!!.checkDatePlanNum(date)
+    }
+
     //日期点击事件监听
     override fun onItemClickListener(date: String) {
         dayDataInit(date,view!!.context)

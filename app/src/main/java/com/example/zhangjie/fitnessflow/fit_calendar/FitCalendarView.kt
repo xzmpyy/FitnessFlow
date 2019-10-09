@@ -950,4 +950,18 @@ class FitCalendarView (context: Context?, attrs: AttributeSet?):
         GetMonthInfo.setDefaultSelectedListChangedFlag(false)
     }
 
+    fun checkDatePlanNum(date:String):Boolean{
+        if (defaultSelectedListGenerator!=null){
+            when(viewPager!!.currentItem){
+                1->{
+                    return middleLeftDefaultSelectedList!!.contains(date)
+                }
+                2->{
+                    return middleRightDefaultSelectedList!!.contains(date)
+                }
+            }
+        }
+        return false
+    }
+
 }

@@ -14,12 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.data_class.IsScreenRestart
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
 import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupItemAddFormView
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
+import com.example.zhangjie.fitnessflow.plan.PastPlanDetailActivity
 import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
 import com.example.zhangjie.fitnessflow.plan.PlanFragment
 import com.example.zhangjie.fitnessflow.today.TodayFragment
@@ -80,7 +82,13 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                 val date=SelectedItemClass.getSelectedList()[0]
                 when (GetMonthInfo.compareDate(date,GetMonthInfo.getTodayString())){
                     0->{
-
+                        if ((indexFragmentInViewPagerList[1] as PlanFragment).checkDatePlanNum(date)){
+                            val intentToPlanDetailActivity = Intent(this@IndexActivity,PastPlanDetailActivity::class.java)
+                            intentToPlanDetailActivity.putExtra("Date",date)
+                            startActivity(intentToPlanDetailActivity)
+                        }else{
+                            MyToast(this,resources.getString(R.string.date_has_no_plan)).showToast()
+                        }
                     }
                     else->{
                         val intentToPlanDetailActivity = Intent(this@IndexActivity,PlanDetailActivity::class.java)
@@ -120,6 +128,7 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
 
     //息屏后点亮状态恢复
     override fun onRestart() {
+        IsScreenRestart.setFlag(true)
         (indexFragmentInViewPagerList[1] as PlanFragment).fitCalendarReStart()
         super.onRestart()
     }

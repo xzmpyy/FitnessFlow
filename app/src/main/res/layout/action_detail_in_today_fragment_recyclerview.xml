@@ -9,33 +9,44 @@
     >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:id="@+id/fold"
-        android:weightSum="6"
-        tools:ignore="UselessParent">
-        <ImageButton
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:src="@drawable/all_done_gray"
-            android:id="@+id/all_done"
-            tools:ignore="ContentDescription" />
-        <HorizontalScrollView
-            android:layout_width="0dp"
-            android:layout_weight="5"
-            android:scrollbars="none"
-            android:id="@+id/hor"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:layout_width="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/margin_layout"
+            tools:ignore="Suspicious0dp,UselessLeaf"
+            android:orientation="horizontal" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/iconSize"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="6"
+            tools:ignore="UselessParent">
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:id="@+id/select"/>
-        </HorizontalScrollView>
+                android:background="@color/colorPrimary"
+                android:src="@drawable/all_done_gray"
+                android:id="@+id/all_done"
+                tools:ignore="ContentDescription" />
+            <HorizontalScrollView
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:scrollbars="none"
+                android:id="@+id/hor"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:id="@+id/select"/>
+            </HorizontalScrollView>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
