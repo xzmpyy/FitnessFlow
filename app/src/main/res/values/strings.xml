@@ -69,4 +69,19 @@
     <string name="can_not_unfold">今日无计划，请前往计划页添加</string>
     <string name="slash">/</string>
     <string name="date_has_no_plan">无可用计划</string>
+    <string name="stature">身高</string>
+    <string name="stature_in_form">身高(单位：米)</string>
+    <string name="age">年龄</string>
+    <string name="sex">性别:</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="weight">体重</string>
+    <string name="weight_in_form">体重(单位：公斤)</string>
+    <string name="body_fat">体脂</string>
+    <string name="bmi">BMI</string>
+    <string name="personal_data">个人数据</string>
+    <string name="exercise_frequency_map">近30天训练热图</string>
+    <string name="not_filled">待填写</string>
+    <string name="KG">KG</string>
+    <string name="auto_filled">不填写将自动计算</string>
 </resources>

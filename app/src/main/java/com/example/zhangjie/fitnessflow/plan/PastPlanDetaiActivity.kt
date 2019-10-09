@@ -199,6 +199,7 @@ class PastPlanDetailActivity : AppCompatActivity() ,
         override fun onPostExecute(result: Boolean?) {
             if (templateCopyFlag && planOrderCorrectFlag){
                 processDialogFragment!!.dismiss()
+                LibraryUpdateClass.setTodayDataUpdateFlag(true)
                 MyToast(this@PastPlanDetailActivity,this@PastPlanDetailActivity.resources.getString(R.string.add_successful)).showToast()
             }else{
                 MyToast(this@PastPlanDetailActivity,this@PastPlanDetailActivity.resources.getString(R.string.add_failed)).showToast()

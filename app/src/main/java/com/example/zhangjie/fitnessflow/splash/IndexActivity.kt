@@ -1,8 +1,10 @@
 package com.example.zhangjie.fitnessflow.splash
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.TextUtils
@@ -39,6 +41,7 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
     private var formView: View? = null
     private var formViewType = 0
     private var formDialog:MyDialogFragment? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,9 +131,16 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
 
     //息屏后点亮状态恢复
     override fun onRestart() {
-        IsScreenRestart.setFlag(true)
         (indexFragmentInViewPagerList[1] as PlanFragment).fitCalendarReStart()
         super.onRestart()
+    }
+
+
+    override fun onPause() {
+        val pm = this.getSystemService(Context.POWER_SERVICE) as PowerManager
+        //pm.isInteractive为true表示未熄灭
+        IsScreenRestart.setFlag(!pm.isInteractive)
+        super.onPause()
     }
 
     override fun onConfirmButtonClick() {
@@ -165,5 +175,6 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
     override fun onDataRefresh() {
         navigatorBar!!.todayDataRefresh()
     }
+
 
 }
