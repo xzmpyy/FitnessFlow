@@ -94,12 +94,17 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/viewPaddingHorizontal"
             android:background="@drawable/transparent_round_rect_background"
-            android:id="@+id/trend"
             android:orientation="vertical">
             <TextView
                 style="@style/navigationTextStyle"
                 android:text="@string/trend"
                 android:textColor="@color/primaryTextColor"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/trend"
                 />
             <TextView
                 style="@style/navigationTextStyle"
@@ -110,6 +115,10 @@
                 android:gravity="center"
                 android:textSize="@dimen/smallTextSize"
                 />
+            <com.example.zhangjie.fitnessflow.mine.TrendAnnotationView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -120,13 +129,16 @@
         android:elevation="@dimen/viewElevation"
         android:layout_marginBottom="@dimen/viewMargin"
         android:background="@color/colorPrimary"
-        android:id="@+id/map"
         >
         <TextView
             style="@style/navigationTextStyle"
             android:text="@string/exercise_frequency_map"
             android:textColor="@color/primaryTextColor"
             />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/map"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

@@ -3,6 +3,9 @@
 <!--深色系-->
     <color name="colorPrimary">#1E2026</color>
     <color name="primaryRed">#D24D57</color>
+    <color name="done20">#A16B6E</color>
+    <color name="done40">#718885</color>
+    <color name="done60">#40A69C</color>
     <color name="primaryGreen">#0FC3B3</color>
     <color name="primaryShadowColor">#5F13121B</color>
     <color name="unSelectedTextColor">#4F5359</color>

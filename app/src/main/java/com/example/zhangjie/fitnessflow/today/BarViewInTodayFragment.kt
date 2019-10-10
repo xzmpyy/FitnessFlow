@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
-import com.example.zhangjie.fitnessflow.utils_class.ScreenInfoClass
 
 class BarViewInTodayFragment (context: Context, set: AttributeSet): View(context, set){
 
