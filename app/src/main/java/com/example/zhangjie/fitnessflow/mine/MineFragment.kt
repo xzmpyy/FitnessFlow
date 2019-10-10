@@ -12,11 +12,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
@@ -24,6 +25,7 @@ import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.util.*
 
 class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
 
@@ -40,6 +42,7 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
     private var bmi:Float? = null
     private var age:Int? = null
     private var stature:Float? = null
+    private val recordList = arrayListOf<Int>()
     //0女1男
     private var sex=0
     private var editTextBackground:Drawable? = null
@@ -63,7 +66,13 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
         }
         editTextBackground = ContextCompat.getDrawable(view.context,R.drawable.edit_text_background)
         incompleteEditTextBackground = ContextCompat.getDrawable(view.context,R.drawable.incomplete_edit_text_background)
+        for (i in 1..30){
+            recordList.add(Random().nextInt(100))
+        }
         dataInit()
+        val mapRecyclerView = view.findViewById<RecyclerView>(R.id.map)
+        mapRecyclerView.layoutManager = GridLayoutManager(view.context,10)
+        mapRecyclerView.adapter = AdapterForMap(recordList,view.context)
     }
 
     fun personalDataEdit(){

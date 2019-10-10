@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.zhangjie.fitnessflow.mine.BlockView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content"
+    android:padding="@dimen/viewPaddingHorizontal"
+    android:gravity="center"
+    >
+    <com.example.zhangjie.fitnessflow.mine.BlockView
+        android:background="@color/colorPrimary"
+        android:layout_width="@dimen/iconSize"
+        android:id="@+id/block"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
