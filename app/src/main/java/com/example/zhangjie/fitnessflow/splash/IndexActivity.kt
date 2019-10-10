@@ -22,6 +22,7 @@ import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
 import com.example.zhangjie.fitnessflow.library.LibraryUpdateClass
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupItemAddFormView
+import com.example.zhangjie.fitnessflow.mine.MineFragment
 import com.example.zhangjie.fitnessflow.navigation_bar.NavigationBarView
 import com.example.zhangjie.fitnessflow.plan.PastPlanDetailActivity
 import com.example.zhangjie.fitnessflow.plan.PlanDetailActivity
@@ -105,6 +106,9 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
             }
             4->{
                 (indexFragmentInViewPagerList[0] as TodayFragment).onOperatorClick()
+            }
+            3->{
+                (indexFragmentInViewPagerList[3] as MineFragment).personalDataEdit()
             }
         }
     }

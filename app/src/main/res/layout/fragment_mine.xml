@@ -17,30 +17,18 @@
         android:elevation="@dimen/viewElevation"
         android:layout_marginBottom="@dimen/viewMargin"
         >
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/viewMargin"
-            >
-            <TextView
-                style="@style/navigationTextStyle"
-                android:text="@string/personal_data"
-                android:textColor="@color/primaryTextColor"
-                android:layout_alignParentStart="true"/>
-            <ImageButton
-                android:layout_width="@dimen/minButtonWidth"
-                android:layout_height="wrap_content"
-                android:src="@drawable/edit_button_green"
-                android:layout_alignParentEnd="true"
-                android:background="@color/colorPrimary"
-                android:id="@+id/personal_data_edit"
-                tools:ignore="ContentDescription" />
-        </RelativeLayout>
+        <TextView
+            style="@style/navigationTextStyle"
+            android:textColor="@color/primaryTextColor"
+            android:text="@string/plan_days"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/viewMargin"
+            android:id="@+id/days"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/viewMargin"
             android:weightSum="3"
             android:baselineAligned="false">
             <LinearLayout
@@ -101,6 +89,28 @@
                     />
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/viewPaddingHorizontal"
+            android:background="@drawable/transparent_round_rect_background"
+            android:id="@+id/trend"
+            android:orientation="vertical">
+            <TextView
+                style="@style/navigationTextStyle"
+                android:text="@string/trend"
+                android:textColor="@color/primaryTextColor"
+                />
+            <TextView
+                style="@style/navigationTextStyle"
+                android:text="@string/no_data_record"
+                android:id="@+id/no_data_record"
+                android:minHeight="@dimen/minButtonWidth"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/smallTextSize"
+                />
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -110,11 +120,93 @@
         android:elevation="@dimen/viewElevation"
         android:layout_marginBottom="@dimen/viewMargin"
         android:background="@color/colorPrimary"
-        android:id="@+id/map">
+        android:id="@+id/map"
+        >
         <TextView
             style="@style/navigationTextStyle"
             android:text="@string/exercise_frequency_map"
             android:textColor="@color/primaryTextColor"
             />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/viewElevation"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/viewMargin">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/underline_background"
+            android:padding="@dimen/viewPaddingHorizontal">
+            <TextView
+                style="@style/navigationTextStyle"
+                android:text="@string/instruction"
+                android:textColor="@color/primaryTextColor"/>
+            <ImageButton
+                android:layout_width="@dimen/minButtonWidth"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:id="@+id/instruction"
+                android:src="@drawable/text_edit_button"
+                android:layout_alignParentEnd="true"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/underline_background"
+            android:padding="@dimen/viewPaddingHorizontal">
+            <TextView
+                style="@style/navigationTextStyle"
+                android:text="@string/data_clear"
+                android:textColor="@color/primaryTextColor"/>
+            <ImageButton
+                android:layout_width="@dimen/minButtonWidth"
+                android:layout_height="wrap_content"
+                android:id="@+id/data_clear"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/text_edit_button"
+                android:layout_alignParentEnd="true"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/underline_background"
+            android:padding="@dimen/viewPaddingHorizontal">
+            <TextView
+                style="@style/navigationTextStyle"
+                android:text="@string/recommendation_feedback"
+                android:textColor="@color/primaryTextColor"/>
+            <ImageButton
+                android:layout_width="@dimen/minButtonWidth"
+                android:layout_height="wrap_content"
+                android:id="@+id/recommendation_feedback"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/text_edit_button"
+                android:layout_alignParentEnd="true"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/underline_background"
+            android:padding="@dimen/viewPaddingHorizontal">
+            <TextView
+                style="@style/navigationTextStyle"
+                android:text="@string/about"
+                android:textColor="@color/primaryTextColor"/>
+            <ImageButton
+                android:layout_width="@dimen/minButtonWidth"
+                android:layout_height="wrap_content"
+                android:id="@+id/about"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/text_edit_button"
+                android:layout_alignParentEnd="true"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

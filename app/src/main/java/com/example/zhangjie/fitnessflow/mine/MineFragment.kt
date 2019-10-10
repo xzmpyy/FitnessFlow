@@ -31,7 +31,7 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
     private var fatText:TextView? = null
     private var bmiText:TextView? = null
     private var weightUnit:String? = null
-    private var dataEditButton:ImageButton? = null
+    private var daysCount:TextView? = null
     private val todayString = GetMonthInfo.getTodayString()
     private var formView:View? = null
     private var dialogFragment:MyDialogFragment? = null
@@ -57,37 +57,36 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
         weightText = view.findViewById(R.id.weight)
         fatText = view.findViewById(R.id.body_fat)
         bmiText = view.findViewById(R.id.bmi)
+        daysCount = view.findViewById(R.id.days)
         if (weightUnit == null){
             weightUnit = view.context.resources.getString(R.string.KG)
         }
         editTextBackground = ContextCompat.getDrawable(view.context,R.drawable.edit_text_background)
         incompleteEditTextBackground = ContextCompat.getDrawable(view.context,R.drawable.incomplete_edit_text_background)
-        dataEditButton = view.findViewById(R.id.personal_data_edit)
         dataInit()
-        dataEditButton!!.setOnClickListener {
-            formView = View.inflate(view.context,R.layout.personal_data_form_view,null)
-            dialogFragment = MyDialogFragment(2,Gravity.CENTER,1,formView!!)
-            dialogFragment!!.setConfirmButtonClickListener(this)
-            if (stature!=null){
-                formView!!.findViewById<EditText>(R.id.stature).setText(stature.toString().toCharArray(),0,stature.toString().count())
-                formView!!.findViewById<EditText>(R.id.age).setText(age.toString().toCharArray(),0,age.toString().count())
-                formView!!.findViewById<EditText>(R.id.weight).setText(weight.toString().toCharArray(),0,weight.toString().count())
-                formView!!.findViewById<EditText>(R.id.fat).setText(fat.toString().toCharArray(),0,fat.toString().count())
-                formView!!.findViewById<EditText>(R.id.bmi).setText(bmi.toString().toCharArray(),0,bmi.toString().count())
-                if (sex == 1){
-                    formView!!.findViewById<Switch>(R.id.sex_switch).isChecked = true
-                    formView!!.findViewById<TextView>(R.id.sex).text = view.context.getString(R.string.male)
-                }
+    }
+
+    fun personalDataEdit(){
+        formView = View.inflate(view!!.context,R.layout.personal_data_form_view,null)
+        dialogFragment = MyDialogFragment(2,Gravity.CENTER,1,formView!!)
+        dialogFragment!!.setConfirmButtonClickListener(this)
+        if (stature!=null){
+            formView!!.findViewById<EditText>(R.id.stature).setText(stature.toString().toCharArray(),0,stature.toString().count())
+            formView!!.findViewById<EditText>(R.id.age).setText(age.toString().toCharArray(),0,age.toString().count())
+            formView!!.findViewById<EditText>(R.id.weight).setText(weight.toString().toCharArray(),0,weight.toString().count())
+            if (sex == 1){
+                formView!!.findViewById<Switch>(R.id.sex_switch).isChecked = true
+                formView!!.findViewById<TextView>(R.id.sex).text = view!!.context.getString(R.string.male)
             }
-            formView!!.findViewById<Switch>(R.id.sex_switch).setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked){
-                    formView!!.findViewById<TextView>(R.id.sex).text = view.context.getString(R.string.male)
-                }else{
-                    formView!!.findViewById<TextView>(R.id.sex).text = view.context.getString(R.string.female)
-                }
-            }
-            dialogFragment!!.show(this.childFragmentManager,null)
         }
+        formView!!.findViewById<Switch>(R.id.sex_switch).setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                formView!!.findViewById<TextView>(R.id.sex).text = view!!.context.getString(R.string.male)
+            }else{
+                formView!!.findViewById<TextView>(R.id.sex).text = view!!.context.getString(R.string.female)
+            }
+        }
+        dialogFragment!!.show(this.childFragmentManager,null)
     }
 
     @SuppressLint("SetTextI18n")
@@ -110,6 +109,13 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
                 break
             }
             cursor.close()
+            val daysCursor = myDataBaseTool.rawQuery("Select * From PlanRecord",null)
+            if (daysCursor.count > 0){
+                daysCount!!.text = daysCount!!.text.toString().replace("count",daysCursor.count.toString())
+            }else{
+                daysCount!!.text = daysCount!!.text.toString().replace("count","0")
+            }
+            daysCursor.close()
             myDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Data Init Failed(In MineFragment):$e")
@@ -188,7 +194,7 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
                     personalDataUpdateTool.execSQL(updateSql)
                 }
                 checkCursor.close()
-                weightText!!.text = weight.toString()
+                weightText!!.text = weight.toString()+weightUnit
                 fatText!!.text = "${fat}%"
                 bmiText!!.text = bmi.toString()
                 MyToast(view!!.context,view!!.context.resources.getString(R.string.add_successful)).showToast()

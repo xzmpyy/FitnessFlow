@@ -188,6 +188,15 @@ class ActionGroupAdapterInPlanDetailActivity (private val dateInfo:String, priva
             }
             if (actionIDList.size == 0){
                 GetMonthInfo.setDefaultSelectedListChangedFlag(true)
+                if (dateInfo == GetMonthInfo.getTodayString()){
+                    val recordCursor = actionDeleteTool.rawQuery("Select * From PlanRecord Where Date=?",
+                        arrayOf(dateInfo))
+                    if (recordCursor.count>0){
+                        val recordDeleteSql = "Delete From PlanRecord Where PlanRecordID=${recordCursor.getString(2)}"
+                        actionDeleteTool.execSQL(recordDeleteSql)
+                    }
+                    recordCursor.close()
+                }
             }
             actionDeleteTool.setTransactionSuccessful()
         }catch(e:Exception){

@@ -79,9 +79,15 @@
     <string name="weight_in_form">体重(单位：公斤)</string>
     <string name="body_fat">体脂</string>
     <string name="bmi">BMI</string>
-    <string name="personal_data">个人数据</string>
     <string name="exercise_frequency_map">近30天训练热图</string>
     <string name="not_filled">待填写</string>
     <string name="KG">KG</string>
     <string name="auto_filled">不填写将自动计算</string>
+    <string name="instruction">使用说明</string>
+    <string name="recommendation_feedback">建议及反馈</string>
+    <string name="about">关于</string>
+    <string name="data_clear">数据清除</string>
+    <string name="plan_days">已训练 count 天</string>
+    <string name="trend">趋势</string>
+    <string name="no_data_record">暂无记录数据</string>
 </resources>

@@ -119,6 +119,20 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
                 "ON \"PersonalData\" (\n" +
                 "  \"DataID\" ASC\n" +
                 ");"
+        val planRecordString1 = "CREATE TABLE \"PlanRecord\" (\n" +
+                "  \"Record\" integer,\n" +
+                "  \"Date\" text,\n" +
+                "  \"PlanRecordID\" integer PRIMARY KEY AUTOINCREMENT,\n" +
+                "  CONSTRAINT \"PlanRecordID\" UNIQUE (\"PlanRecordID\")\n" +
+                ");"
+        val planRecordString2 = "CREATE INDEX \"DateInPlanRecord\"\n" +
+                "ON \"PlanRecord\" (\n" +
+                "  \"Date\" ASC\n" +
+                ");"
+        val planRecordString3="CREATE UNIQUE INDEX \"PlanRecordID\"\n" +
+                "ON \"PlanRecord\" (\n" +
+                "  \"PlanRecordID\" ASC\n" +
+                ");"
         db!!.execSQL(actionTableString1)
         //执行语句
         db.run{
@@ -137,6 +151,9 @@ class MyDataBaseTool(context: Context, DB_NAME:String, factory: SQLiteDatabase.C
             execSQL(personalDataString1)
             execSQL(personalDataString2)
             execSQL(personalDataString3)
+            execSQL(planRecordString1)
+            execSQL(planRecordString2)
+            execSQL(planRecordString3)
         }
     }
 

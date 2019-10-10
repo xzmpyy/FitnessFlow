@@ -192,13 +192,34 @@ class TodayFragment : Fragment(){
         val updateDataDatabase=MyDataBaseTool(view!!.context,"FitnessFlowDB",null,1)
         val updateDataDataBaseTool=updateDataDatabase.writableDatabase
         updateDataDataBaseTool.beginTransaction()
+        val actionCompletion = arrayListOf<Float>()
         try{
             for (action in actionList){
+                var doneSum = 0
+                var targetSum = 0
                 for (detail in actionDetailMap[action]!!){
                     val updateSql = "Update PlanDetailTable Set Done=${detail.done} Where ID=${detail.ID}"
+                    doneSum += detail.done
+                    targetSum += detail.num
                     updateDataDataBaseTool.execSQL(updateSql)
                 }
+                actionCompletion.add((doneSum.toFloat()/targetSum.toFloat())*100f)
             }
+            var recordSum = 0f
+            for (completion in actionCompletion){
+                recordSum += completion
+            }
+            val record = (recordSum/(actionList.size.toFloat())).toInt()
+            val recordCursor = updateDataDataBaseTool.rawQuery("Select * From PlanRecord Where Date=?",
+                arrayOf(toDayString))
+            if (recordCursor.count>0){
+                val recordUpdateSql = "Update PlanRecord Set Record=$record Where PlanRecordID=${recordCursor.getString(2)} "
+                updateDataDataBaseTool.execSQL(recordUpdateSql)
+            }else{
+                val recordInsertSql = "INSERT INTO PlanRecord (Record,Date) VALUES($record,\"$toDayString\")"
+                updateDataDataBaseTool.execSQL(recordInsertSql)
+            }
+            recordCursor.close()
             updateDataDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Data Save Failed(In TodayFragment):$e")
