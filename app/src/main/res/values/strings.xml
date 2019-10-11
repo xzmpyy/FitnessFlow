@@ -90,4 +90,22 @@
     <string name="plan_days">已训练 count 天</string>
     <string name="trend">趋势</string>
     <string name="no_data_record">暂无记录数据</string>
+    <string name="instruction_one">1) 在收\"藏页\"根据不同肌肉群自定义添加相应动作</string>
+    <string name="instruction_two">2) 可在收\"藏页\"的"模板"中创建训练模板，用以添加至训练计划</string>
+    <string name="instruction_three">3) 在\"计划\"页中创建个性化的健身计划</string>
+    <string name="instruction_four">4) 在\"今日\"页中记录计划的完成情况</string>
+    <string name="instruction_five">5) 可在\"我的\"页中记录相应身身体数据</string>
+    <string name="recommendation_feedback_one">如果您有建议或发现问题</string>
+    <string name="recommendation_feedback_two">可通过以下邮箱联系我</string>
+    <string name="recommendation_feedback_three">jiez0714@gmail.com</string>
+    <string name="about_one">此应用为个人开发,无广告及收费</string>
+    <string name="about_two">项目开源在GitHub中</string>
+    <string name="about_three">https://github.com/xzmpyy</string>
+    <string name="about_four">除手机震动权限外无需任何权限，不会收集您的数据</string>
+    <string name="about_five">如对您有帮助，请在应用商店评价或在GitHub帮忙Star</string>
+    <string name="about_six">可通过以下邮箱联系我</string>
+    <string name="about_seven">jiez0714@gmail.com</string>
+    <string name="data_clear_one">训练计划清除</string>
+    <string name="data_clear_two">动作及模板清除</string>
+    <string name="data_clear_three">个人数据清除</string>
 </resources>

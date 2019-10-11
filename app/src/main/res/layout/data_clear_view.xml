@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:padding="@dimen/viewPaddingHorizontal"
+    android:minWidth="350dp"
+    android:layout_height="wrap_content">
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@mipmap/ic_launcher"
+        android:background="@color/colorPrimary"
+        tools:ignore="ContentDescription" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/underline_background">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/navigatorTextSize"
+            android:textColor="@color/primaryTextColor"
+            android:text="@string/data_clear_one"
+            tools:ignore="RelativeOverlap" />
+        <ImageButton
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_height="wrap_content"
+            android:tag="0"
+            android:layout_gravity="center"
+            android:src="@drawable/all_done_gray"
+            android:id="@+id/plan_data"
+            android:layout_alignParentEnd="true"
+            android:background="@color/colorPrimary"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/underline_background">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/navigatorTextSize"
+            android:textColor="@color/primaryTextColor"
+            android:text="@string/data_clear_two"
+            tools:ignore="RelativeOverlap" />
+        <ImageButton
+            android:layout_width="@dimen/minButtonWidth"
+            android:tag="0"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/all_done_gray"
+            android:id="@+id/action_data"
+            android:layout_alignParentEnd="true"
+            android:background="@color/colorPrimary"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/underline_background">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/navigatorTextSize"
+            android:textColor="@color/primaryTextColor"
+            android:text="@string/data_clear_three"
+            tools:ignore="RelativeOverlap" />
+        <ImageButton
+            android:layout_width="@dimen/minButtonWidth"
+            android:layout_height="wrap_content"
+            android:tag="0"
+            android:layout_gravity="center"
+            android:src="@drawable/all_done_gray"
+            android:id="@+id/personal_data"
+            android:layout_alignParentEnd="true"
+            android:background="@color/colorPrimary"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+</LinearLayout>

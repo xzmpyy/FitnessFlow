@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:minWidth="350dp"
+    android:gravity="center"
+    android:padding="@dimen/viewPaddingHorizontal"
+    android:layout_height="wrap_content">
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:background="@color/colorPrimary"
+        tools:ignore="ContentDescription" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recommendation_feedback_one"
+        android:textSize="@dimen/smallTextSize"
+        android:textColor="@color/primaryTextColor"
+        android:background="@drawable/underline_background"
+        android:layout_marginBottom="@dimen/viewMargin"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recommendation_feedback_two"
+        android:textSize="@dimen/smallTextSize"
+        android:textColor="@color/primaryTextColor"
+        android:background="@drawable/underline_background"
+        android:layout_marginBottom="@dimen/viewMargin"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recommendation_feedback_three"
+        android:textSize="@dimen/smallTextSize"
+        android:textColor="@color/primaryButtonBackground"
+        android:textStyle="bold"
+        android:background="@drawable/underline_background"
+        android:layout_marginBottom="@dimen/viewMargin"/>
+</LinearLayout>
