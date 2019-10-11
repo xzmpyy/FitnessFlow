@@ -90,49 +90,37 @@ class TrendView (context: Context, set: AttributeSet): View(context, set) {
 
     private fun getMaxData(){
         var maxNum = 0f
-        var minNum = 0f
+        var minNum = weightList!![0]
         for (weight in weightList!!){
             if (weight>maxNum){
                 maxNum = weight
             }
-            if (weightList!!.indexOf(weight) == 0 && weightList!!.size>1){
+            if (weight<minNum){
                 minNum = weight
-            }else{
-                if (weight<minNum){
-                    minNum = weight
-                }
             }
         }
         maxWeight = maxNum-minNum
         minWeight = minNum
         maxNum = 0f
-        minNum = 0f
+        minNum = fatList!![0]
         for (fat in fatList!!){
             if (fat>maxNum){
                 maxNum = fat
             }
-            if (fatList!!.indexOf(fat) == 0 && fatList!!.size>1){
+            if (fat<minNum){
                 minNum = fat
-            }else{
-                if (fat<minNum){
-                    minNum = fat
-                }
             }
         }
         maxFat = maxNum-minNum
         minFat = minNum
         maxNum = 0f
-        minNum = 0f
+        minNum = bmiList!![0]
         for (bmi in bmiList!!){
             if (bmi>maxNum){
                 maxNum = bmi
             }
-            if (bmiList!!.indexOf(bmi) == 0 && bmiList!!.size>1){
+            if (bmi<minNum){
                 minNum = bmi
-            }else{
-                if (bmi<minNum){
-                    minNum = bmi
-                }
             }
         }
         maxBMI = maxNum-minNum
@@ -141,31 +129,43 @@ class TrendView (context: Context, set: AttributeSet): View(context, set) {
 
     private fun getCircleY(){
         for (weight in weightList!!){
-            val percentage = (weight-minWeight)/maxWeight
-            val positionY = if (percentage == 0f){
-                viewHeight - padding*3 -circleRadius
+            if (weightList!!.size == 1){
+                weightCircleList.add((viewHeight -padding*2)/2 + padding)
             }else{
-                viewHeight-percentage*(viewHeight-padding*2) + padding
+                val percentage = (weight-minWeight)/maxWeight
+                val positionY = if (percentage == 0f){
+                    viewHeight - padding*3 -circleRadius
+                }else{
+                    viewHeight-percentage*(viewHeight-padding*2) + padding
+                }
+                weightCircleList.add(positionY)
             }
-            weightCircleList.add(positionY)
         }
         for (fat in fatList!!){
-            val percentage = (fat-minFat)/maxFat
-            val positionY = if (percentage == 0f){
-                viewHeight - padding*2 -circleRadius
+            if (fatList!!.size == 1){
+                fatCircleList.add((viewHeight -padding*2)/2 + padding*2)
             }else{
-                viewHeight-percentage*(viewHeight-padding*2) + padding*2
+                val percentage = (fat-minFat)/maxFat
+                val positionY = if (percentage == 0f){
+                    viewHeight - padding*2 -circleRadius
+                }else{
+                    viewHeight-percentage*(viewHeight-padding*2) + padding*2
+                }
+                fatCircleList.add(positionY)
             }
-            fatCircleList.add(positionY)
         }
         for (bmi in bmiList!!){
-            val percentage = (bmi-minBMI)/maxBMI
-            val positionY = if (percentage == 0f){
-                viewHeight - padding -circleRadius
+            if (bmiList!!.size == 1){
+                bmiCircleList.add((viewHeight -padding*2)/2 + padding*3)
             }else{
-                viewHeight-percentage*(viewHeight-padding*2) + padding*3
+                val percentage = (bmi-minBMI)/maxBMI
+                val positionY = if (percentage == 0f){
+                    viewHeight - padding -circleRadius
+                }else{
+                    viewHeight-percentage*(viewHeight-padding*2) + padding*3
+                }
+                bmiCircleList.add(positionY)
             }
-            bmiCircleList.add(positionY)
         }
     }
 

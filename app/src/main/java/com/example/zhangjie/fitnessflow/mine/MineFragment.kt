@@ -121,18 +121,18 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
             while(cursor.moveToNext()){
                 if (stature == null){
                     weightText!!.text = "${cursor.getString(4)}$weightUnit"
-                    fatText!!.text = "${cursor.getString(5)}%"
-                    bmiText!!.text = cursor.getString(6).toString()
+                    fatText!!.text = "${cursor.getString(6)}%"
+                    bmiText!!.text = cursor.getString(5).toString()
                     weight = cursor.getString(4).toFloat()
-                    fat = cursor.getString(5).toFloat()
-                    bmi = cursor.getString(6).toFloat()
+                    fat = cursor.getString(6).toFloat()
+                    bmi = cursor.getString(5).toFloat()
                     age =cursor.getString(2).toInt()
                     stature = cursor.getString(3).toFloat()
                     sex = cursor.getString(1).toInt()
                 }
                 weightArrayList.add(cursor.getString(4).toFloat())
-                fatArrayList.add(cursor.getString(5).toFloat())
-                bmiArrayList.add(cursor.getString(6).toFloat())
+                fatArrayList.add(cursor.getString(6).toFloat())
+                bmiArrayList.add(cursor.getString(5).toFloat())
             }
             weightList = weightArrayList.reversed()
             fatList = fatArrayList.reversed()
@@ -262,8 +262,8 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
                     val bmiArrayList = arrayListOf<Float>()
                     while(trendUpdateCursor.moveToNext()){
                         weightArrayList.add(trendUpdateCursor.getString(4).toFloat())
-                        fatArrayList.add(trendUpdateCursor.getString(5).toFloat())
-                        bmiArrayList.add(trendUpdateCursor.getString(6).toFloat())
+                        fatArrayList.add(trendUpdateCursor.getString(6).toFloat())
+                        bmiArrayList.add(trendUpdateCursor.getString(5).toFloat())
                     }
                     weightList = weightArrayList.reversed()
                     fatList = fatArrayList.reversed()
