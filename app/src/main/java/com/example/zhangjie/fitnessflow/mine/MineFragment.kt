@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.TextUtils
+import android.util.Xml
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -20,12 +22,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
+import com.example.zhangjie.fitnessflow.utils_class.GetPlanCountsList
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyDialogFragment
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.util.*
 
 class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
 
@@ -34,6 +36,8 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
     private var bmiText:TextView? = null
     private var weightUnit:String? = null
     private var daysCount:TextView? = null
+    private var noDataRecord:TextView? = null
+    private var trendLayout:LinearLayout? = null
     private val todayString = GetMonthInfo.getTodayString()
     private var formView:View? = null
     private var dialogFragment:MyDialogFragment? = null
@@ -43,10 +47,14 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
     private var age:Int? = null
     private var stature:Float? = null
     private val recordList = arrayListOf<Int>()
+    private var trendView:TrendView? = null
     //0女1男
     private var sex=0
     private var editTextBackground:Drawable? = null
     private var incompleteEditTextBackground:Drawable? = null
+    private var weightList = listOf<Float>()
+    private var fatList= listOf<Float>()
+    private var bmiList= listOf<Float>()
 
 
     //视图加载
@@ -61,13 +69,15 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
         fatText = view.findViewById(R.id.body_fat)
         bmiText = view.findViewById(R.id.bmi)
         daysCount = view.findViewById(R.id.days)
+        noDataRecord = view.findViewById(R.id.no_data_record)
+        trendLayout = view.findViewById(R.id.trend)
         if (weightUnit == null){
             weightUnit = view.context.resources.getString(R.string.KG)
         }
         editTextBackground = ContextCompat.getDrawable(view.context,R.drawable.edit_text_background)
         incompleteEditTextBackground = ContextCompat.getDrawable(view.context,R.drawable.incomplete_edit_text_background)
         for (i in 1..30){
-            recordList.add(Random().nextInt(100))
+            recordList.add(-1)
         }
         dataInit()
         val mapRecyclerView = view.findViewById<RecyclerView>(R.id.map)
@@ -104,18 +114,36 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
         val myDataBaseTool=myDatabase.writableDatabase
         myDataBaseTool.beginTransaction()
         try{
-            val cursor=myDataBaseTool.rawQuery("Select * From PersonalData Order By DataID Desc",null)
+            val cursor=myDataBaseTool.rawQuery("Select * From PersonalData Order By DataID Desc Limit 8 ",null)
+            val weightArrayList = arrayListOf<Float>()
+            val fatArrayList = arrayListOf<Float>()
+            val bmiArrayList = arrayListOf<Float>()
             while(cursor.moveToNext()){
-                weightText!!.text = "${cursor.getString(4)}$weightUnit"
-                fatText!!.text = "${cursor.getString(5)}%"
-                bmiText!!.text = cursor.getString(6).toString()
-                weight = cursor.getString(4).toFloat()
-                fat = cursor.getString(5).toFloat()
-                bmi = cursor.getString(6).toFloat()
-                age =cursor.getString(2).toInt()
-                stature = cursor.getString(3).toFloat()
-                sex = cursor.getString(1).toInt()
-                break
+                if (stature == null){
+                    weightText!!.text = "${cursor.getString(4)}$weightUnit"
+                    fatText!!.text = "${cursor.getString(5)}%"
+                    bmiText!!.text = cursor.getString(6).toString()
+                    weight = cursor.getString(4).toFloat()
+                    fat = cursor.getString(5).toFloat()
+                    bmi = cursor.getString(6).toFloat()
+                    age =cursor.getString(2).toInt()
+                    stature = cursor.getString(3).toFloat()
+                    sex = cursor.getString(1).toInt()
+                }
+                weightArrayList.add(cursor.getString(4).toFloat())
+                fatArrayList.add(cursor.getString(5).toFloat())
+                bmiArrayList.add(cursor.getString(6).toFloat())
+            }
+            weightList = weightArrayList.reversed()
+            fatList = fatArrayList.reversed()
+            bmiList = bmiArrayList.reversed()
+            //趋势图
+            if (weightList.isNotEmpty()){
+                noDataRecord!!.visibility = LinearLayout.GONE
+                val parser = resources.getXml(R.xml.trend_view)
+                val attributesForTrend = Xml.asAttributeSet(parser)
+                trendView = TrendView(view!!.context,attributesForTrend,weightList,fatList,bmiList)
+                trendLayout!!.addView(trendView)
             }
             cursor.close()
             val daysCursor = myDataBaseTool.rawQuery("Select * From PlanRecord",null)
@@ -125,6 +153,16 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
                 daysCount!!.text = daysCount!!.text.toString().replace("count","0")
             }
             daysCursor.close()
+            val dayList = GetPlanCountsList.getDayList()
+            for (dayIndex in 0..29){
+                val recordCheckCursor = myDataBaseTool.rawQuery("Select * From PlanRecord Where Date=?",
+                    arrayOf(dayList[dayIndex]))
+                if (recordCheckCursor.count>0){
+                    recordCheckCursor.moveToNext()
+                    recordList[dayIndex] = recordCheckCursor.getString(0).toInt()
+                }
+                recordCheckCursor.close()
+            }
             myDataBaseTool.setTransactionSuccessful()
         }catch(e:Exception){
             println("Data Init Failed(In MineFragment):$e")
@@ -207,6 +245,34 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
                 fatText!!.text = "${fat}%"
                 bmiText!!.text = bmi.toString()
                 MyToast(view!!.context,view!!.context.resources.getString(R.string.add_successful)).showToast()
+                //更新趋势图
+                val parser = resources.getXml(R.xml.trend_view)
+                val attributesForTrend = Xml.asAttributeSet(parser)
+                if (weightList.isEmpty()){
+                    weightList = listOf(weight!!)
+                    fatList = listOf(fat!!)
+                    bmiList = listOf(bmi!!)
+                    noDataRecord!!.visibility = LinearLayout.GONE
+                    trendView = TrendView(view!!.context,attributesForTrend,weightList,fatList,bmiList)
+                    trendLayout!!.addView(trendView)
+                }else{
+                    val trendUpdateCursor=personalDataUpdateTool.rawQuery("Select * From PersonalData Order By DataID Desc Limit 8 ",null)
+                    val weightArrayList = arrayListOf<Float>()
+                    val fatArrayList = arrayListOf<Float>()
+                    val bmiArrayList = arrayListOf<Float>()
+                    while(trendUpdateCursor.moveToNext()){
+                        weightArrayList.add(trendUpdateCursor.getString(4).toFloat())
+                        fatArrayList.add(trendUpdateCursor.getString(5).toFloat())
+                        bmiArrayList.add(trendUpdateCursor.getString(6).toFloat())
+                    }
+                    weightList = weightArrayList.reversed()
+                    fatList = fatArrayList.reversed()
+                    bmiList = bmiArrayList.reversed()
+                    trendUpdateCursor.close()
+                    trendLayout!!.removeAllViews()
+                    trendView = TrendView(view!!.context,attributesForTrend,weightList,fatList,bmiList)
+                    trendLayout!!.addView(trendView)
+                }
                 personalDataUpdateTool.setTransactionSuccessful()
             }catch(e:Exception){
                 println("Personal Data Update Failed(In MineFragment):$e")

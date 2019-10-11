@@ -7,7 +7,7 @@
     android:gravity="center"
     >
     <com.example.zhangjie.fitnessflow.mine.BlockView
-        android:background="@color/colorPrimary"
+        android:background="@color/transparentGray"
         android:layout_width="@dimen/iconSize"
         android:id="@+id/block"
         android:layout_height="wrap_content"/>

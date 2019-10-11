@@ -29,7 +29,6 @@ class TrendAnnotationView (context: Context, set: AttributeSet): View(context, s
         //填充风格
         paint.style = Paint.Style.FILL_AND_STROKE
         paint.strokeWidth = strokeWidth
-        paint.color = redColor
         paint.textSize = textSize
         //设置文字基点为中心点
         paint.textAlign=Paint.Align.CENTER
@@ -37,6 +36,8 @@ class TrendAnnotationView (context: Context, set: AttributeSet): View(context, s
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        paint.color = redColor
+        paint.strokeWidth = strokeWidth
         //体重
         canvas!!.drawLine(0f,lineWidth/2,lineWidth,lineWidth/2,paint)
         paint.color = textColor
