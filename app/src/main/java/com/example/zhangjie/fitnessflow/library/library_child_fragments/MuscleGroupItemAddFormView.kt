@@ -2,6 +2,7 @@ package com.example.zhangjie.fitnessflow.library.library_child_fragments
 
 import android.app.Service
 import android.content.Context
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.TextUtils
@@ -12,9 +13,11 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 import com.example.zhangjie.fitnessflow.utils_class.MyDataBaseTool
 import com.example.zhangjie.fitnessflow.utils_class.MyToast
 
@@ -116,6 +119,7 @@ class MuscleGroupItemAddFormView (context: Context,set:AttributeSet):LinearLayou
         super.onWindowFocusChanged(hasWindowFocus)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirmButtonClick(){
         if (TextUtils.isEmpty(actionName!!.text)){
             if (!unIntegrityList.contains(actionName!!)){
@@ -231,7 +235,9 @@ class MuscleGroupItemAddFormView (context: Context,set:AttributeSet):LinearLayou
                         unIntegrity.background = incompleteEditTextBackground
                     }
                     MyToast(context,formIncompleteText).showToast()
-                    vibrator.vibrate(VibrationEffect.createOneShot(400,4))
+                    if (SDKVersion.getVersion()>=26){
+                        vibrator.vibrate(VibrationEffect.createOneShot(400,4))
+                    }
                 }
             }
         }

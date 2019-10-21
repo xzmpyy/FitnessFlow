@@ -213,6 +213,7 @@ class TodayFragment : Fragment(){
             val recordCursor = updateDataDataBaseTool.rawQuery("Select * From PlanRecord Where Date=?",
                 arrayOf(toDayString))
             if (recordCursor.count>0){
+                recordCursor.moveToNext()
                 val recordUpdateSql = "Update PlanRecord Set Record=$record Where PlanRecordID=${recordCursor.getString(2)} "
                 updateDataDataBaseTool.execSQL(recordUpdateSql)
             }else{

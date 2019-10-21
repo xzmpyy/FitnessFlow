@@ -3,11 +3,8 @@ package com.example.zhangjie.fitnessflow.plan
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
-import android.os.AsyncTask
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
@@ -15,12 +12,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInPlan
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
@@ -386,14 +385,17 @@ class PlanDetailActivity : AppCompatActivity() ,
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onConfirmButtonClick() {
         if (formView!=null){
             val templateName = formView!!.findViewById<EditText>(R.id.template_name)
             if (TextUtils.isEmpty(templateName!!.text)){
                 templateName.background = ContextCompat.getDrawable(this,R.drawable.incomplete_edit_text_background)
                 MyToast(this,resources.getString(R.string.form_incomplete)).showToast()
-                (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
-                    VibrationEffect.createOneShot(400,4))
+                if (SDKVersion.getVersion()>=26){
+                    (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
+                        VibrationEffect.createOneShot(400,4))
+                }
             }else{
                 processDialogFragment!!.show(this.supportFragmentManager, null)
                 val newTemplateProcess = NewTemplate(templateName.text.toString())

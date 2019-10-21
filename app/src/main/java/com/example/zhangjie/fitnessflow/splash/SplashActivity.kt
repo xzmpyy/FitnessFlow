@@ -2,14 +2,17 @@ package com.example.zhangjie.fitnessflow.splash
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 
 
 class SplashActivity : AppCompatActivity() {
@@ -17,10 +20,13 @@ class SplashActivity : AppCompatActivity() {
     private var transitionView:TransitionView? = null
     private var duration = 1500L
     private var startActivityFlag = false
+//    private var privateFlag = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+//        val share = this.getSharedPreferences("Private", Context.MODE_PRIVATE)
+//        privateFlag = share.getBoolean("PrivateFlag",false)
         transitionView=findViewById(R.id.process)
         val dataLoading= DataLoading()
         dataLoading.execute()
@@ -28,6 +34,15 @@ class SplashActivity : AppCompatActivity() {
         //保证动画执行完再跳转
         Handler().postDelayed({
             if (startActivityFlag){
+//                if (privateFlag){
+//                    val intent = Intent(this@SplashActivity, IndexActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                }else{
+//                    val intent = Intent(this@SplashActivity, PrivateActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                }
                 val intent = Intent(this@SplashActivity, IndexActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -43,11 +58,21 @@ class SplashActivity : AppCompatActivity() {
         override fun doInBackground(vararg params: Void?): Boolean {
             //预加载任务
             FragmentInit.init()
+            SDKVersion.setVersion(Build.VERSION.SDK_INT)
             return true
         }
 
         override fun onPostExecute(result: Boolean?) {
             if (startActivityFlag){
+//                if (privateFlag){
+//                    val intent = Intent(this@SplashActivity, IndexActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                }else{
+//                    val intent = Intent(this@SplashActivity, PrivateActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                }
                 val intent = Intent(this@SplashActivity, IndexActivity::class.java)
                 startActivity(intent)
                 finish()

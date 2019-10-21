@@ -49,3 +49,16 @@ object IsScreenRestart{
         return restartFlag
     }
 }
+
+object SDKVersion{
+    private var version = 0
+
+    fun setVersion(version:Int){
+        this.version = version
+    }
+
+    fun getVersion():Int{
+        return this.version
+    }
+
+}

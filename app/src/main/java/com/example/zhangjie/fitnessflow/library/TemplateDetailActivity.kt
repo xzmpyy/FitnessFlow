@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.ActionDetailInTemplate
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 import com.example.zhangjie.fitnessflow.data_class.Template
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.TemplateModifyClass
 import com.example.zhangjie.fitnessflow.utils_class.*
@@ -106,13 +108,16 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
         editDialog!!.show(supportFragmentManager,null)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onConfirmButtonClick() {
-        editTextParent!!.focusable = View.FOCUSABLE
-        editTextParent!!.isFocusableInTouchMode = true
-        editTextParent!!.requestFocus()
-        //收起键盘
-        val imm: InputMethodManager = editTextParent!!.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(editTextParent!!.windowToken, 0)
+        if (SDKVersion.getVersion()>=26){
+            editTextParent!!.focusable = View.FOCUSABLE
+            editTextParent!!.isFocusableInTouchMode = true
+            editTextParent!!.requestFocus()
+            //收起键盘
+            val imm: InputMethodManager = editTextParent!!.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(editTextParent!!.windowToken, 0)
+        }
         when (editType){
             //模板编辑
             0->{
@@ -120,8 +125,10 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
                 if (TextUtils.isEmpty(templateName!!.text)){
                     templateName.background = ContextCompat.getDrawable(this,R.drawable.incomplete_edit_text_background)
                     MyToast(this,resources.getString(R.string.form_incomplete)).showToast()
-                    (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
-                        VibrationEffect.createOneShot(400,4))
+                    if (SDKVersion.getVersion()>=26){
+                        (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
+                            VibrationEffect.createOneShot(400,4))
+                    }
                 }else{
                     templateNameUpdate(templateName.text.toString())
                     editDialog!!.dismiss()
@@ -132,12 +139,14 @@ class TemplateDetailActivity : AppCompatActivity() ,MyDialogFragment.ConfirmButt
 
     //EditText自动获取焦点并弹出键盘
     private fun editTextGetFocus(editText:EditText){
-        editText.isFocusable = true
-        editText.isFocusableInTouchMode = true
-        editText.requestFocus()
-        editText.setSelection(editText.text.toString().length)
-        val inputManager:InputMethodManager  = editText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.showSoftInput(editText, 0)
+        if (SDKVersion.getVersion()>=26){
+            editText.isFocusable = true
+            editText.isFocusableInTouchMode = true
+            editText.requestFocus()
+            editText.setSelection(editText.text.toString().length)
+            val inputManager:InputMethodManager  = editText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.showSoftInput(editText, 0)
+        }
     }
 
     private fun templateNameUpdate(newName:String){

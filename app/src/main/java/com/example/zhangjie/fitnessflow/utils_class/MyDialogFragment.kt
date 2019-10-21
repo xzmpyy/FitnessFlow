@@ -2,6 +2,7 @@ package com.example.zhangjie.fitnessflow.utils_class
 
 import android.app.Activity
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +10,10 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 import com.example.zhangjie.fitnessflow.library.library_child_fragments.MuscleGroupItemAddFormView
 
 //参数是弹窗类型，弹窗位置，Gravity.bottom等、宽度wrap_content还是撑满屏幕及子视图
@@ -49,7 +52,8 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
     }
 
     //视图初始化
-    override fun onViewCreated(view:View,savedInstanceState:Bundle?){
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view:View, savedInstanceState:Bundle?){
         //0只有确认按钮，1动作编辑，2名称编辑，3日历选择
         parentLayout = view.findViewById(R.id.parent_layout)
         parentLayout!!.addView(childView)
@@ -68,23 +72,27 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
                 }
                 //确认按钮
                 view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
-                    this.view!!.focusable = View.FOCUSABLE
-                    this.view!!.isFocusableInTouchMode = true
-                    this.view!!.requestFocus()
-                    //收起键盘
-                    val imm: InputMethodManager = this.context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(this.view!!.windowToken, 0)
+                    if (SDKVersion.getVersion() >= 26) {
+                        this.view!!.focusable = View.FOCUSABLE
+                        this.view!!.isFocusableInTouchMode = true
+                        this.view!!.requestFocus()
+                        //收起键盘
+                        val imm: InputMethodManager = this.context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(this.view!!.windowToken, 0)
+                    }
                     if (confirmButtonClickListener!=null){
                         confirmButtonClickListener!!.onConfirmButtonClick()
                     }
                 }
                 this.view!!.setOnTouchListener { v, _ ->
-                    this.view!!.focusable = View.FOCUSABLE
-                    this.view!!.isFocusableInTouchMode = true
-                    this.view!!.requestFocus()
-                    //收起键盘
-                    val imm: InputMethodManager = v!!.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(v.windowToken, 0)
+                    if (SDKVersion.getVersion()>=26){
+                        this.view!!.focusable = View.FOCUSABLE
+                        this.view!!.isFocusableInTouchMode = true
+                        this.view!!.requestFocus()
+                        //收起键盘
+                        val imm: InputMethodManager = v!!.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(v.windowToken, 0)
+                    }
                     false
                 }
             }
@@ -95,13 +103,15 @@ class MyDialogFragment (private val dialogType:Int,private val gravity: Int,priv
                 }
                 //确认按钮
                 view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
-                    this.view!!.focusable = View.FOCUSABLE
-                    this.view!!.isFocusableInTouchMode = true
-                    this.view!!.requestFocus()
-                    //收起键盘
-                    val imm: InputMethodManager = this.context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(this.view!!.windowToken, 0)
-                    if (confirmButtonClickListener!=null){
+                    if (SDKVersion.getVersion() >= 26){
+                        this.view!!.focusable = View.FOCUSABLE
+                        this.view!!.isFocusableInTouchMode = true
+                        this.view!!.requestFocus()
+                        //收起键盘
+                        val imm: InputMethodManager = this.context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(this.view!!.windowToken, 0)
+                    }
+                    if (confirmButtonClickListener != null) {
                         confirmButtonClickListener!!.onConfirmButtonClick()
                     }
                 }

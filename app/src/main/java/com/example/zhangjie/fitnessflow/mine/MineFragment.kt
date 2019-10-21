@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -14,11 +15,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zhangjie.fitnessflow.R
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.splash.SplashActivity
 import com.example.zhangjie.fitnessflow.utils_class.GetPlanCountsList
@@ -226,6 +229,7 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onConfirmButtonClick() {
         when(dialogType){
@@ -338,9 +342,16 @@ class MineFragment : Fragment(), MyDialogFragment.ConfirmButtonClickListener {
                         personalDataUpdate.close()
                     }
                     dialogFragment!!.dismiss()
-                }else{
-                    MyToast(view!!.context,view!!.context.resources.getString(R.string.form_incomplete)).showToast()
-                    (view!!.context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(400,4))
+                }else {
+                    MyToast(
+                        view!!.context,
+                        view!!.context.resources.getString(R.string.form_incomplete)
+                    ).showToast()
+                    if (SDKVersion.getVersion() >= 26) {
+                        (view!!.context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
+                            VibrationEffect.createOneShot(400, 4)
+                        )
+                    }
                 }
             }
             1->{

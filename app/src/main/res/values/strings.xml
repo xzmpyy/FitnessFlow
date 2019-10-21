@@ -90,8 +90,8 @@
     <string name="plan_days">已训练 count 天</string>
     <string name="trend">趋势</string>
     <string name="no_data_record">暂无记录数据</string>
-    <string name="instruction_one">1) 在收\"藏页\"根据不同肌肉群自定义添加相应动作</string>
-    <string name="instruction_two">2) 可在收\"藏页\"的"模板"中创建训练模板，用以添加至训练计划</string>
+    <string name="instruction_one">1) 在\"收藏\"页根据不同肌肉群自定义添加相应动作</string>
+    <string name="instruction_two">2) 可在\"收藏\"页的"模板"中创建训练模板，用以添加至训练计划</string>
     <string name="instruction_three">3) 在\"计划\"页中创建个性化的健身计划</string>
     <string name="instruction_four">4) 在\"今日\"页中记录计划的完成情况</string>
     <string name="instruction_five">5) 可在\"我的\"页中记录相应身身体数据</string>
@@ -108,4 +108,23 @@
     <string name="data_clear_one">训练计划清除</string>
     <string name="data_clear_two">动作及模板清除</string>
     <string name="data_clear_three">个人数据清除</string>
+    <string name="private_matter">《隐私政策》与《用户协议》</string>
+    <string name="private_matter_info">
+        应国家相关规定要求，在此向您提示本应用的《隐私政策》与《用户协议》\n
+        提示： 请您仔细阅读这份协议。本协议将告知您应用的详细信息及隐私涉及，若点击同意则表明您已完全同意并接受本协议，
+        愿意遵守本协议的各项规则、规范的全部内容，若不同意则可点击退出按钮停止使用本应用。\n
+        \n
+        《隐私政策》\n
+        1) FitnessFlow是一个个人开发的，用于管理建设计划的应用程序，此程序由个人开发，并开源在GitHub上，
+        应用只会获取您设备的震动权限，用以您在进行错误操作时的触感提示，除此之外无任何其他权限需求，因此不会收集您的任何数据。\n
+        2) 您使用或继续使用此应用，即意味着同意此《隐私政策》中对您震动权限的获取，如若您不同意，可退出应用或在设置中关闭震动权限。\n
+        3) 如果您有任何疑问可通过jiez0714@gmail.com联系本应用开发者\n
+        \n
+        《用户协议》\n
+        1) 本应用可自定义创建健身动作，请您不要起涉及政治、人身攻击、邪教等有害动作名称，并进行传播，如有此行为，后果由使用者自行承担。\n
+        2) 本应用特有的标识、版面设计、编排方式等版权均属本应用享有，未经本应用许可授权，不得任意复制或转载，若利用本应用源码进行有害传播，将追究法律责任。\n
+        3) 如果您有任何疑问可通过jiez0714@gmail.com联系本应用开发者\n
+    </string>
+    <string name="agree">同意</string>
+    <string name="quit">退出</string>
 </resources>

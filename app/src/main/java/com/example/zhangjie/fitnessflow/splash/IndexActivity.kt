@@ -3,20 +3,19 @@ package com.example.zhangjie.fitnessflow.splash
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.os.PowerManager
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.text.TextUtils
 import android.util.Xml
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.zhangjie.fitnessflow.R
 import com.example.zhangjie.fitnessflow.data_class.Action
 import com.example.zhangjie.fitnessflow.data_class.IsScreenRestart
+import com.example.zhangjie.fitnessflow.data_class.SDKVersion
 import com.example.zhangjie.fitnessflow.fit_calendar.GetMonthInfo
 import com.example.zhangjie.fitnessflow.fit_calendar.SelectedItemClass
 import com.example.zhangjie.fitnessflow.library.LibraryFragment
@@ -147,6 +146,7 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
         super.onPause()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onConfirmButtonClick() {
         when(formViewType){
             0->{
@@ -155,8 +155,10 @@ class IndexActivity : AppCompatActivity(),NavigationBarView.OperationButtonClick
                     if (TextUtils.isEmpty(templateName!!.text)){
                         templateName.background = ContextCompat.getDrawable(this,R.drawable.incomplete_edit_text_background)
                         MyToast(this,resources.getString(R.string.form_incomplete)).showToast()
-                        (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
-                            VibrationEffect.createOneShot(400,4))
+                        if (SDKVersion.getVersion() >= 26) {
+                            (this.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator).vibrate(
+                                VibrationEffect.createOneShot(400,4))
+                        }
                     }else{
                         (indexFragmentInViewPagerList[2] as LibraryFragment).templateAdd(templateName.text.toString(),formDialog!!)
                     }
